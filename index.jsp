@@ -2,8 +2,10 @@
 
 <%
 App newApp = new App();
-System.out.println("tests");
-out.write("test");
+ //newApp.get("https://free-nba.p.rapidapi.com/players", "?page=0&per_page=25"); 
+newApp.get("https://www.balldontlie.io/api/v1/teams", ""); 
+
+out.write("tests");
 
 %>
 
