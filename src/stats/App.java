@@ -14,10 +14,6 @@ public class App {
     public App() {
     }
 
-    public static void main(String[] args) throws Exception {
-        System.out.println("Hello, World!");
-    }
-
     public static void get(String address, String params) throws NoSuchAlgorithmException, KeyManagementException {
         StringBuilder output = new StringBuilder();
         SSLContext sslContext;
@@ -27,7 +23,8 @@ public class App {
             System.out.println(url.toString());
             HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
             con.setRequestMethod("GET");
-            con.setRequestProperty("X-RapidAPI-Key", "0d5ab3a4bfmsh5174a54093fd0f6p12a4ffjsn47f368b3d6ea");
+            // con.setRequestProperty("X-RapidAPI-Key",
+            // "0d5ab3a4bfmsh5174a54093fd0f6p12a4ffjsn47f368b3d6ea");
 
             sslContext = SSLContext.getInstance("TLSv1.2");
             sslContext.init(null, null, new java.security.SecureRandom());
@@ -49,4 +46,5 @@ public class App {
 
         System.out.println(output);
     }
+
 }
