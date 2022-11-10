@@ -1,7 +1,10 @@
 <%@ page import="stats.FetchStats" %>
+<%@ page import="teams.TeamUtil" %>
+<%@ page import="teams.Team" %>
 <%@ page import="java.util.HashMap" %>
 <%@ page import="org.json.simple.JSONObject"%>
 <%@ page import="org.json.simple.JSONArray"%>
+<%@ page import="java.util.Iterator" %>
 <%
 FetchStats stats = new FetchStats();
 HashMap<String,String> playersPropertiesMap = new HashMap<>();
@@ -9,75 +12,92 @@ playersPropertiesMap.put("X-RapidAPI-Key", "0d5ab3a4bfmsh5174a54093fd0f6p12a4ffj
 JSONObject players = stats.get("https://free-nba.p.rapidapi.com/players", "?page=0&per_page=25", playersPropertiesMap); 
 JSONObject teams = stats.get("https://www.balldontlie.io/api/v1/teams"); 
 //out.write(players.toString());
-//out.write(teams.toString());
+//out.write(teams.toString()); 
+//TeamUtil.TeamName teamName;
+JSONArray teamsJson = (JSONArray) teams.get("data");  
+    for (Object curObj : teamsJson) {
+        JSONObject teamObj = (JSONObject) curObj;    
+       // out.write(teamObj.get("id") + "     " + teamObj.get("name")+  "<br>");
+    }           
 
-//out.write(teams.get("data").get("division"));
+    Team nets = new Team.TeamBuilder(TeamUtil.TeamName.NETS)
+    .teamId(69)
+    .build();
 
-        
-          //     JSONArray dataArr = (JSONArray) teams.get("data");
-          //     System.out.println(dataArr.get());
-
-              //for (int i = 0; i < teams.size(); i++) {
-               // System.out.println(i);
-              //      JSONObject new_obj = (JSONObject) teams.get(i);
-
-                  //  if (new_obj.get("division").equals("Southeast")) {
-                 //       System.out.println("team: " + new_obj.get("full_name"));
-                //        break;
-                //    }
-              //  }
-
-                
+    out.write(nets.getTeamId());
+    out.write("Test");
 %>
-<%-- {
-    "data": [
-        {
-            "id": 1,
-            "abbreviation": "ATL",
-            "city": "Atlanta",
-            "conference": "East",
-            "division": "Southeast",
-            "full_name": "Atlanta Hawks",
-            "name": "Hawks"
-        },
-        {
-            "id": 2,
-            "abbreviation": "BOS",
-            "city": "Boston",
-            "conference": "East",
-            "division": "Atlantic",
-            "full_name": "Boston Celtics",
-            "name": "Celtics"
-        },
-        {
-            "id": 3,
-            "abbreviation": "BKN",
-            "city": "Brooklyn",
-            "conference": "East",
-            "division": "Atlantic",
-            "full_name": "Brooklyn Nets",
-            "name": "Nets"
-        },
-        {
-            "id": 4,
-            "abbreviation": "CHA",
-            "city": "Charlotte",
-            "conference": "East",
-            "division": "Southeast",
-            "full_name": "Charlotte Hornets",
-            "name": "Hornets"
-        }, --%>
 <html>
     <head>
     </head>
 
     <style>
+    .body{
+        background:white;
+    }
+    .body > div{
+        color:dodgerblue;
+    }
+    .outerBorder {
+        border: solid black;
+        border-radius: 15px;
+        margin:4%;
+        height: 80%;
+    }
+    .innerContent{
+        display: flex;
+        justify-content:center;
+        flex-direction: column;
+        min-height:100%;
+    }
+    .innerContent > div{
+        flex:1;
+        text-align: center;
+        align-self: stretch;   
+    }
+
+    .topView{
+        background:black;
+        display:flex;
+        flex-direction:row;
+    }
+
+    .topView > div {
+        flex:1;
+    }
+    
+    .midView{
+        background: green;
+    }
+
+    .botView{
+        background: yellow;
+    }
     </style>
 
-    <body>
-        <div>
-            Test Grimmys
-        </div>
+    <body class="body">
+        <div class="outerBorder">
+            <div class="innerContent">
+                <div class="topView">
+                    <div>
+                        A1
+                    </div>
+                    <div style="background: red">
+                        Match Info 
+                    </div>
+                </div>
+                <div class="midView">
+                   <div>
+                        A2
+                    </div>
+                </div>
+                <div class="botView">
+                   <div>
+                        A3
+                    </div>
+                </div>
+            </div>
+        </div> 
     </body>
 
 <html>
