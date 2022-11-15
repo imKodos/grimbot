@@ -20,11 +20,20 @@ JSONArray teamsJson = (JSONArray) teams.get("data");
        // out.write(teamObj.get("id") + "     " + teamObj.get("name")+  "<br>");
     }           
 
-    Team nets = new Team.TeamBuilder(TeamUtil.TeamName.NETS)
-    .teamId(69)
+    Team t1 = new Team.Builder(TeamUtil.TeamName.NETS)
+    .teamId(2)
+    .last5PF(100)
+    .last5PA(110)
     .build();
 
-    out.write(nets.getTeamId());
+
+    Team t2 = new Team.Builder(TeamUtil.TeamName.CLIPPERS)
+    .teamId(5)
+    .last5PF(120)
+    .last5PA(110)
+    .build(); 
+
+    out.print(t2.getTeamId());
     out.write("Test");
 %>
 <html>

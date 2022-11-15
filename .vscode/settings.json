@@ -1,10 +1,12 @@
 {
-    "java.project.referencedLibraries": [
-      "lib/**/*.jar",
-      "e:\\Tomcat\\apache-tomcat-8.5.81\\lib\\servlet-api.jar"
-    ],
-    "java.project.outputPath": "WEB-INF\\classes",
-    "java.dependency.packagePresentation": "hierarchical",
-    "java.project.sourcePaths": ["src"],
+  "java.project.referencedLibraries": [
+    "lib/**/*.jar",
+    "Projects\\apache-tomcat-9.0.68\\lib\\servlet-api.jar"
+  ],
+  "java.project.sourcePaths": ["src"],
+  "java.project.outputPath": "WEB-INF/classes",
+  // "java.dependency.packagePresentation": "hierarchical"
+  // "java.project.sourcePaths": ["src"]
 
-  }
+}
+// /Projects/apache-tomcat-9.0.68/bin/catalina.sh start

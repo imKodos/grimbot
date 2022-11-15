@@ -28,7 +28,7 @@ public class Team {
         return teamId;
     }
 
-    public static class TeamBuilder {
+    public static class Builder {
         // required fields
         private final TeamName name;
 
@@ -52,81 +52,81 @@ public class Team {
         private boolean hasStartingInjury = false;
         private boolean isHomeTeam = false;
 
-        public TeamBuilder(TeamName name) {
+        public Builder(TeamName name) {
             this.name = name;
         }
 
-        public TeamBuilder teamId(int val) {
+        public Builder teamId(int val) {
             teamId = val;
             return this;
         }
 
-        public TeamBuilder seasonAvgPf(int val) {
+        public Builder seasonAvgPf(int val) {
             seasonAvgPf = val;
             return this;
         }
 
-        public TeamBuilder seasonAvgPa(int val) {
+        public Builder seasonAvgPa(int val) {
             seasonAvgPa = val;
             return this;
         }
 
-        public TeamBuilder last5PF(int val) {
+        public Builder last5PF(int val) {
             last5PF = val;
             return this;
         }
 
-        public TeamBuilder last5PA(int val) {
+        public Builder last5PA(int val) {
             last5PA = val;
             return this;
         }
 
-        public TeamBuilder varianceWeight(double val) {
+        public Builder varianceWeight(double val) {
             varianceWeight = val;
             return this;
         }
 
-        public TeamBuilder playConsecutiveDays(boolean val) {
+        public Builder playConsecutiveDays(boolean val) {
             playConsecutiveDays = val;
             return this;
         }
 
-        public TeamBuilder isDivisionGame(boolean val) {
+        public Builder isDivisionGame(boolean val) {
             isDivisionGame = val;
             return this;
         }
 
-        public TeamBuilder hasPositiveRecord(boolean val) {
+        public Builder hasPositiveRecord(boolean val) {
             hasPositiveRecord = val;
             return this;
         }
 
-        public TeamBuilder defenseRating(int val) {
+        public Builder defenseRating(int val) {
             defenseRating = val;
             return this;
         }
 
-        public TeamBuilder offenseRating(int val) {
+        public Builder offenseRating(int val) {
             offenseRating = val;
             return this;
         }
 
-        public TeamBuilder avgTimeOfPosession(int val) {
+        public Builder avgTimeOfPosession(int val) {
             avgTimeOfPosession = val;
             return this;
         }
 
-        public TeamBuilder paceRating(int val) {
+        public Builder paceRating(int val) {
             paceRating = val;
             return this;
         }
 
-        public TeamBuilder hasStartingInjury(boolean val) {
+        public Builder hasStartingInjury(boolean val) {
             hasStartingInjury = val;
             return this;
         }
 
-        public TeamBuilder isHomeTeam(boolean val) {
+        public Builder isHomeTeam(boolean val) {
             isHomeTeam = val;
             return this;
         }
@@ -136,7 +136,7 @@ public class Team {
         }
     }
 
-    private Team(TeamBuilder builder) {
+    private Team(Builder builder) {
         name = builder.name;
         teamId = builder.teamId;
         seasonAvgPf = builder.seasonAvgPf;
