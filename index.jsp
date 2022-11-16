@@ -5,35 +5,49 @@
 <%@ page import="org.json.simple.JSONObject"%>
 <%@ page import="org.json.simple.JSONArray"%>
 <%@ page import="java.util.Iterator" %>
+<%@ page import="java.util.ArrayList" %>
 <%
 FetchStats stats = new FetchStats();
 HashMap<String,String> playersPropertiesMap = new HashMap<>();
 playersPropertiesMap.put("X-RapidAPI-Key", "0d5ab3a4bfmsh5174a54093fd0f6p12a4ffjsn47f368b3d6ea");
 JSONObject players = stats.get("https://free-nba.p.rapidapi.com/players", "?page=0&per_page=25", playersPropertiesMap); 
 JSONObject teams = stats.get("https://www.balldontlie.io/api/v1/teams"); 
-//out.write(players.toString());
-//out.write(teams.toString()); 
-//TeamUtil.TeamName teamName;
+ArrayList<Team> teamList = new ArrayList<>();
 JSONArray teamsJson = (JSONArray) teams.get("data");  
+    for(int i=0; i<teamsJson.size();i++){ //build each team -- todo maybe look into making this a map where the key is the teamId or team name enum
+          JSONObject teamObj = (JSONObject)teamsJson.get(i);
+          Long teamId=(Long)teamObj.get("id"); //todo figure out why these are coming over as Long, instead of int -- needed to pull data as long and convert to int
+          teamList.add(new Team.Builder(TeamUtil.TeamName.NETS)
+            .teamId(teamId.intValue())
+            .last5PF(100)
+            .last5PA(110)
+            .build()
+           );
+    }
+
+   for (Team curTeam : teamList) {
+      out.println(curTeam.getName());
+   }     
+
     for (Object curObj : teamsJson) {
         JSONObject teamObj = (JSONObject) curObj;    
-       // out.write(teamObj.get("id") + "     " + teamObj.get("name")+  "<br>");
+        out.write(teamObj.get("id") + "     " + teamObj.get("name")+  "<br>");
     }           
 
-    Team t1 = new Team.Builder(TeamUtil.TeamName.NETS)
-    .teamId(2)
-    .last5PF(100)
-    .last5PA(110)
-    .build();
+ //   Team t1 = new Team.Builder(TeamUtil.TeamName.NETS)
+  //  .teamId(2)
+  //  .last5PF(100)
+  //  .last5PA(110)
+  //  .build();
 
 
-    Team t2 = new Team.Builder(TeamUtil.TeamName.CLIPPERS)
-    .teamId(5)
-    .last5PF(120)
-    .last5PA(110)
-    .build(); 
+   // Team t2 = new Team.Builder(TeamUtil.TeamName.CLIPPERS)
+   // .teamId(5)
+   // .last5PF(120)
+   // .last5PA(110)
+   // .build(); 
 
-    out.print(t2.getTeamId());
+  //  out.print(t2.getTeamId());
     out.write("Test");
 %>
 <html>
