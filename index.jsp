@@ -6,6 +6,7 @@
 <%@ page import="org.json.simple.JSONArray"%>
 <%@ page import="java.util.Iterator" %>
 <%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.Optional" %>
 <%
 FetchStats stats = new FetchStats();
 HashMap<String,String> playersPropertiesMap = new HashMap<>();
@@ -25,30 +26,37 @@ JSONArray teamsJson = (JSONArray) teams.get("data");
            );
     }
 
-   for (Team curTeam : teamList) {
-      out.println(curTeam.getName());
-   }     
+    //list of all team and name
+   // for(TeamUtil.TeamName team : TeamUtil.TeamName.values()) {
+   //     out.print("Team " + team.getId() + " is: " + team.getName()+ " <br>");
+   // }
+
+    //get team name from id
+   // Optional<TeamUtil.TeamName> teamEnum  = TeamUtil.TeamName.getTeamByName(20);
+    //if(teamEnum.isPresent()) {
+    //    out.print(teamEnum.get().getName()); //Knicks
+    //out.print(teamEnum.get()); //KNICKS
+   // }
+    
+    
+    // get enum from name
+ //   Optional<TeamUtil.TeamName> teamEnum  = TeamUtil.TeamName.getTeamByName("Knicks");
+  //   if(teamEnum.isPresent()) {
+    //out.print(teamEnum.get().getId()); //20
+    //out.print(teamEnum.get()); //KNICKS
+  //  }
+
+
+    //list of teams built
+    for (Team curTeam : teamList) {
+        //  out.println(curTeam.getName());
+    }     
 
     for (Object curObj : teamsJson) {
         JSONObject teamObj = (JSONObject) curObj;    
         out.write(teamObj.get("id") + "     " + teamObj.get("name")+  "<br>");
     }           
 
- //   Team t1 = new Team.Builder(TeamUtil.TeamName.NETS)
-  //  .teamId(2)
-  //  .last5PF(100)
-  //  .last5PA(110)
-  //  .build();
-
-
-   // Team t2 = new Team.Builder(TeamUtil.TeamName.CLIPPERS)
-   // .teamId(5)
-   // .last5PF(120)
-   // .last5PA(110)
-   // .build(); 
-
-  //  out.print(t2.getTeamId());
-    out.write("Test");
 %>
 <html>
     <head>
