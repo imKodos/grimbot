@@ -13,6 +13,7 @@ HashMap<String,String> playersPropertiesMap = new HashMap<>();
 playersPropertiesMap.put("X-RapidAPI-Key", "0d5ab3a4bfmsh5174a54093fd0f6p12a4ffjsn47f368b3d6ea");
 JSONObject players = stats.get("https://free-nba.p.rapidapi.com/players", "?page=0&per_page=25", playersPropertiesMap); 
 JSONObject teams = stats.get("https://www.balldontlie.io/api/v1/teams"); 
+//https://www.balldontlie.io/api/v1/games?seasons[]=2022&page=50
 ArrayList<Team> teamList = new ArrayList<>();
 JSONArray teamsJson = (JSONArray) teams.get("data");  
     for(int i=0; i<teamsJson.size();i++){ //build each team -- todo maybe look into making this a map where the key is the teamId or team name enum
@@ -60,6 +61,7 @@ JSONArray teamsJson = (JSONArray) teams.get("data");
 %>
 <html>
     <head>
+    <script src="scripts/jquery-3.6.1.js"></script>
     </head>
 
     <style>
@@ -132,3 +134,7 @@ JSONArray teamsJson = (JSONArray) teams.get("data");
     </body>
 
 <html>
+
+<script>
+//$(".botView").hide();
+</script>
