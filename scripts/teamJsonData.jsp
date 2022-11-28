@@ -8,28 +8,22 @@
 <%
 JSONObject returnJo = new JSONObject();
 JSONObject teamJo;
-JSONArray ja = new JSONArray();
+JSONArray jArray = new JSONArray();
 
 
 ArrayList<Team> teamList = new ArrayList<>();
-
 teamList = (ArrayList<Team>) session.getAttribute("teamList");
 
  for (Team curTeam : teamList) {
-    System.out.println(curTeam.getTeamId());
-  }   
+  teamJo = new JSONObject();
+  teamJo.put("teamId", curTeam.getTeamId());
+  teamJo.put("teamName", curTeam.getName().toString());
+  jArray.add(teamJo);
+ }   
 
-teamJo = new JSONObject();
-teamJo.put("EmployeeId", 1);
-teamJo.put("FullName", "Nets");
-ja.add(teamJo);
+//System.out.println(TeamUtil.TeamName.getTeamByName(teamList.get(0).getTeamId()));
 
-teamJo = new JSONObject();
-teamJo.put("EmployeeId", 2);
-teamJo.put("FullName", "Knicks");
-ja.add(teamJo);
-
-returnJo.put("teamData", ja);
+returnJo.put("teamData", jArray);
 
 out.print(returnJo);
 

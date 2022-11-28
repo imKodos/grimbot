@@ -4,6 +4,7 @@ import teams.TeamUtil.TeamName;
 
 public class Team {
     private final TeamName name;
+    private final String teamName;
     private final int teamId;
     private final int seasonAvgPf;
     private final int seasonAvgPa;
@@ -28,12 +29,17 @@ public class Team {
         return teamId;
     }
 
+    public String getTeamName() {
+        return teamName;
+    }
+
     public static class Builder {
         // required fields
         private final TeamName name;
 
         // optional fields
         private int teamId = -1;
+        private String teamName = "";
         private int seasonAvgPf = -1;
         private int seasonAvgPa = -1;
         private int last5PF = -1;
@@ -58,6 +64,11 @@ public class Team {
 
         public Builder teamId(int val) {
             teamId = val;
+            return this;
+        }
+
+        public Builder teamName(String val) {
+            teamName = val;
             return this;
         }
 
@@ -139,6 +150,7 @@ public class Team {
     private Team(Builder builder) {
         name = builder.name;
         teamId = builder.teamId;
+        teamName = builder.teamName;
         seasonAvgPf = builder.seasonAvgPf;
         seasonAvgPa = builder.seasonAvgPa;
         last5PF = builder.last5PF;

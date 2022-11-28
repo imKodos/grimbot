@@ -21,6 +21,7 @@ JSONArray teamsJson = (JSONArray) teams.get("data");
           JSONObject teamObj = (JSONObject)teamsJson.get(i);
           Long teamId=(Long)teamObj.get("id"); //todo figure out why these are coming over as Long, instead of int -- needed to pull data as long and convert to int
           teamList.add(new Team.Builder(TeamUtil.TeamName.NETS)
+            .teamName(teamId.intValue())
             .teamId(teamId.intValue())
             .last5PF(100)
             .last5PA(110)
@@ -31,9 +32,9 @@ JSONArray teamsJson = (JSONArray) teams.get("data");
     session.setAttribute("teamList", teamList);
 
     //list of all team and name
-   // for(TeamUtil.TeamName team : TeamUtil.TeamName.values()) {
-   //     out.print("Team " + team.getId() + " is: " + team.getName()+ " <br>");
-   // }
+ //  for(TeamUtil.TeamName team : TeamUtil.TeamName.values()) {
+  //     out.print("Team " + team.getId() + " is: " + team.getName()+ " <br>");
+  // }
 
     //get team name from id
    // Optional<TeamUtil.TeamName> teamEnum  = TeamUtil.TeamName.getTeamByName(20);
@@ -52,15 +53,15 @@ JSONArray teamsJson = (JSONArray) teams.get("data");
 
 
     //list of teams built
-   // for (Team curTeam : teamList) {
-        //  out.println(curTeam.getName());
-    //}     
+   //for (Team curTeam : teamList) {
+   //       out.println(curTeam.getName());
+   // }     
 
     //prints out team info 
-    for (Object curObj : teamsJson) {
+   // for (Object curObj : teamsJson) {
         //JSONObject teamObj = (JSONObject) curObj;    
         //out.write(teamObj.get("id") + "     " + teamObj.get("name")+  "<br>"); 
-    }           
+  //  }           
 
 %>
 <html>
@@ -210,7 +211,7 @@ $(".teamList").kendoDropDownList({
     }
     });
 
-var dataSource2 = new kendo.data.DataSource({
+    var dataSource2 = new kendo.data.DataSource({
          transport: {
             read:  {
             url: "scripts/teamJsonData.jsp",
@@ -223,23 +224,19 @@ var dataSource2 = new kendo.data.DataSource({
     }
     });
 
-
-
-
-
     $("#team1").kendoDropDownList({
-         filter: "contains",
+        filter: "contains",
         dataSource: dataSource,
-        dataTextField: "FullName",
-        dataValueField: "EmployeeId"
+        dataTextField: "teamName",
+        dataValueField: "teamId"
     });
 
 
     $("#team2").kendoDropDownList({
-         filter: "contains",
+        filter: "contains",
         dataSource: dataSource2,
-        dataTextField: "FullName",
-        dataValueField: "EmployeeId"
+        dataTextField: "teamName",
+        dataValueField: "teamId"
     });
 
 
