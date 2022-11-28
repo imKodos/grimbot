@@ -47,13 +47,13 @@ public class TeamUtil {
                     .findFirst();
         }
 
-        // public static TeamName getById(int id) {
-        // for (TeamName e : values()) {
-        // if (e.tId == (id))
-        // return e;
-        // }
-        // return UNKNOWN;
-        // }
+        public static TeamName getById(int id) {
+            for (TeamName e : values()) {
+                if (e.tId == (id))
+                    return e;
+            }
+            return UNKNOWN;
+        }
 
         // public static int getId(TeamName name) {
         // for (TeamName e : values()) {

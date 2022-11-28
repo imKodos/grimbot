@@ -19,10 +19,11 @@ ArrayList<Team> teamList = new ArrayList<>();
 JSONArray teamsJson = (JSONArray) teams.get("data");  
     for(int i=0; i<teamsJson.size();i++){ //build each team -- todo maybe look into making this a map where the key is the teamId or team name enum
           JSONObject teamObj = (JSONObject)teamsJson.get(i);
-          Long teamId=(Long)teamObj.get("id"); //todo figure out why these are coming over as Long, instead of int -- needed to pull data as long and convert to int
-          teamList.add(new Team.Builder(TeamUtil.TeamName.NETS)
-            .teamName(teamId.intValue())
-            .teamId(teamId.intValue())
+          Long longId=(Long)teamObj.get("id");//comes from json as a long
+          int teamId = longId.intValue();
+          teamList.add(new Team.Builder(TeamUtil.TeamName.getById(teamId))
+            .teamName(TeamUtil.TeamName.getTeamByName(teamId).get().getName())
+            .teamId(teamId)
             .last5PF(100)
             .last5PA(110)
             .build()
@@ -205,6 +206,7 @@ $(".teamList").kendoDropDownList({
             dataType: "json"
             }
         },
+         sort: { field: "teamName", dir: "asc" },
          schema : {
              type: "json",
              data: "teamData",
@@ -218,6 +220,7 @@ $(".teamList").kendoDropDownList({
             dataType: "json" 
             }
         },
+         sort: { field: "teamName", dir: "asc" },
          schema : {
              type: "json",
              data: "teamData",

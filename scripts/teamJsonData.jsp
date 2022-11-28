@@ -17,7 +17,7 @@ teamList = (ArrayList<Team>) session.getAttribute("teamList");
  for (Team curTeam : teamList) {
   teamJo = new JSONObject();
   teamJo.put("teamId", curTeam.getTeamId());
-  teamJo.put("teamName", curTeam.getName().toString());
+  teamJo.put("teamName", curTeam.getTeamName());
   jArray.add(teamJo);
  }   
 
