@@ -29,5 +29,4 @@ out.print(returnJo);
 
 //session.setAttribute("test1", "yessir");
 //out.print(session.getAttribute("test2"));
-//out.print("callback([{\"EmployeeId\":2,\"FullName\":\"Andrew Fuller\"}])");
 %>

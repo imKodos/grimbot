@@ -31,39 +31,6 @@ JSONArray teamsJson = (JSONArray) teams.get("data");
     }
 
     session.setAttribute("teamList", teamList);
-
-    //list of all team and name
- //  for(TeamUtil.TeamName team : TeamUtil.TeamName.values()) {
-  //     out.print("Team " + team.getId() + " is: " + team.getName()+ " <br>");
-  // }
-
-    //get team name from id
-   // Optional<TeamUtil.TeamName> teamEnum  = TeamUtil.TeamName.getTeamByName(20);
-    //if(teamEnum.isPresent()) {
-    //    out.print(teamEnum.get().getName()); //Knicks
-    //out.print(teamEnum.get()); //KNICKS
-   // }
-    
-    
-    // get enum from name
- //   Optional<TeamUtil.TeamName> teamEnum  = TeamUtil.TeamName.getTeamByName("Knicks");
-  //   if(teamEnum.isPresent()) {
-    //out.print(teamEnum.get().getId()); //20
-    //out.print(teamEnum.get()); //KNICKS
-  //  }
-
-
-    //list of teams built
-   //for (Team curTeam : teamList) {
-   //       out.println(curTeam.getName());
-   // }     
-
-    //prints out team info 
-   // for (Object curObj : teamsJson) {
-        //JSONObject teamObj = (JSONObject) curObj;    
-        //out.write(teamObj.get("id") + "     " + teamObj.get("name")+  "<br>"); 
-  //  }           
-
 %>
 <html>
     <head>
@@ -124,6 +91,7 @@ JSONArray teamsJson = (JSONArray) teams.get("data");
     .k-i-arrow-60-down{
         position: initial;
     }
+
     </style>
 
     <body class="body">
@@ -131,17 +99,21 @@ JSONArray teamsJson = (JSONArray) teams.get("data");
             <div class="innerContent">
                 <div class="topView">
                     <div>
-                        <input id="team1" class="teamList" /><br><br>
-                        <input id="team2" class="teamList" />
+                     <p>
+                        <input id="t1" class="teamList" />
+                      </p>
+                      <p style="padding-top: 20px">
+                        <input id="t2" class="teamList" />
+                      </p>
                     </div>
                     <div style="background: red">
-                        <p>Match Info :</p>
-                        <p>Projected score: </p>
+                        <p>Projected Score: </p>
+                        <p>Projected Total:</p>
                     </div>
                 </div>
                 <div class="midView">
                    <div>
-                        <p>Team {1} stats</p>
+                        <p id="t1Name">Team 1 Name</p>
                         <p>Last Game Result</p>
                         <p>Average PF</p>
                         <p>Average PA</p>
@@ -151,7 +123,7 @@ JSONArray teamsJson = (JSONArray) teams.get("data");
                 </div>
                 <div class="botView">
                    <div>
-                        <p>Team {2} stats</p>
+                        <p id="t2Name">Team 2 Name</p>
                         <p>Last Game Result</p>
                         <p>Average PF</p>
                         <p>Average PA</p>
@@ -165,82 +137,35 @@ JSONArray teamsJson = (JSONArray) teams.get("data");
 
 <html>
 
-<%-- <script>
-var dataSource = new kendo.data.DataSource({
-  transport: {
-    read: {
-     url: "http://localhost:8080/grim/scripts/teamJsonData.jsp",
-    //   read: "/grim/scripts/teamJsonData.jsp",
-      dataType: "json",
-      cache: false
-    }
-  },
- schema: {  
-  model: {  
-    id: "id",
-  }
-}  
-
-});
-
-
-$(".teamList").kendoDropDownList({
- // filter:"startswith",
-  dataSource: dataSource,
-  dataTextField: "id",
-  dataValueField: "id"
-});
-
-
-//var filterInput = dropdownlist.filterInput;
-</script> --%>
-
 <script>
-// need 2 datasource objects otherwise filtering one ddl will affect the other.
-//todo need to figure out how to make a shared datasource obj and extract the data into a new data source obj,
-// this will cut down on the code of having to do a full init on 2 data source
-    var dataSource = new kendo.data.DataSource({
-         transport: {
-            read:  {
-            url: "scripts/teamJsonData.jsp",
-            dataType: "json"
-            }
-        },
-         sort: { field: "teamName", dir: "asc" },
-         schema : {
-             type: "json",
-             data: "teamData",
+   //slightly lame, but need to pull the json data from teamJsonData first and then put that info into the datasource.
+   //the 2 team DDLs cant share the same data source obj, otherwise it shares the same filter data.
+   //this also saves an additional call to teamJsonData - I'm only doing one call now, compared to the initial 2 
+   //see TestCodeAndComments ~33 [Data Source teamJsonData] for a handle on how I was doing it
+   var fillTeamData = $.getJSON('scripts/teamJsonData.jsp', function(data) {
+        var teamJsonData = data.teamData;
+        $(".teamList").kendoDropDownList({
+            filter: "contains",
+            dataSource: {
+                data: teamJsonData,
+                sort: { field: "teamName", dir: "asc" },
+            },
+            dataTextField: "teamName",
+            dataValueField: "teamId",
+            text: "Select a Team",
+            autoBind: false,
+            change: teamChange
+        });
+    });
+
+     function teamChange(e) {
+        $("#"+e.sender.element[0].id+"Name").html('<%=TeamUtil.TeamName.getTeamByName(10).get().getName()%>');
     }
-    });
 
-    var dataSource2 = new kendo.data.DataSource({
-         transport: {
-            read:  {
-            url: "scripts/teamJsonData.jsp",
-            dataType: "json" 
-            }
-        },
-         sort: { field: "teamName", dir: "asc" },
-         schema : {
-             type: "json",
-             data: "teamData",
-    }
-    });
-
-    $("#team1").kendoDropDownList({
-        filter: "contains",
-        dataSource: dataSource,
-        dataTextField: "teamName",
-        dataValueField: "teamId"
-    });
-
-
-    $("#team2").kendoDropDownList({
-        filter: "contains",
-        dataSource: dataSource2,
-        dataTextField: "teamName",
-        dataValueField: "teamId"
-    });
-
-
+// <select id="items" onselect="javascript:reloadPage(this)">
+//   <option name="item1">Item 1</option>
+// </select>
+    // function reloadPage(id) {
+//    document.location.href = location.href + '?id=' + id.value;
+// }
 </script>

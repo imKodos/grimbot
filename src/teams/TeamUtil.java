@@ -10,7 +10,7 @@ public class TeamUtil {
 
     public enum TeamName {
         CELTICS(2, "Celtics"), NETS(3, "Nets"), KNICKS(20, "Knicks"), SIXERS(23, "76ers"), RAPTORS(28, "Raptors"), // atlantic
-        BULLS(5, "Bullss"), CAVALIERS(6, "Cavaliers"), PISTONS(9, "PIstons"), PACERS(12, "Pacers"), BUCKS(17, "Bucks"), // central
+        BULLS(5, "Bulls"), CAVALIERS(6, "Cavaliers"), PISTONS(9, "Pistons"), PACERS(12, "Pacers"), BUCKS(17, "Bucks"), // central
         HAWKS(1, "Hawks"), HORNETS(4, "Hornets"), HEAT(16, "Heat"), MAGIC(22, "Magic"), WIZARDS(30, "Wizards"), // Southeast
         NUGGETS(8, "Nuggets"), TIMBERWOLVES(18, "Timberwolves"), BLAZERS(25, "Blazers"), JAZZ(29, "Jazz"),
         THUNDER(21, "Thunder"), // northwest
