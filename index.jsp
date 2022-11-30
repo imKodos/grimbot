@@ -1,5 +1,6 @@
 <%@ page import="stats.FetchStats" %>
 <%@ page import="teams.TeamUtil" %>
+<%@ page import="teams.TeamUtil.TeamName" %>
 <%@ page import="teams.Team" %>
 <%@ page import="java.util.HashMap" %>
 <%@ page import="org.json.simple.JSONObject"%>
@@ -14,11 +15,12 @@ if(session.getAttribute("teamList") == null){
         session.setAttribute("teamList",  TeamUtil.generateTeamMap());
 }
 
-Team team1 = new Team();
-Team team2 = new Team();
+Team team1;
+Team team2;
 HashMap<TeamName, Team> teamMap = (HashMap<TeamName,Team>) session.getAttribute("teamMap");
 //ArrayList<Team> teamList = (ArrayList<Team>) session.getAttribute("teamList");
-if(request.getParameter("t1")!=null && request.getParameter("t1")!=-1){
+if(request.getParameter("t1")!=null && request.getParameter("t1")!="-1" 
+        && request.getParameter("t1")!=""){
    team1 = teamMap.get(TeamUtil.TeamName.getById(request.getParameter("t1")));//get from teamMap
    
 }
