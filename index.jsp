@@ -7,31 +7,23 @@
 <%@ page import="java.util.Iterator" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.Optional" %>
-<%
-FetchStats stats = new FetchStats();
-HashMap<String,String> playersPropertiesMap = new HashMap<>();
-playersPropertiesMap.put("X-RapidAPI-Key", "0d5ab3a4bfmsh5174a54093fd0f6p12a4ffjsn47f368b3d6ea");
-JSONObject players = stats.get("https://free-nba.p.rapidapi.com/players", "?page=0&per_page=25", playersPropertiesMap); 
-JSONObject teams = stats.get("https://www.balldontlie.io/api/v1/teams"); 
-//https://www.balldontlie.io/api/v1/games?seasons[]=2022&page=50
-//out.print(session.getAttribute("test1"));
-ArrayList<Team> teamList = new ArrayList<>();
-JSONArray teamsJson = (JSONArray) teams.get("data");  
-    for(int i=0; i<teamsJson.size();i++){ //build each team -- todo maybe look into making this a map where the key is the teamId or team name enum
-          JSONObject teamObj = (JSONObject)teamsJson.get(i);
-          Long longId=(Long)teamObj.get("id");//comes from json as a long
-          int teamId = longId.intValue();
-          teamList.add(new Team.Builder(TeamUtil.TeamName.getById(teamId))
-            .teamName(TeamUtil.TeamName.getTeamByName(teamId).get().getName())
-            .teamId(teamId)
-            .last5PF(100)
-            .last5PA(110)
-            .build()
-           );
-    }
 
-    session.setAttribute("teamList", teamList);
+<%
+//on entry, if theres no handle on the list of teams, generate them -- prevents unnecessary api calls
+if(session.getAttribute("teamList") == null){ 
+        session.setAttribute("teamList",  TeamUtil.generateTeamMap());
+}
+
+Team team1 = new Team();
+Team team2 = new Team();
+HashMap<TeamName, Team> teamMap = (HashMap<TeamName,Team>) session.getAttribute("teamMap");
+//ArrayList<Team> teamList = (ArrayList<Team>) session.getAttribute("teamList");
+if(request.getParameter("t1")!=null && request.getParameter("t1")!=-1){
+   team1 = teamMap.get(TeamUtil.TeamName.getById(request.getParameter("t1")));//get from teamMap
+   
+}
 %>
+
 <html>
     <head>
     <link rel="stylesheet" href="scripts/kendo/styles/kendo.common.min.css" />
@@ -100,10 +92,12 @@ JSONArray teamsJson = (JSONArray) teams.get("data");
                 <div class="topView">
                     <div>
                      <p>
-                        <input id="t1" class="teamList" />
+                        <input id="t1" class="teamList" value="" />
+                        <%-- <input id="t1" class="teamList" value="20"/> --%>
                       </p>
                       <p style="padding-top: 20px">
-                        <input id="t2" class="teamList" />
+                        <input id="t2" class="teamList" value="<%=request.getParameter("t2")%>" />
+                        <%-- <input id="t2" class="teamList" /> --%>
                       </p>
                     </div>
                     <div style="background: red">
@@ -138,6 +132,9 @@ JSONArray teamsJson = (JSONArray) teams.get("data");
 <html>
 
 <script>
+   
+
+
    //slightly lame, but need to pull the json data from teamJsonData first and then put that info into the datasource.
    //the 2 team DDLs cant share the same data source obj, otherwise it shares the same filter data.
    //this also saves an additional call to teamJsonData - I'm only doing one call now, compared to the initial 2 
@@ -153,19 +150,26 @@ JSONArray teamsJson = (JSONArray) teams.get("data");
             dataTextField: "teamName",
             dataValueField: "teamId",
             text: "Select a Team",
-            autoBind: false,
-            change: teamChange
+            change: teamChange,
+            autoBind:false
         });
+
+        //read in / set default values of the DDL on refresh if we have a value
+        if($('#t1').val() != "" && $('#t1').val() != -1 && $('#t1').val() != "null"){
+            $('#t1').data('kendoDropDownList').dataSource.read();
+        }
+          if($('#t2').val() != "" && $('#t2').val() != -1 && $('#t2').val() != "null"){
+            $('#t2').data('kendoDropDownList').dataSource.read();
+        }
     });
 
      function teamChange(e) {
-        $("#"+e.sender.element[0].id+"Name").html('<%=TeamUtil.TeamName.getTeamByName(10).get().getName()%>');
+    // I could avoid doing a page refresh here, but would be awkward to change the ui text and use the compare teams from TeamUtils
+    //pros: this is more light weight, only uses the teams as needed
+    //cons: does a page refresh and looks awful
+      var t1Value= $("#t1").val() != "" ? $("#t1").val() : "-1";
+      var t2Value= $("#t2").val() != "" ? $("#t2").val() : "-1";
+      document.location.href = '?t1=' + t1Value + '&t2=' +t2Value;
+    // alert(e.sender.element[0].id); // returns id of which ddl was changed
     }
-
-// <select id="items" onselect="javascript:reloadPage(this)">
-//   <option name="item1">Item 1</option>
-// </select>
-    // function reloadPage(id) {
-//    document.location.href = location.href + '?id=' + id.value;
-// }
 </script>

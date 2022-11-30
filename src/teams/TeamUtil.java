@@ -1,7 +1,17 @@
 package teams;
 
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Optional;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
+import stats.FetchStats;
 
 public class TeamUtil {
     // public TeamUtil() {
@@ -55,15 +65,71 @@ public class TeamUtil {
             return UNKNOWN;
         }
 
-        // public static int getId(TeamName name) {
-        // for (TeamName e : values()) {
-        // System.out.println(e);
-        // if (e.equals(name))
-        // return e.tId;
-        // }
-        // return -1;
-        // }
+        public static int getId(TeamName name) {
+            for (TeamName e : values()) {
+                // System.out.println(e);
+                if (e.equals(name))
+                    return e.tId;
+            }
+            return -1;
+        }
 
+    }
+
+    public static ArrayList<Team> generateTeamList()
+            throws KeyManagementException, NoSuchAlgorithmException, ParseException,
+            org.json.simple.parser.ParseException {
+        HashMap<String, String> playersPropertiesMap = new HashMap<>();
+        playersPropertiesMap.put("X-RapidAPI-Key", "0d5ab3a4bfmsh5174a54093fd0f6p12a4ffjsn47f368b3d6ea");
+        // JSONObject players = stats.get("https://free-nba.p.rapidapi.com/players",
+        // "?page=0&per_page=25", playersPropertiesMap);
+        JSONObject teams = FetchStats.get("https://www.balldontlie.io/api/v1/teams");
+        // https://www.balldontlie.io/api/v1/games?seasons[]=2022&page=50
+        ArrayList<Team> teamList = new ArrayList<>();
+        JSONArray teamsJson = (JSONArray) teams.get("data");
+        for (int i = 0; i < teamsJson.size(); i++) { // build each team -- todo maybe look into making this a map where
+                                                     // the key is the teamId or team name enum
+            JSONObject teamObj = (JSONObject) teamsJson.get(i);
+            Long longId = (Long) teamObj.get("id");// comes from json as a long
+            int teamId = longId.intValue();
+            teamList.add(new Team.Builder(TeamUtil.TeamName.getById(teamId))
+                    .teamName(TeamUtil.TeamName.getTeamByName(teamId).get().getName())
+                    .teamId(teamId)
+                    .last5PF(100)
+                    .last5PA(110)
+                    .build());
+        }
+        return teamList;
+    }
+
+    public static HashMap<TeamName, Team> generateTeamMap()
+            throws KeyManagementException, NoSuchAlgorithmException, ParseException,
+            org.json.simple.parser.ParseException {
+        HashMap<String, String> playersPropertiesMap = new HashMap<>();
+        playersPropertiesMap.put("X-RapidAPI-Key", "0d5ab3a4bfmsh5174a54093fd0f6p12a4ffjsn47f368b3d6ea");
+        // JSONObject players = stats.get("https://free-nba.p.rapidapi.com/players",
+        // "?page=0&per_page=25", playersPropertiesMap);
+        JSONObject teams = FetchStats.get("https://www.balldontlie.io/api/v1/teams");
+        // https://www.balldontlie.io/api/v1/games?seasons[]=2022&page=50
+        HashMap<TeamName, Team> teamMap = new HashMap<>();
+        JSONArray teamsJson = (JSONArray) teams.get("data");
+        for (int i = 0; i < teamsJson.size(); i++) { // build each team -- todo maybe look into making this a map where
+                                                     // the key is the teamId or team name enum
+            JSONObject teamObj = (JSONObject) teamsJson.get(i);
+            Long longId = (Long) teamObj.get("id");// comes from json as a long
+            int teamId = longId.intValue();
+            teamMap.put(TeamUtil.TeamName.getById(teamId), new Team.Builder(TeamUtil.TeamName.getById(teamId))
+                    .teamName(TeamUtil.TeamName.getTeamByName(teamId).get().getName())
+                    .teamId(teamId)
+                    .last5PF(100)
+                    .last5PA(110)
+                    .build());
+        }
+        return teamMap;
+    }
+
+    public boolean compareTeams(int a, int b) {
+        return a > b;
     }
 
 }
