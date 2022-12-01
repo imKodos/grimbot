@@ -14,9 +14,6 @@ import org.json.simple.JSONObject;
 import stats.FetchStats;
 
 public class TeamUtil {
-    // public TeamUtil() {
-
-    // }
 
     public enum TeamName {
         CELTICS(2, "Celtics"), NETS(3, "Nets"), KNICKS(20, "Knicks"), SIXERS(23, "76ers"), RAPTORS(28, "Raptors"), // atlantic
@@ -27,7 +24,7 @@ public class TeamUtil {
         WARRIORS(10, "Warriors"), CLIPPERS(13, "Clippers"), LAKERS(14, "Lakers"), SUNS(24, "Suns"), KINGS(26, "Kings"), // pacific
         MAVERICKS(7, "Mavericks"), ROCKETS(11, "Rockets"), GRIZZLIES(15, "Grizzlies"), PELICANS(19, "Pelicans"),
         SPURS(27, "Spurs"), // southwest
-        UNKNOWN(0, "N/A");
+        UNKNOWN(-1, "N/A");
 
         private final int tId;
         private final String tName;
@@ -92,12 +89,14 @@ public class TeamUtil {
             JSONObject teamObj = (JSONObject) teamsJson.get(i);
             Long longId = (Long) teamObj.get("id");// comes from json as a long
             int teamId = longId.intValue();
-            teamList.add(new Team.Builder(TeamUtil.TeamName.getById(teamId))
+            Team team = new Team.Builder(TeamUtil.TeamName.getById(teamId))
                     .teamName(TeamUtil.TeamName.getTeamByName(teamId).get().getName())
                     .teamId(teamId)
                     .last5PF(100)
                     .last5PA(110)
-                    .build());
+                    .build();
+
+            teamList.add(team);
         }
         return teamList;
     }
@@ -118,18 +117,33 @@ public class TeamUtil {
             JSONObject teamObj = (JSONObject) teamsJson.get(i);
             Long longId = (Long) teamObj.get("id");// comes from json as a long
             int teamId = longId.intValue();
-            teamMap.put(TeamUtil.TeamName.getById(teamId), new Team.Builder(TeamUtil.TeamName.getById(teamId))
+            Team team = new Team.Builder(TeamUtil.TeamName.getById(teamId))
                     .teamName(TeamUtil.TeamName.getTeamByName(teamId).get().getName())
                     .teamId(teamId)
                     .last5PF(100)
                     .last5PA(110)
-                    .build());
+                    .build();
+
+            teamMap.put(TeamUtil.TeamName.getById(teamId), team);
         }
         return teamMap;
     }
 
     public boolean compareTeams(int a, int b) {
         return a > b;
+    }
+
+    public static Team validateTeam(String request, HashMap<TeamName, Team> teamMap) {
+        if (request != null && !request.equals("-1") && !request.equals("") && !request.equals("null")) {
+            return teamMap.get(TeamUtil.TeamName.getById(Integer.parseInt(request)));// get from teamMap
+        } else {
+            Team team = new Team.Builder(TeamName.UNKNOWN)
+                    .teamId(-1)
+                    .teamName(TeamUtil.TeamName.getTeamByName(-1).get().getName())
+                    .build();
+            return team;
+        }
+
     }
 
 }

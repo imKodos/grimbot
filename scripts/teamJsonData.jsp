@@ -3,6 +3,8 @@
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="teams.TeamUtil" %>
 <%@ page import="teams.Team" %>
+<%@ page import="java.util.HashMap" %>
+<%@ page import="teams.TeamUtil.TeamName" %>
 
 
 <%
@@ -11,13 +13,14 @@ JSONObject teamJo;
 JSONArray jArray = new JSONArray();
 
 
-ArrayList<Team> teamList = new ArrayList<>();
-teamList = (ArrayList<Team>) session.getAttribute("teamList");
+HashMap<TeamName, Team> teamMap = new HashMap<>();
+teamMap = (HashMap<TeamName, Team>) session.getAttribute("teamMap");
 
- for (Team curTeam : teamList) {
+ //for (Team curTeam : teamMap) {
+  for (HashMap.Entry<TeamName,Team> teamEntry : teamMap.entrySet()) {
   teamJo = new JSONObject();
-  teamJo.put("teamId", curTeam.getTeamId());
-  teamJo.put("teamName", curTeam.getTeamName());
+  teamJo.put("teamId", teamEntry.getValue().getTeamId());
+  teamJo.put("teamName", teamEntry.getValue().getTeamName());
   jArray.add(teamJo);
  }   
 

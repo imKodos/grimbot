@@ -33,6 +33,14 @@ public class Team {
         return teamName;
     }
 
+    public int getLast5PF() {
+        return last5PF;
+    }
+
+    public int getLast5PA() {
+        return last5PA;
+    }
+
     public static class Builder {
         // required fields
         private final TeamName name;

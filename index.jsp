@@ -11,19 +11,12 @@
 
 <%
 //on entry, if theres no handle on the list of teams, generate them -- prevents unnecessary api calls
-if(session.getAttribute("teamList") == null){ 
-        session.setAttribute("teamList",  TeamUtil.generateTeamMap());
+if(session.getAttribute("teamMap") == null){ 
+        session.setAttribute("teamMap",  TeamUtil.generateTeamMap());
 }
 
-Team team1;
-Team team2;
-HashMap<TeamName, Team> teamMap = (HashMap<TeamName,Team>) session.getAttribute("teamMap");
-//ArrayList<Team> teamList = (ArrayList<Team>) session.getAttribute("teamList");
-if(request.getParameter("t1")!=null && request.getParameter("t1")!="-1" 
-        && request.getParameter("t1")!=""){
-   team1 = teamMap.get(TeamUtil.TeamName.getById(request.getParameter("t1")));//get from teamMap
-   
-}
+Team team1 = TeamUtil.validateTeam(request.getParameter("t1"), (HashMap<TeamName, Team>) session.getAttribute("teamMap"));
+Team team2 = TeamUtil.validateTeam(request.getParameter("t2"), (HashMap<TeamName, Team>) session.getAttribute("teamMap"));
 %>
 
 <html>
@@ -94,12 +87,10 @@ if(request.getParameter("t1")!=null && request.getParameter("t1")!="-1"
                 <div class="topView">
                     <div>
                      <p>
-                        <input id="t1" class="teamList" value="" />
-                        <%-- <input id="t1" class="teamList" value="20"/> --%>
+                        <input id="t1" class="teamList" value="<%=team1.getTeamId()%>" />
                       </p>
                       <p style="padding-top: 20px">
-                        <input id="t2" class="teamList" value="<%=request.getParameter("t2")%>" />
-                        <%-- <input id="t2" class="teamList" /> --%>
+                        <input id="t2" class="teamList" value="<%=team2.getTeamId()%>" />
                       </p>
                     </div>
                     <div style="background: red">
@@ -109,20 +100,20 @@ if(request.getParameter("t1")!=null && request.getParameter("t1")!="-1"
                 </div>
                 <div class="midView">
                    <div>
-                        <p id="t1Name">Team 1 Name</p>
+                        <p id="t1Name">Team 1: <%=team1.getTeamName()%></p>
                         <p>Last Game Result</p>
-                        <p>Average PF</p>
-                        <p>Average PA</p>
+                        <p>Last 5 PF: <%=team1.getLast5PF()%></p>
+                        <p>Last 5 PA: <%=team1.getLast5PA()%></p>
                         <p>Offensive Ranking</p>
                         <p>Defensive Ranking</p>
                     </div>
                 </div>
                 <div class="botView">
                    <div>
-                        <p id="t2Name">Team 2 Name</p>
+                        <p id="t2Name">Team 1: <%=team2.getTeamName()%></p>
                         <p>Last Game Result</p>
-                        <p>Average PF</p>
-                        <p>Average PA</p>
+                        <p>Last 5 PF: <%=team2.getLast5PF()%></p>
+                        <p>Last 5 PA: <%=team2.getLast5PA()%></p>
                         <p>Offensive Ranking</p>
                         <p>Defensive Ranking</p>
                     </div>
