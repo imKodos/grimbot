@@ -106,6 +106,8 @@ Team team2 = TeamUtil.validateTeam(request.getParameter("t2"), (HashMap<TeamName
                         <p>Last 5 PA: <%=team1.getLast5PA()%></p>
                         <p>Offensive Ranking</p>
                         <p>Defensive Ranking</p>
+                        <p>Short Name: <%=team1.getShortName()%></p>
+                        <p>Espn code: <%=team1.getEspnCode()%></p>
                     </div>
                 </div>
                 <div class="botView">

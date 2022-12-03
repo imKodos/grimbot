@@ -14,24 +14,41 @@ import org.json.simple.JSONObject;
 import stats.FetchStats;
 
 public class TeamUtil {
+    // https://www.espn.com/nba/team/stats/_/name/bos/boston-celtics
+    // https://www.espn.com/nba/standings/_/group/league
 
     public enum TeamName {
-        CELTICS(2, "Celtics"), NETS(3, "Nets"), KNICKS(20, "Knicks"), SIXERS(23, "76ers"), RAPTORS(28, "Raptors"), // atlantic
-        BULLS(5, "Bulls"), CAVALIERS(6, "Cavaliers"), PISTONS(9, "Pistons"), PACERS(12, "Pacers"), BUCKS(17, "Bucks"), // central
-        HAWKS(1, "Hawks"), HORNETS(4, "Hornets"), HEAT(16, "Heat"), MAGIC(22, "Magic"), WIZARDS(30, "Wizards"), // Southeast
-        NUGGETS(8, "Nuggets"), TIMBERWOLVES(18, "Timberwolves"), BLAZERS(25, "Blazers"), JAZZ(29, "Jazz"),
-        THUNDER(21, "Thunder"), // northwest
-        WARRIORS(10, "Warriors"), CLIPPERS(13, "Clippers"), LAKERS(14, "Lakers"), SUNS(24, "Suns"), KINGS(26, "Kings"), // pacific
-        MAVERICKS(7, "Mavericks"), ROCKETS(11, "Rockets"), GRIZZLIES(15, "Grizzlies"), PELICANS(19, "Pelicans"),
-        SPURS(27, "Spurs"), // southwest
-        UNKNOWN(-1, "N/A");
+        CELTICS(2, "Celtics", "BOS", "boston-celtics"), NETS(3, "Nets", "BKN", "brooklyn-nets"),
+        KNICKS(20, "Knicks", "NY", "new-york-knicks"), SIXERS(23, "76ers", "PHI", "philadelphia-76ers"),
+        RAPTORS(28, "Raptors", "TOR", "toronto-raptors"), // atlantic
+        BULLS(5, "Bulls", "CHI", "chicago-bulls"), CAVALIERS(6, "Cavaliers", "CLE", "cleveland-cavaliers"),
+        PISTONS(9, "Pistons", "DET", "detroit-pistons"), PACERS(12, "Pacers", "IND", "indiana-pacers"),
+        BUCKS(17, "Bucks", "MIL", "milwaukee-bucks"), // central
+        HAWKS(1, "Hawks", "ATL", "atlanta-hawks"), HORNETS(4, "Hornets", "CHA", "charlotte-hornets"),
+        HEAT(16, "Heat", "MIA", "miami-heat"), MAGIC(22, "Magic", "ORL", "orlando-magic"),
+        WIZARDS(30, "Wizards", "WSH", "washington-wizards"), // Southeast
+        NUGGETS(8, "Nuggets", "DEN", "denver-nuggets"),
+        TIMBERWOLVES(18, "Timberwolves", "MIN", "minnesota-timberwolves"),
+        BLAZERS(25, "Blazers", "POR", "portland-trail-blazers"), JAZZ(29, "Jazz", "UTAH", "utah-jazz"),
+        THUNDER(21, "Thunder", "OKC", "oklahoma-city-thunder"), // northwest
+        WARRIORS(10, "Warriors", "GS", "golden-state-warriors"), CLIPPERS(13, "Clippers", "LAC", "la-clippers"),
+        LAKERS(14, "Lakers", "LAL", "los-angeles-lakers"), SUNS(24, "Suns", "PHX", "phoenix-suns"),
+        KINGS(26, "Kings", "SAC", "sacramento-kings"), // pacific
+        MAVERICKS(7, "Mavericks", "DAL", "dallas-mavericks"), ROCKETS(11, "Rockets", "HOU", "houston-rockets"),
+        GRIZZLIES(15, "Grizzlies", "MEM", "memphis-grizzlies"), PELICANS(19, "Pelicans", "NO", "new-orleans-pelicans"),
+        SPURS(27, "Spurs", "SA", "san-antonio-spurs"), // southwest
+        UNKNOWN(-1, "N/A", "N/A", "N/A");
 
         private final int tId;
         private final String tName;
+        private final String tShortName;
+        private final String tEspnUrlCode;
 
-        TeamName(final int id, final String name) {
+        TeamName(final int id, final String name, final String shortName, final String espnUrlCode) {
             tId = id;
             tName = name;
+            tShortName = shortName;
+            tEspnUrlCode = espnUrlCode;
         }
 
         public String getName() {
@@ -64,11 +81,26 @@ public class TeamUtil {
 
         public static int getId(TeamName name) {
             for (TeamName e : values()) {
-                // System.out.println(e);
                 if (e.equals(name))
                     return e.tId;
             }
             return -1;
+        }
+
+        public static String getShortName(int id) {
+            for (TeamName e : values()) {
+                if (e.tId == (id))
+                    return e.tShortName;
+            }
+            return "";
+        }
+
+        public static String getEspnUrl(int id) {
+            for (TeamName e : values()) {
+                if (e.tId == (id))
+                    return e.tEspnUrlCode;
+            }
+            return "";
         }
 
     }
@@ -119,9 +151,14 @@ public class TeamUtil {
             JSONObject teamObj = (JSONObject) teamsJson.get(i);
             Long longId = (Long) teamObj.get("id");// comes from json as a long
             int teamId = longId.intValue();
+            String shortName = TeamUtil.TeamName.getShortName(teamId);
+            String espnUrl = TeamUtil.TeamName.getEspnUrl(teamId);
+            String teamName = TeamUtil.TeamName.getTeamByName(teamId).get().getName();
             Team team = new Team.Builder(TeamUtil.TeamName.getById(teamId))
-                    .teamName(TeamUtil.TeamName.getTeamByName(teamId).get().getName())
+                    .teamName(teamName)
                     .teamId(teamId)
+                    .shortName(shortName)
+                    .espnUrl(espnUrl)
                     .last5PF(100)
                     .last5PA(110)
                     .build();
