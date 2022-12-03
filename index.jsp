@@ -101,8 +101,8 @@ Team team2 = TeamUtil.validateTeam(request.getParameter("t2"), (HashMap<TeamName
                 <div class="midView">
                    <div>
                         <p id="t1Name">Team 1: <%=team1.getTeamName()%></p>
-                        <p>Last Game Result</p>
-                        <p>Last 5 PF: <%=team1.getLast5PF()%></p>
+                        <p>Last Game Result: + add link to (https://www.espn.com/nba/team/schedule/_/name/bos/boston-celtics)</p>
+                        <p>Last 5 PF: <%=team1.getLast5PF()%> + add link</p>
                         <p>Last 5 PA: <%=team1.getLast5PA()%></p>
                         <p>Offensive Ranking</p>
                         <p>Defensive Ranking</p>
