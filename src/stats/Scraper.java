@@ -71,8 +71,9 @@ public class Scraper {
             if (i == 0) {
                 lastGameInfo = tsBody.get(0).text();
             }
-            if(gameResult.startsWith(gameResult))
-            //put results into a json obj and make this a function that gets passed the url as a parm, and build a team
+            // if(gameResult.startsWith(gameResult))
+            // put results into a json obj and make this a function that gets passed the url
+            // as a parm, and build a team
         }
     }
 }
