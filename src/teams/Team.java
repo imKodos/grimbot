@@ -7,6 +7,7 @@ public class Team {
     private final String teamName;
     private final String shortName;
     private final String espnUrl;
+    private final String lastGameInfo;
     private final int teamId;
     private final int seasonAvgPf;
     private final int seasonAvgPa;
@@ -51,6 +52,10 @@ public class Team {
         return espnUrl;
     }
 
+    public String getLastGameInfo() {
+        return lastGameInfo;
+    }
+
     public static class Builder {
         // required fields
         private final TeamName name;
@@ -60,6 +65,7 @@ public class Team {
 
         // optional fields
         private String teamName = "";
+        private String lastGameInfo = "";
         private int seasonAvgPf = -1;
         private int seasonAvgPa = -1;
         private int last5PF = -1;
@@ -94,6 +100,11 @@ public class Team {
 
         public Builder espnUrl(String val) {
             espnUrl = val;
+            return this;
+        }
+
+        public Builder lastGameInfo(String val) {
+            lastGameInfo = val;
             return this;
         }
 
@@ -182,6 +193,7 @@ public class Team {
         shortName = builder.shortName;
         espnUrl = builder.espnUrl;
         teamId = builder.teamId;
+        lastGameInfo = builder.lastGameInfo;
         teamName = builder.teamName;
         seasonAvgPf = builder.seasonAvgPf;
         seasonAvgPa = builder.seasonAvgPa;
