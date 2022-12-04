@@ -64,7 +64,7 @@ Team team2 = TeamUtil.validateTeam(request.getParameter("t2"), (HashMap<TeamName
     }
     
     .midView{
-        background: green;
+        background: black;
     }
 
     .botView{
@@ -100,14 +100,14 @@ Team team2 = TeamUtil.validateTeam(request.getParameter("t2"), (HashMap<TeamName
                 </div>
                 <div class="midView">
                    <div>
-                        <p id="t1Name">Team 1: <%=team1.getTeamName()%></p>
-                        <p>Last Game Result: + add link to (https://www.espn.com/nba/team/schedule/_/name/bos/boston-celtics)</p>
-                        <p>Last 5 PF: <%=team1.getLast5PF()%> + add link</p>
-                        <p>Last 5 PA: <%=team1.getLast5PA()%></p>
-                        <p>Offensive Ranking</p>
-                        <p>Defensive Ranking</p>
-                        <p>Short Name: <%=team1.getShortName()%></p>
-                        <p>Espn code: <%=team1.getEspnCode()%></p>
+                        <p id="t1Name">Team 1: <%=team1.getTeamName() + "  (" + team1.getShortName()+")"%></p>
+                        <p>Last Game Result: <%=team1.getLastGameInfo()%></p>
+                        <p>Last 5 PF Average: <%=team1.getLast5PF()/5%></p>
+                        <p>Last 5 PA Average: <%=team1.getLast5PA()/5%></p>
+                        <p>Last 10 PF Average: <%=team1.getLast10PF()/10%></p>
+                        <p>Last 10 PA Average: <%=team1.getLast10PA()/10%></p>
+                        <p>Season PPG:</p>
+                        <p>Season OPPG:</p>
                     </div>
                 </div>
                 <div class="botView">

@@ -6,13 +6,17 @@ public class Team {
     private final TeamName name;
     private final String teamName;
     private final String shortName;
-    private final String espnUrl;
+    // private final String espnUrl;
     private final String lastGameInfo;
     private final int teamId;
     private final int seasonAvgPf;
     private final int seasonAvgPa;
+    private final int lastPF;
+    private final int lastPA;
     private final int last5PF;
     private final int last5PA;
+    private final int last10PF;
+    private final int last10PA;
     private final double varianceWeight;
     private final boolean playConsecutiveDays;
     private final boolean isDivisionGame;
@@ -36,6 +40,14 @@ public class Team {
         return teamName;
     }
 
+    public int getLastPF() {
+        return lastPF;
+    }
+
+    public int getLastPA() {
+        return lastPA;
+    }
+
     public int getLast5PF() {
         return last5PF;
     }
@@ -44,13 +56,21 @@ public class Team {
         return last5PA;
     }
 
+    public int getLast10PF() {
+        return last10PF;
+    }
+
+    public int getLast10PA() {
+        return last10PA;
+    }
+
     public String getShortName() {
         return shortName;
     }
 
-    public String getEspnCode() {
-        return espnUrl;
-    }
+    // public String getEspnCode() {
+    // return espnUrl;
+    // }
 
     public String getLastGameInfo() {
         return lastGameInfo;
@@ -61,15 +81,19 @@ public class Team {
         private final TeamName name;
         private int teamId = -1;
         private String shortName = "";
-        private String espnUrl = "";
+        // private String espnUrl = "";
 
         // optional fields
         private String teamName = "";
         private String lastGameInfo = "";
         private int seasonAvgPf = -1;
         private int seasonAvgPa = -1;
+        private int lastPF = -1;
+        private int lastPA = -1;
         private int last5PF = -1;
         private int last5PA = -1;
+        private int last10PF = -1;
+        private int last10PA = -1;
         private double varianceWeight = 1.00; // will fluctuate depending on the booleans below. will multiply outcome
         private boolean playConsecutiveDays = false; // if true, bring down variance weight slightly. Was it OT? bring
                                                      // it down more.
@@ -98,10 +122,10 @@ public class Team {
             return this;
         }
 
-        public Builder espnUrl(String val) {
-            espnUrl = val;
-            return this;
-        }
+        // public Builder espnUrl(String val) {
+        // espnUrl = val;
+        // return this;
+        // }
 
         public Builder lastGameInfo(String val) {
             lastGameInfo = val;
@@ -123,13 +147,33 @@ public class Team {
             return this;
         }
 
-        public Builder last5PF(int val) {
-            last5PF = val;
+        public Builder lastPA(int val) {
+            lastPA = val;
+            return this;
+        }
+
+        public Builder lastPF(int val) {
+            lastPF = val;
             return this;
         }
 
         public Builder last5PA(int val) {
             last5PA = val;
+            return this;
+        }
+
+        public Builder last5PF(int val) {
+            last5PF = val;
+            return this;
+        }
+
+        public Builder last10PF(int val) {
+            last10PF = val;
+            return this;
+        }
+
+        public Builder last10PA(int val) {
+            last10PA = val;
             return this;
         }
 
@@ -191,14 +235,18 @@ public class Team {
     private Team(Builder builder) {
         name = builder.name;
         shortName = builder.shortName;
-        espnUrl = builder.espnUrl;
+        // espnUrl = builder.espnUrl;
         teamId = builder.teamId;
         lastGameInfo = builder.lastGameInfo;
         teamName = builder.teamName;
         seasonAvgPf = builder.seasonAvgPf;
         seasonAvgPa = builder.seasonAvgPa;
+        lastPF = builder.lastPF;
+        lastPA = builder.lastPA;
         last5PF = builder.last5PF;
         last5PA = builder.last5PA;
+        last10PF = builder.last10PF;
+        last10PA = builder.last10PA;
         varianceWeight = builder.varianceWeight;
         playConsecutiveDays = builder.playConsecutiveDays;
         isDivisionGame = builder.isDivisionGame;

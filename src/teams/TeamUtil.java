@@ -1,5 +1,6 @@
 package teams;
 
+import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
@@ -11,7 +12,11 @@ import java.util.Optional;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import com.google.gson.Gson;
+
 import stats.FetchStats;
+import stats.Games;
+import stats.Scraper;
 
 public class TeamUtil {
     // https://www.espn.com/nba/team/stats/_/name/bos/boston-celtics
@@ -135,15 +140,9 @@ public class TeamUtil {
 
     public static HashMap<TeamName, Team> generateTeamMap()
             throws KeyManagementException, NoSuchAlgorithmException, ParseException,
-            org.json.simple.parser.ParseException {
-        // HashMap<String, String> playersPropertiesMap = new HashMap<>();
-        // playersPropertiesMap.put("X-RapidAPI-Key",
-        // "0d5ab3a4bfmsh5174a54093fd0f6p12a4ffjsn47f368b3d6ea");
+            org.json.simple.parser.ParseException, IOException {
 
-        // JSONObject players = stats.get("https://free-nba.p.rapidapi.com/players",
-        // "?page=0&per_page=25", playersPropertiesMap);
         JSONObject teams = FetchStats.get("https://www.balldontlie.io/api/v1/teams");
-        // https://www.balldontlie.io/api/v1/games?seasons[]=2022&page=50
         HashMap<TeamName, Team> teamMap = new HashMap<>();
         JSONArray teamsJson = (JSONArray) teams.get("data");
         for (int i = 0; i < teamsJson.size(); i++) { // build each team -- todo maybe look into making this a map where
@@ -154,13 +153,32 @@ public class TeamUtil {
             String shortName = TeamUtil.TeamName.getShortName(teamId);
             String espnUrl = TeamUtil.TeamName.getEspnUrl(teamId);
             String teamName = TeamUtil.TeamName.getTeamByName(teamId).get().getName();
+            JSONObject recentGameStats = Scraper.getRecentGameStats(shortName, espnUrl);
+            String lastGameInfo = (String) recentGameStats.get("lastGameInfo");
+            // int lastPF = (int) recentGameStats.get("pf1");
+            // int lastPA = (int) recentGameStats.get("pa1");
+            // int last5PF = (int) recentGameStats.get("pf5");
+            // int last5PA = (int) recentGameStats.get("pa5");
+            // int last10PF = (int) recentGameStats.get("pf10");
+            // int last10PA = (int) recentGameStats.get("pa10");
+
+            JSONObject gamesJo = FetchStats
+                    .get("https://www.balldontlie.io/api/v1/games?seasons[]=2022&team_ids[]=" + teamId);
+            JSONArray gamesJoArr = (JSONArray) gamesJo.get("data");
+            Gson gson = new Gson();
+            Games[] gamesArray = gson.fromJson(gamesJoArr.toString(), Games[].class);
+
             Team team = new Team.Builder(TeamUtil.TeamName.getById(teamId))
                     .teamName(teamName)
                     .teamId(teamId)
                     .shortName(shortName)
-                    .espnUrl(espnUrl)
-                    .last5PF(100)
-                    .last5PA(110)
+                    .lastGameInfo(lastGameInfo)
+                    // .lastPF(lastPF)
+                    // .lastPA(lastPA)
+                    // .last5PF(last5PF)
+                    // .last5PA(last5PA)
+                    // .last10PF(last10PF)
+                    // .last10PA(last10PA)
                     .build();
 
             teamMap.put(TeamUtil.TeamName.getById(teamId), team);
