@@ -258,4 +258,26 @@ public class Team {
         hasStartingInjury = builder.hasStartingInjury;
         isHomeTeam = builder.isHomeTeam;
     }
+
 }
+
+    
+        
+        
+    
+
+    
+        
+        
+    
+
+    
+        
+        
+    
+
+    
+        
+    
+
+    
