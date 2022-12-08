@@ -6,13 +6,17 @@ import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 
 import stats.FetchStats;
 import stats.Games;
@@ -142,43 +146,117 @@ public class TeamUtil {
             throws KeyManagementException, NoSuchAlgorithmException, ParseException,
             org.json.simple.parser.ParseException, IOException {
 
-        JSONObject teams = FetchStats.get("https://www.balldontlie.io/api/v1/teams");
+        // build all the games
+        // start with 1 page of games
+        JSONObject gamesJo = FetchStats
+                .get("https://www.balldontlie.io/api/v1/games?seasons[]=2022&per_page=100");
+        JSONArray gamesJoArr = (JSONArray) gamesJo.get("data");
+        JSONObject gamesMetaObj = (JSONObject) gamesJo.get("meta");
+        Long gamesPages = (Long) gamesMetaObj.get("total_pages"); // total number of
+        // pages to iterate
+
+        for (int i = 2; i <= gamesPages.intValue(); i++) {
+            JSONObject curGamesJo = FetchStats
+                    .get("https://www.balldontlie.io/api/v1/games?seasons[]=2022&per_page=100&page="
+                            + i);
+            JSONArray curGamesArr = (JSONArray) curGamesJo.get("data");
+            gamesJoArr.addAll(curGamesArr);
+        }
+        Gson gson = new Gson();
+        Games[] gamesArray = gson.fromJson(gamesJoArr.toString(), Games[].class); // populate Game objects from array
+        Collections.sort(Arrays.asList(gamesArray));
+
         HashMap<TeamName, Team> teamMap = new HashMap<>();
+        JSONObject teams = FetchStats.get("https://www.balldontlie.io/api/v1/teams");
         JSONArray teamsJson = (JSONArray) teams.get("data");
-        for (int i = 0; i < teamsJson.size(); i++) { // build each team -- todo maybe look into making this a map where
-                                                     // the key is the teamId or team name enum
+
+        for (int i = 0; i < teamsJson.size(); i++) {
             JSONObject teamObj = (JSONObject) teamsJson.get(i);
             Long longId = (Long) teamObj.get("id");// comes from json as a long
             int teamId = longId.intValue();
+
             String shortName = TeamUtil.TeamName.getShortName(teamId);
             String espnUrl = TeamUtil.TeamName.getEspnUrl(teamId);
             String teamName = TeamUtil.TeamName.getTeamByName(teamId).get().getName();
             JSONObject recentGameStats = Scraper.getRecentGameStats(shortName, espnUrl);
             String lastGameInfo = (String) recentGameStats.get("lastGameInfo");
-            // int lastPF = (int) recentGameStats.get("pf1");
-            // int lastPA = (int) recentGameStats.get("pa1");
-            // int last5PF = (int) recentGameStats.get("pf5");
-            // int last5PA = (int) recentGameStats.get("pa5");
-            // int last10PF = (int) recentGameStats.get("pf10");
-            // int last10PA = (int) recentGameStats.get("pa10");
 
-            JSONObject gamesJo = FetchStats
-                    .get("https://www.balldontlie.io/api/v1/games?seasons[]=2022&team_ids[]=" + teamId);
-            JSONArray gamesJoArr = (JSONArray) gamesJo.get("data");
-            Gson gson = new Gson();
-            Games[] gamesArray = gson.fromJson(gamesJoArr.toString(), Games[].class);
+            double seasonPpg = 0;
+            double seasonOppg = 0;
+            int gamesPlayed = 0;
+            int lastPf = 0;
+            int lastPa = 0;
+            double last5Pf = 0;
+            double last5Pa = 0;
+            double last10Pf = 0;
+            double last10Pa = 0;
+            for (Games game : gamesArray) {
+                if ("Final".equals(game.getStatus()) && (game.getHome_team().getId() == teamId)) {
+                    seasonPpg += game.getHome_team_score();
+                    seasonOppg += game.getVisitor_team_score();
+                    gamesPlayed++;
+
+                    if (gamesPlayed == 1) {
+                        lastPf += game.getHome_team_score();
+                        lastPa += game.getVisitor_team_score();
+                    }
+
+                    if (gamesPlayed <= 5) {
+                        last5Pf += game.getHome_team_score();
+                        last5Pa += game.getVisitor_team_score();
+                    }
+
+                    if (gamesPlayed <= 10) {
+                        last10Pf += game.getHome_team_score();
+                        last10Pa += game.getVisitor_team_score();
+                    }
+                }
+
+                if ("Final".equals(game.getStatus()) && (game.getVisitor_team().getId() == teamId)) {
+                    seasonPpg += game.getVisitor_team_score();
+                    seasonOppg += game.getHome_team_score();
+                    gamesPlayed++;
+
+                    if (gamesPlayed == 1) {
+                        lastPa += game.getHome_team_score();
+                        lastPf += game.getVisitor_team_score();
+                    }
+                    if (gamesPlayed <= 5) {
+                        last5Pa += game.getHome_team_score();
+                        last5Pf += game.getVisitor_team_score();
+                    }
+                    if (gamesPlayed <= 10) {
+                        last10Pa += game.getHome_team_score();
+                        last10Pf += game.getVisitor_team_score();
+                    }
+                }
+            }
+
+            // TODO LIST
+            // get stat for Game object, next game
+            // get playConsecutiveDays
+            // get isHomeTeam
+            // remove isDivisionGame
+            // make a hot/cold streak (3-5g W or L streak -- also do for home/away)
+            // remove pace and time of possession
+            // can pull in ranks for variance here https://www.espn.com/nba/bpi
+            // (defenseRating/offensiveRating)
+            // refactor for loop
+            // try scraping for hasStartingInjury
 
             Team team = new Team.Builder(TeamUtil.TeamName.getById(teamId))
                     .teamName(teamName)
                     .teamId(teamId)
                     .shortName(shortName)
                     .lastGameInfo(lastGameInfo)
-                    // .lastPF(lastPF)
-                    // .lastPA(lastPA)
-                    // .last5PF(last5PF)
-                    // .last5PA(last5PA)
-                    // .last10PF(last10PF)
-                    // .last10PA(last10PA)
+                    .seasonAvgPf(Math.round(seasonPpg / gamesPlayed * 10) / 10.0)
+                    .seasonAvgPa(Math.round(seasonOppg / gamesPlayed * 10) / 10.0)
+                    .lastPF(lastPf)
+                    .lastPA(lastPa)
+                    .last5PF(Math.round(last5Pf / 5 * 10) / 10.0)
+                    .last5PA(Math.round(last5Pa / 5 * 10) / 10.0)
+                    .last10PF(Math.round(last10Pf / 10 * 10) / 10.0)
+                    .last10PA(Math.round(last10Pa / 10 * 10) / 10.0)
                     .build();
 
             teamMap.put(TeamUtil.TeamName.getById(teamId), team);

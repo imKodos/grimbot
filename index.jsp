@@ -102,11 +102,13 @@ Team team2 = TeamUtil.validateTeam(request.getParameter("t2"), (HashMap<TeamName
                    <div>
                         <p id="t1Name">Team 1: <%=team1.getTeamName() + "  (" + team1.getShortName()+")"%></p>
                         <p>Last Game Result: <%=team1.getLastGameInfo()%></p>
-                        <p>Last 5 PF Average: <%=team1.getLast5PF()/5%></p>
-                        <p>Last 5 PA Average: <%=team1.getLast5PA()/5%></p>
-                        <p>Last 10 PF Average: <%=team1.getLast10PF()/10%></p>
-                        <p>Last 10 PA Average: <%=team1.getLast10PA()/10%></p>
-                        <p>Season PPG:</p>
+                        <p>Last PF: <%=team1.getLastPF()%></p>
+                        <p>Last PA: <%=team1.getLastPA()%></p>
+                        <p>Last 5 PF Average: <%=team1.getLast5PF()%></p>
+                        <p>Last 5 PA Average: <%=team1.getLast5PA()%></p>
+                        <p>Last 10 PF Average: <%=team1.getLast10PF()%></p>
+                        <p>Last 10 PA Average: <%=team1.getLast10PA()%></p>
+                        <p>Season PPG: <%=team1.getSeasonAvgPf()%></p>
                         <p>Season OPPG:</p>
                     </div>
                 </div>

@@ -1,5 +1,8 @@
 package teams;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
 import teams.TeamUtil.TeamName;
 
 public class Team {
@@ -9,14 +12,14 @@ public class Team {
     // private final String espnUrl;
     private final String lastGameInfo;
     private final int teamId;
-    private final int seasonAvgPf;
-    private final int seasonAvgPa;
+    private final double seasonAvgPf;
+    private final double seasonAvgPa;
     private final int lastPF;
     private final int lastPA;
-    private final int last5PF;
-    private final int last5PA;
-    private final int last10PF;
-    private final int last10PA;
+    private final double last5PF;
+    private final double last5PA;
+    private final double last10PF;
+    private final double last10PA;
     private final double varianceWeight;
     private final boolean playConsecutiveDays;
     private final boolean isDivisionGame;
@@ -27,6 +30,7 @@ public class Team {
     private final int paceRating;
     private final boolean hasStartingInjury;
     private final boolean isHomeTeam;
+    private final JSONArray teamJsonArr;
 
     public TeamName getName() {
         return this.name;
@@ -48,19 +52,19 @@ public class Team {
         return lastPA;
     }
 
-    public int getLast5PF() {
+    public double getLast5PF() {
         return last5PF;
     }
 
-    public int getLast5PA() {
+    public double getLast5PA() {
         return last5PA;
     }
 
-    public int getLast10PF() {
+    public double getLast10PF() {
         return last10PF;
     }
 
-    public int getLast10PA() {
+    public double getLast10PA() {
         return last10PA;
     }
 
@@ -76,6 +80,18 @@ public class Team {
         return lastGameInfo;
     }
 
+    public double getSeasonAvgPa() {
+        return seasonAvgPa;
+    }
+
+    public double getSeasonAvgPf() {
+        return seasonAvgPf;
+    }
+
+    public JSONArray getTeamJsonArray() {
+        return teamJsonArr;
+    }
+
     public static class Builder {
         // required fields
         private final TeamName name;
@@ -86,14 +102,14 @@ public class Team {
         // optional fields
         private String teamName = "";
         private String lastGameInfo = "";
-        private int seasonAvgPf = -1;
-        private int seasonAvgPa = -1;
+        private double seasonAvgPf = -1;
+        private double seasonAvgPa = -1;
         private int lastPF = -1;
         private int lastPA = -1;
-        private int last5PF = -1;
-        private int last5PA = -1;
-        private int last10PF = -1;
-        private int last10PA = -1;
+        private double last5PF = -1;
+        private double last5PA = -1;
+        private double last10PF = -1;
+        private double last10PA = -1;
         private double varianceWeight = 1.00; // will fluctuate depending on the booleans below. will multiply outcome
         private boolean playConsecutiveDays = false; // if true, bring down variance weight slightly. Was it OT? bring
                                                      // it down more.
@@ -107,6 +123,7 @@ public class Team {
         private int paceRating;
         private boolean hasStartingInjury = false;
         private boolean isHomeTeam = false;
+        private JSONArray teamJsonArr;
 
         public Builder(TeamName name) {
             this.name = name;
@@ -137,12 +154,12 @@ public class Team {
             return this;
         }
 
-        public Builder seasonAvgPf(int val) {
+        public Builder seasonAvgPf(double val) {
             seasonAvgPf = val;
             return this;
         }
 
-        public Builder seasonAvgPa(int val) {
+        public Builder seasonAvgPa(double val) {
             seasonAvgPa = val;
             return this;
         }
@@ -157,22 +174,22 @@ public class Team {
             return this;
         }
 
-        public Builder last5PA(int val) {
+        public Builder last5PA(double val) {
             last5PA = val;
             return this;
         }
 
-        public Builder last5PF(int val) {
+        public Builder last5PF(double val) {
             last5PF = val;
             return this;
         }
 
-        public Builder last10PF(int val) {
+        public Builder last10PF(double val) {
             last10PF = val;
             return this;
         }
 
-        public Builder last10PA(int val) {
+        public Builder last10PA(double val) {
             last10PA = val;
             return this;
         }
@@ -257,27 +274,25 @@ public class Team {
         paceRating = builder.paceRating;
         hasStartingInjury = builder.hasStartingInjury;
         isHomeTeam = builder.isHomeTeam;
+
+        // build a JSONArray on each team build
+        JSONObject curTeamJo = new JSONObject();
+        teamJsonArr = new JSONArray();
+        curTeamJo.put("name", name);
+        curTeamJo.put("shortName", shortName);
+        curTeamJo.put("teamName", teamName);
+        curTeamJo.put("teamId", teamId);
+        curTeamJo.put("lastGameInfo", lastGameInfo);
+        curTeamJo.put("lastPF", lastPF);
+        curTeamJo.put("lastPA", lastPA);
+        curTeamJo.put("last5PF", last5PF);
+        curTeamJo.put("last5PA", last5PA);
+        curTeamJo.put("last10PF", last10PF);
+        curTeamJo.put("last10PA", last10PA);
+        curTeamJo.put("seasonAvgPf", seasonAvgPf);
+        curTeamJo.put("seasonAvgPa", seasonAvgPa);
+        teamJsonArr.add(curTeamJo);
+
     }
 
 }
-
-    
-        
-        
-    
-
-    
-        
-        
-    
-
-    
-        
-        
-    
-
-    
-        
-    
-
-    

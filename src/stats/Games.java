@@ -4,7 +4,7 @@ import java.util.List;
 import teams.HomeTeamPojo;
 import teams.VisitorTeamPojo;
 
-public class Games {
+public class Games implements Comparable<Games> {
     public int id;
     public String date;
     public HomeTeamPojo home_team;
@@ -16,6 +16,11 @@ public class Games {
     public String status;
     public String time;
     public int visitor_team_score;
+
+    @Override
+    public int compareTo(Games g) {
+        return Integer.compare(g.getId(), getId());
+    }
 
     public int getId() {
         return this.id;
