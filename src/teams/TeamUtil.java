@@ -197,11 +197,12 @@ public class TeamUtil {
             String lastGameDateStr = "";
             // String nextGameDateStr = "";
             long daysRested = -1;
+            Games nextGame = new Games();
             for (Games game : gamesArray) {
                 if (game.getHome_team().getId() == teamId) {
-                    // if (0 == game.getPeriod()) {// keep the next game state up to date
-                    // nextGameDateStr = game.getDate().replace("T00:00:00.000Z", "");
-                    // }
+                    if (0 == game.getPeriod()) {// keep the next game state up to date
+                        nextGame = game;
+                    }
                     if ("Final".equals(game.getStatus())) {
                         seasonPpg += game.getHome_team_score();
                         seasonOppg += game.getVisitor_team_score();
@@ -225,9 +226,9 @@ public class TeamUtil {
                     }
                 }
                 if ((game.getVisitor_team().getId() == teamId)) {
-                    // if (0 == game.getPeriod()) {// keep the next game state up to date
-                    // nextGameDateStr = game.getDate().replace("T00:00:00.000Z", "");
-                    // }
+                    if (0 == game.getPeriod()) {// keep the next game state up to date
+                        nextGame = game;
+                    }
                     if ("Final".equals(game.getStatus())) {
                         seasonPpg += game.getVisitor_team_score();
                         seasonOppg += game.getHome_team_score();
@@ -257,12 +258,15 @@ public class TeamUtil {
             lastGame.setTime(sdf.parse(lastGameDateStr));
             // subtract 1 in daysRested because we dont want to count today as a rest day
             daysRested = TimeUnit.MILLISECONDS.toDays(today.getTimeInMillis() - lastGame.getTimeInMillis()) - 1;
-            System.out.println(teamName + " " + daysRested);
+
+            boolean isHomeTeam = nextGame.getHome_team().getId() == teamId;
+            System.out.println(teamName + " " + isHomeTeam);
 
             // }
             // TODO LIST
             // get isHomeTeam
             // remove isDivisionGame
+            // get home and away ppgs
             // make a hot/cold streak (3-5g W or L streak -- also do for home/away)
             // remove pace and time of possession
             // can pull in ranks for variance here https://www.espn.com/nba/bpi
