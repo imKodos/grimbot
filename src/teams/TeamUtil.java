@@ -4,13 +4,17 @@ import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -190,51 +194,73 @@ public class TeamUtil {
             double last5Pa = 0;
             double last10Pf = 0;
             double last10Pa = 0;
+            String lastGameDateStr = "";
+            // String nextGameDateStr = "";
+            long daysRested = -1;
             for (Games game : gamesArray) {
-                if ("Final".equals(game.getStatus()) && (game.getHome_team().getId() == teamId)) {
-                    seasonPpg += game.getHome_team_score();
-                    seasonOppg += game.getVisitor_team_score();
-                    gamesPlayed++;
+                if (game.getHome_team().getId() == teamId) {
+                    // if (0 == game.getPeriod()) {// keep the next game state up to date
+                    // nextGameDateStr = game.getDate().replace("T00:00:00.000Z", "");
+                    // }
+                    if ("Final".equals(game.getStatus())) {
+                        seasonPpg += game.getHome_team_score();
+                        seasonOppg += game.getVisitor_team_score();
+                        gamesPlayed++;
 
-                    if (gamesPlayed == 1) {
-                        lastPf += game.getHome_team_score();
-                        lastPa += game.getVisitor_team_score();
-                    }
+                        if (gamesPlayed == 1) {
+                            lastPf += game.getHome_team_score();
+                            lastPa += game.getVisitor_team_score();
+                            lastGameDateStr = game.getDate().replace("T00:00:00.000Z", "");
+                        }
 
-                    if (gamesPlayed <= 5) {
-                        last5Pf += game.getHome_team_score();
-                        last5Pa += game.getVisitor_team_score();
-                    }
+                        if (gamesPlayed <= 5) {
+                            last5Pf += game.getHome_team_score();
+                            last5Pa += game.getVisitor_team_score();
+                        }
 
-                    if (gamesPlayed <= 10) {
-                        last10Pf += game.getHome_team_score();
-                        last10Pa += game.getVisitor_team_score();
+                        if (gamesPlayed <= 10) {
+                            last10Pf += game.getHome_team_score();
+                            last10Pa += game.getVisitor_team_score();
+                        }
                     }
                 }
+                if ((game.getVisitor_team().getId() == teamId)) {
+                    // if (0 == game.getPeriod()) {// keep the next game state up to date
+                    // nextGameDateStr = game.getDate().replace("T00:00:00.000Z", "");
+                    // }
+                    if ("Final".equals(game.getStatus())) {
+                        seasonPpg += game.getVisitor_team_score();
+                        seasonOppg += game.getHome_team_score();
+                        gamesPlayed++;
 
-                if ("Final".equals(game.getStatus()) && (game.getVisitor_team().getId() == teamId)) {
-                    seasonPpg += game.getVisitor_team_score();
-                    seasonOppg += game.getHome_team_score();
-                    gamesPlayed++;
-
-                    if (gamesPlayed == 1) {
-                        lastPa += game.getHome_team_score();
-                        lastPf += game.getVisitor_team_score();
-                    }
-                    if (gamesPlayed <= 5) {
-                        last5Pa += game.getHome_team_score();
-                        last5Pf += game.getVisitor_team_score();
-                    }
-                    if (gamesPlayed <= 10) {
-                        last10Pa += game.getHome_team_score();
-                        last10Pf += game.getVisitor_team_score();
+                        if (gamesPlayed == 1) {
+                            lastPa += game.getHome_team_score();
+                            lastPf += game.getVisitor_team_score();
+                            lastGameDateStr = game.getDate().replace("T00:00:00.000Z", "");
+                        }
+                        if (gamesPlayed <= 5) {
+                            last5Pa += game.getHome_team_score();
+                            last5Pf += game.getVisitor_team_score();
+                        }
+                        if (gamesPlayed <= 10) {
+                            last10Pa += game.getHome_team_score();
+                            last10Pf += game.getVisitor_team_score();
+                        }
                     }
                 }
             }
 
+            // compare date objects to set playedYesterday
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Calendar lastGame = Calendar.getInstance();
+            Calendar today = Calendar.getInstance();
+            lastGame.setTime(sdf.parse(lastGameDateStr));
+            // subtract 1 in daysRested because we dont want to count today as a rest day
+            daysRested = TimeUnit.MILLISECONDS.toDays(today.getTimeInMillis() - lastGame.getTimeInMillis()) - 1;
+            System.out.println(teamName + " " + daysRested);
+
+            // }
             // TODO LIST
-            // get stat for Game object, next game
-            // get playConsecutiveDays
             // get isHomeTeam
             // remove isDivisionGame
             // make a hot/cold streak (3-5g W or L streak -- also do for home/away)
@@ -243,7 +269,6 @@ public class TeamUtil {
             // (defenseRating/offensiveRating)
             // refactor for loop
             // try scraping for hasStartingInjury
-
             Team team = new Team.Builder(TeamUtil.TeamName.getById(teamId))
                     .teamName(teamName)
                     .teamId(teamId)
@@ -257,6 +282,7 @@ public class TeamUtil {
                     .last5PA(Math.round(last5Pa / 5 * 10) / 10.0)
                     .last10PF(Math.round(last10Pf / 10 * 10) / 10.0)
                     .last10PA(Math.round(last10Pa / 10 * 10) / 10.0)
+                    .daysRested(daysRested)
                     .build();
 
             teamMap.put(TeamUtil.TeamName.getById(teamId), team);

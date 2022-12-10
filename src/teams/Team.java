@@ -21,7 +21,7 @@ public class Team {
     private final double last10PF;
     private final double last10PA;
     private final double varianceWeight;
-    private final boolean playConsecutiveDays;
+    private final long daysRested;
     private final boolean isDivisionGame;
     private final boolean hasPositiveRecord;
     private final int defenseRating;
@@ -92,6 +92,10 @@ public class Team {
         return teamJsonArr;
     }
 
+    public long getDaysRested() {
+        return daysRested;
+    }
+
     public static class Builder {
         // required fields
         private final TeamName name;
@@ -111,8 +115,7 @@ public class Team {
         private double last10PF = -1;
         private double last10PA = -1;
         private double varianceWeight = 1.00; // will fluctuate depending on the booleans below. will multiply outcome
-        private boolean playConsecutiveDays = false; // if true, bring down variance weight slightly. Was it OT? bring
-                                                     // it down more.
+        private long daysRested = -1;
         private boolean isDivisionGame = false; // increase weight
         private boolean hasPositiveRecord = false; // if over .500, add slight increase weight. vs an under 500 team
                                                    // should be a slight advantage
@@ -199,8 +202,8 @@ public class Team {
             return this;
         }
 
-        public Builder playConsecutiveDays(boolean val) {
-            playConsecutiveDays = val;
+        public Builder daysRested(long val) {
+            daysRested = val;
             return this;
         }
 
@@ -265,7 +268,7 @@ public class Team {
         last10PF = builder.last10PF;
         last10PA = builder.last10PA;
         varianceWeight = builder.varianceWeight;
-        playConsecutiveDays = builder.playConsecutiveDays;
+        daysRested = builder.daysRested;
         isDivisionGame = builder.isDivisionGame;
         hasPositiveRecord = builder.hasPositiveRecord;
         defenseRating = builder.defenseRating;
