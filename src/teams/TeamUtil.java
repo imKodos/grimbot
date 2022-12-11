@@ -188,6 +188,7 @@ public class TeamUtil {
             double seasonPpg = 0;
             double seasonOppg = 0;
             int gamesPlayed = 0;
+
             int lastPf = 0;
             int lastPa = 0;
             double last5Pf = 0;
@@ -195,8 +196,18 @@ public class TeamUtil {
             double last10Pf = 0;
             double last10Pa = 0;
             String lastGameDateStr = "";
-            // String nextGameDateStr = "";
             long daysRested = -1;
+            double last2HomePf = 0;
+            double last5HomePf = 0;
+            double last2HomePa = 0;
+            double last5HomePa = 0;
+            double last2AwayPf = 0;
+            double last5AwayPf = 0;
+            double last2AwayPa = 0;
+            double last5AwayPa = 0;
+            double homeGameIdx = 0;
+            double awayGameIdx = 0;
+
             Games nextGame = new Games();
             for (Games game : gamesArray) {
                 if (game.getHome_team().getId() == teamId) {
@@ -206,7 +217,18 @@ public class TeamUtil {
                     if ("Final".equals(game.getStatus())) {
                         seasonPpg += game.getHome_team_score();
                         seasonOppg += game.getVisitor_team_score();
-                        gamesPlayed++;
+                        gamesPlayed++;// can refactor this with homegameidx + awaygameidx
+                        homeGameIdx++;
+                        if (homeGameIdx <= 2) {
+                            last2HomePf += game.getHome_team_score();
+                            last2HomePa += game.getVisitor_team_score();
+                        }
+
+                        if (homeGameIdx <= 5) { // can refactor this to be in the same block as other homeGameIdx
+                                                // calculations
+                            last5HomePf += game.getHome_team_score();
+                            last5HomePa += game.getVisitor_team_score();
+                        }
 
                         if (gamesPlayed == 1) {
                             lastPf += game.getHome_team_score();
@@ -233,6 +255,18 @@ public class TeamUtil {
                         seasonPpg += game.getVisitor_team_score();
                         seasonOppg += game.getHome_team_score();
                         gamesPlayed++;
+                        awayGameIdx++;
+
+                        if (awayGameIdx <= 2) {
+                            last2AwayPa += game.getHome_team_score();
+                            last2AwayPf += game.getVisitor_team_score();
+                        }
+
+                        if (awayGameIdx <= 5) { // can refactor this to be in the same block as other homeGameIdx
+                                                // calculations
+                            last5AwayPa += game.getHome_team_score();
+                            last5AwayPf += game.getVisitor_team_score();
+                        }
 
                         if (gamesPlayed == 1) {
                             lastPa += game.getHome_team_score();
@@ -260,19 +294,19 @@ public class TeamUtil {
             daysRested = TimeUnit.MILLISECONDS.toDays(today.getTimeInMillis() - lastGame.getTimeInMillis()) - 1;
 
             boolean isHomeTeam = nextGame.getHome_team().getId() == teamId;
-            System.out.println(teamName + " " + isHomeTeam);
 
             // }
             // TODO LIST
-            // get isHomeTeam
-            // remove isDivisionGame
-            // get home and away ppgs
+
             // make a hot/cold streak (3-5g W or L streak -- also do for home/away)
             // remove pace and time of possession
             // can pull in ranks for variance here https://www.espn.com/nba/bpi
             // (defenseRating/offensiveRating)
             // refactor for loop
             // try scraping for hasStartingInjury
+            // refactor all lastPf and Pa to be a map, PF is key, PA is value
+            // fix pf pa calculations above, can be refactored to be simpler with indexes
+            // calculations
             Team team = new Team.Builder(TeamUtil.TeamName.getById(teamId))
                     .teamName(teamName)
                     .teamId(teamId)
@@ -287,6 +321,15 @@ public class TeamUtil {
                     .last10PF(Math.round(last10Pf / 10 * 10) / 10.0)
                     .last10PA(Math.round(last10Pa / 10 * 10) / 10.0)
                     .daysRested(daysRested)
+                    .isHomeTeam(isHomeTeam)
+                    .last2AwayPa(Math.round(last2AwayPa / 2 * 10) / 10.0)
+                    .last2AwayPf(Math.round(last2AwayPf / 2 * 10) / 10.0)
+                    .last5AwayPf(Math.round(last5AwayPf / 5 * 10) / 10.0)
+                    .last5AwayPa(Math.round(last5AwayPa / 5 * 10) / 10.0)
+                    .last2HomePa(Math.round(last2HomePa / 2 * 10) / 10.0)
+                    .last2HomePf(Math.round(last2HomePf / 2 * 10) / 10.0)
+                    .last5HomePf(Math.round(last5HomePf / 5 * 10) / 10.0)
+                    .last5HomePa(Math.round(last5HomePa / 5 * 10) / 10.0)
                     .build();
 
             teamMap.put(TeamUtil.TeamName.getById(teamId), team);

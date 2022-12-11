@@ -20,10 +20,16 @@ public class Team {
     private final double last5PA;
     private final double last10PF;
     private final double last10PA;
+    private final double last2AwayPa;
+    private final double last2AwayPf;
+    private final double last5AwayPa;
+    private final double last5AwayPf;
+    private final double last2HomePa;
+    private final double last2HomePf;
+    private final double last5HomePa;
+    private final double last5HomePf;
     private final double varianceWeight;
     private final long daysRested;
-    private final boolean isDivisionGame;
-    private final boolean hasPositiveRecord;
     private final int defenseRating;
     private final int offenseRating;
     private final int avgTimeOfPosession;
@@ -68,6 +74,38 @@ public class Team {
         return last10PA;
     }
 
+    public double getLast2AwayPa() {
+        return last2AwayPa;
+    }
+
+    public double getLast2AwayPf() {
+        return last2AwayPf;
+    }
+
+    public double getLast5AwayPa() {
+        return last5AwayPa;
+    }
+
+    public double getLast5AwayPf() {
+        return last5AwayPf;
+    }
+
+    public double getLast2HomePa() {
+        return last2HomePa;
+    }
+
+    public double getLast2HomePf() {
+        return last2HomePf;
+    }
+
+    public double getLast5HomePa() {
+        return last5HomePa;
+    }
+
+    public double getLast5HomePf() {
+        return last5HomePf;
+    }
+
     public String getShortName() {
         return shortName;
     }
@@ -96,6 +134,10 @@ public class Team {
         return daysRested;
     }
 
+    public boolean isHomeTeam() {
+        return isHomeTeam;
+    }
+
     public static class Builder {
         // required fields
         private final TeamName name;
@@ -114,11 +156,17 @@ public class Team {
         private double last5PA = -1;
         private double last10PF = -1;
         private double last10PA = -1;
+        private double last2AwayPa = -1;
+        private double last2AwayPf = -1;
+        private double last5AwayPa = -1;
+        private double last5AwayPf = -1;
+        private double last2HomePf = -1;
+        private double last2HomePa = -1;
+        private double last5HomePf = -1;
+        private double last5HomePa = -1;
         private double varianceWeight = 1.00; // will fluctuate depending on the booleans below. will multiply outcome
         private long daysRested = -1;
-        private boolean isDivisionGame = false; // increase weight
-        private boolean hasPositiveRecord = false; // if over .500, add slight increase weight. vs an under 500 team
-                                                   // should be a slight advantage
+
         // addtl stats
         private int defenseRating;
         private int offenseRating;
@@ -197,6 +245,46 @@ public class Team {
             return this;
         }
 
+        public Builder last2AwayPa(double val) {
+            last2AwayPa = val;
+            return this;
+        }
+
+        public Builder last2AwayPf(double val) {
+            last2AwayPf = val;
+            return this;
+        }
+
+        public Builder last5AwayPa(double val) {
+            last5AwayPa = val;
+            return this;
+        }
+
+        public Builder last5AwayPf(double val) {
+            last5AwayPf = val;
+            return this;
+        }
+
+        public Builder last2HomePa(double val) {
+            last2HomePa = val;
+            return this;
+        }
+
+        public Builder last2HomePf(double val) {
+            last2HomePf = val;
+            return this;
+        }
+
+        public Builder last5HomePa(double val) {
+            last5HomePa = val;
+            return this;
+        }
+
+        public Builder last5HomePf(double val) {
+            last5HomePf = val;
+            return this;
+        }
+
         public Builder varianceWeight(double val) {
             varianceWeight = val;
             return this;
@@ -204,16 +292,6 @@ public class Team {
 
         public Builder daysRested(long val) {
             daysRested = val;
-            return this;
-        }
-
-        public Builder isDivisionGame(boolean val) {
-            isDivisionGame = val;
-            return this;
-        }
-
-        public Builder hasPositiveRecord(boolean val) {
-            hasPositiveRecord = val;
             return this;
         }
 
@@ -267,10 +345,16 @@ public class Team {
         last5PA = builder.last5PA;
         last10PF = builder.last10PF;
         last10PA = builder.last10PA;
+        last2AwayPa = builder.last2AwayPa;
+        last2AwayPf = builder.last2AwayPf;
+        last5AwayPa = builder.last5AwayPa;
+        last5AwayPf = builder.last5AwayPf;
+        last2HomePa = builder.last2HomePa;
+        last2HomePf = builder.last2HomePf;
+        last5HomePa = builder.last5HomePa;
+        last5HomePf = builder.last5HomePf;
         varianceWeight = builder.varianceWeight;
         daysRested = builder.daysRested;
-        isDivisionGame = builder.isDivisionGame;
-        hasPositiveRecord = builder.hasPositiveRecord;
         defenseRating = builder.defenseRating;
         offenseRating = builder.offenseRating;
         avgTimeOfPosession = builder.avgTimeOfPosession;
@@ -294,6 +378,16 @@ public class Team {
         curTeamJo.put("last10PA", last10PA);
         curTeamJo.put("seasonAvgPf", seasonAvgPf);
         curTeamJo.put("seasonAvgPa", seasonAvgPa);
+        curTeamJo.put("daysRested", daysRested);
+        curTeamJo.put("isHomeTeam", isHomeTeam);
+        curTeamJo.put("last2AwayPa", last2AwayPa);
+        curTeamJo.put("last2AwayPf", last2AwayPf);
+        curTeamJo.put("last5AwayPa", last5AwayPa);
+        curTeamJo.put("last5AwayPf", last5AwayPf);
+        curTeamJo.put("last2HomePa", last2HomePa);
+        curTeamJo.put("last2HomePf", last2HomePf);
+        curTeamJo.put("last5HomePa", last5HomePa);
+        curTeamJo.put("last5HomePf", last5HomePf);
         teamJsonArr.add(curTeamJo);
 
     }

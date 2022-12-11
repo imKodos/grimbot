@@ -110,7 +110,10 @@ Team team2 = TeamUtil.validateTeam(request.getParameter("t2"), (HashMap<TeamName
                         <p>Last 10 PA Average: <%=team1.getLast10PA()%></p>
                         <p>Season PPG: <%=team1.getSeasonAvgPf()%></p>
                         <p>Season OPPG: <%=team1.getSeasonAvgPf()%></p>
-                        <p>Days Rest: <%=team1.getDaysRested()%></p>               
+                        <p>Days Rest: <%=team1.getDaysRested()%></p>  
+                        <p>is home team: <%=team1.isHomeTeam()%></p>               
+                        <p>last 2 home PF: <%=team1.getLast2HomePf()%></p>               
+                        <p>last 2 away PF: <%=team1.getLast2AwayPf()%></p>               
                     </div>
                 </div>
                 <div class="botView">
