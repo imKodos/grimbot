@@ -100,7 +100,7 @@ Team team2 = TeamUtil.validateTeam(request.getParameter("t2"), (HashMap<TeamName
                 </div>
                 <div class="midView">
                    <div>
-                        <p id="t1Name">Team 1: <%=team1.getTeamName() + "  (" + team1.getShortName()+")"%></p>
+                        <p id="t1Name">Team 1: <%=team1.getTeamName() + "  (" + team1.getShortName()+") " + team1.getTotalWins() +"-" +team1.getTotalLoss()%></p>
                         <p>Last Game Result: <%=team1.getLastGameInfo()%></p>
                         <p>Last PF: <%=team1.getLastPF()%></p>
                         <p>Last PA: <%=team1.getLastPA()%></p>
@@ -114,6 +114,23 @@ Team team2 = TeamUtil.validateTeam(request.getParameter("t2"), (HashMap<TeamName
                         <p>is home team: <%=team1.isHomeTeam()%></p>               
                         <p>last 2 home PF: <%=team1.getLast2HomePf()%></p>               
                         <p>last 2 away PF: <%=team1.getLast2AwayPf()%></p>               
+                        <p>home Streak <%=team1.isHomeHotStreak()%></p>               
+                        <p>home cold Streak <%=team1.isHomeColdStreak()%></p>                
+                        <p>away Streak <%=team1.isAwayHotStreak()%></p>               
+                        <p>away cold Streak <%=team1.isAwayColdStreak()%></p>               
+                        <p>num Injuries <%=team1.getNumStartersInjured()%></p>  
+
+                        <p>Injured Players List: 
+                        <%
+                        if(team1.getInjuredPlayers()==null || team1.getInjuredPlayers().isEmpty()){
+                             out.print(" None");
+                        }else{
+                            for(String s: team1.getInjuredPlayers()){
+                                out.print("<br>"+s);
+                            }
+                        }                   
+                        %>
+                        </p>               
                     </div>
                 </div>
                 <div class="botView">

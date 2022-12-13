@@ -1,5 +1,7 @@
 package teams;
 
+import java.util.Vector;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -30,12 +32,17 @@ public class Team {
     private final double last5HomePf;
     private final double varianceWeight;
     private final long daysRested;
-    private final int defenseRating;
-    private final int offenseRating;
-    private final int avgTimeOfPosession;
-    private final int paceRating;
-    private final boolean hasStartingInjury;
+    private final boolean isHotStreak;
+    private final boolean isColdStreak;
+    private final boolean isAwayHotStreak;
+    private final boolean isHomeHotStreak;
+    private final boolean isAwayColdStreak;
+    private final boolean isHomeColdStreak;
     private final boolean isHomeTeam;
+    private final int totalWins;
+    private final int totalLoss;
+    private final int numStartersInjured;
+    private final Vector<String> injuredPlayers;
     private final JSONArray teamJsonArr;
 
     public TeamName getName() {
@@ -138,6 +145,46 @@ public class Team {
         return isHomeTeam;
     }
 
+    public boolean isHotStreak() {
+        return isHotStreak;
+    }
+
+    public boolean isColdStreak() {
+        return isColdStreak;
+    }
+
+    public boolean isHomeColdStreak() {
+        return isHomeColdStreak;
+    }
+
+    public boolean isHomeHotStreak() {
+        return isHomeHotStreak;
+    }
+
+    public boolean isAwayHotStreak() {
+        return isAwayHotStreak;
+    }
+
+    public boolean isAwayColdStreak() {
+        return isAwayColdStreak;
+    }
+
+    public int getTotalWins() {
+        return totalWins;
+    }
+
+    public int getTotalLoss() {
+        return totalLoss;
+    }
+
+    public int getNumStartersInjured() {
+        return numStartersInjured;
+    }
+
+    public Vector<String> getInjuredPlayers() {
+        return injuredPlayers;
+    }
+
     public static class Builder {
         // required fields
         private final TeamName name;
@@ -168,12 +215,17 @@ public class Team {
         private long daysRested = -1;
 
         // addtl stats
-        private int defenseRating;
-        private int offenseRating;
-        private int avgTimeOfPosession;
-        private int paceRating;
-        private boolean hasStartingInjury = false;
         private boolean isHomeTeam = false;
+        private boolean isHotStreak = false;
+        private boolean isColdStreak = false;
+        private boolean isHomeHotStreak = false;
+        private boolean isAwayHotStreak = false;
+        private boolean isHomeColdStreak = false;
+        private boolean isAwayColdStreak = false;
+        private int totalWins = 0;
+        private int totalLoss = 0;
+        private int numStartersInjured = 0;
+        private Vector<String> injuredPlayers;;
         private JSONArray teamJsonArr;
 
         public Builder(TeamName name) {
@@ -295,33 +347,58 @@ public class Team {
             return this;
         }
 
-        public Builder defenseRating(int val) {
-            defenseRating = val;
-            return this;
-        }
-
-        public Builder offenseRating(int val) {
-            offenseRating = val;
-            return this;
-        }
-
-        public Builder avgTimeOfPosession(int val) {
-            avgTimeOfPosession = val;
-            return this;
-        }
-
-        public Builder paceRating(int val) {
-            paceRating = val;
-            return this;
-        }
-
-        public Builder hasStartingInjury(boolean val) {
-            hasStartingInjury = val;
-            return this;
-        }
-
         public Builder isHomeTeam(boolean val) {
             isHomeTeam = val;
+            return this;
+        }
+
+        public Builder isHotStreak(boolean val) {
+            isHotStreak = val;
+            return this;
+        }
+
+        public Builder isColdStreak(boolean val) {
+            isColdStreak = val;
+            return this;
+        }
+
+        public Builder isHomeColdStreak(boolean val) {
+            isHomeColdStreak = val;
+            return this;
+        }
+
+        public Builder isAwayColdStreak(boolean val) {
+            isAwayColdStreak = val;
+            return this;
+        }
+
+        public Builder isHomeHotStreak(boolean val) {
+            isHomeHotStreak = val;
+            return this;
+        }
+
+        public Builder isAwayHotStreak(boolean val) {
+            isAwayHotStreak = val;
+            return this;
+        }
+
+        public Builder totalWins(int val) {
+            totalWins = val;
+            return this;
+        }
+
+        public Builder totalLoss(int val) {
+            totalLoss = val;
+            return this;
+        }
+
+        public Builder numStartersInjured(int val) {
+            numStartersInjured = val;
+            return this;
+        }
+
+        public Builder injuredPlayers(Vector<String> val) {
+            injuredPlayers = val;
             return this;
         }
 
@@ -355,12 +432,17 @@ public class Team {
         last5HomePf = builder.last5HomePf;
         varianceWeight = builder.varianceWeight;
         daysRested = builder.daysRested;
-        defenseRating = builder.defenseRating;
-        offenseRating = builder.offenseRating;
-        avgTimeOfPosession = builder.avgTimeOfPosession;
-        paceRating = builder.paceRating;
-        hasStartingInjury = builder.hasStartingInjury;
         isHomeTeam = builder.isHomeTeam;
+        isHotStreak = builder.isHotStreak;
+        isColdStreak = builder.isColdStreak;
+        isHomeColdStreak = builder.isHomeColdStreak;
+        isAwayColdStreak = builder.isAwayColdStreak;
+        isAwayHotStreak = builder.isAwayHotStreak;
+        isHomeHotStreak = builder.isHomeHotStreak;
+        totalWins = builder.totalWins;
+        totalLoss = builder.totalLoss;
+        numStartersInjured = builder.numStartersInjured;
+        injuredPlayers = builder.injuredPlayers;
 
         // build a JSONArray on each team build
         JSONObject curTeamJo = new JSONObject();
@@ -369,6 +451,8 @@ public class Team {
         curTeamJo.put("shortName", shortName);
         curTeamJo.put("teamName", teamName);
         curTeamJo.put("teamId", teamId);
+        curTeamJo.put("totalWins", totalWins);
+        curTeamJo.put("totalLoss", totalLoss);
         curTeamJo.put("lastGameInfo", lastGameInfo);
         curTeamJo.put("lastPF", lastPF);
         curTeamJo.put("lastPA", lastPA);

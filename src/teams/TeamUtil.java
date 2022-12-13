@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
 import org.json.simple.JSONArray;
@@ -30,6 +31,7 @@ import stats.Scraper;
 public class TeamUtil {
     // https://www.espn.com/nba/team/stats/_/name/bos/boston-celtics
     // https://www.espn.com/nba/standings/_/group/league
+    public static int STREAK_GAMES = 4;
 
     public enum TeamName {
         CELTICS(2, "Celtics", "BOS", "boston-celtics"), NETS(3, "Nets", "BKN", "brooklyn-nets"),
@@ -183,8 +185,13 @@ public class TeamUtil {
             String shortName = TeamUtil.TeamName.getShortName(teamId);
             String espnUrl = TeamUtil.TeamName.getEspnUrl(teamId);
             String teamName = TeamUtil.TeamName.getTeamByName(teamId).get().getName();
+
             JSONObject recentGameStats = Scraper.getRecentGameStats(shortName, espnUrl);
             String lastGameInfo = (String) recentGameStats.get("lastGameInfo");
+
+            JSONObject startingInjuries = Scraper.getInjuries(shortName, espnUrl);
+            int numStartersInjured = (int) startingInjuries.get("totalStartersInjured");
+            Vector<String> injuredPlayerVec = (Vector<String>) startingInjuries.get("injuredPlayers");
 
             double seasonPpg = 0;
             double seasonOppg = 0;
@@ -208,6 +215,14 @@ public class TeamUtil {
             double last5AwayPa = 0;
             double homeGameIdx = 0;
             double awayGameIdx = 0;
+            int winStreak = 0;
+            int loseStreak = 0;
+            int homeWinStreak = 0;
+            int homeLoseStreak = 0;
+            int awayWinStreak = 0;
+            int awayLoseStreak = 0;
+            int totalWins = 0;
+            int totalLoss = 0;
 
             Games nextGame = new Games();
             for (Games game : gamesArray) {
@@ -246,6 +261,26 @@ public class TeamUtil {
                             last10Pf += game.getHome_team_score();
                             last10Pa += game.getVisitor_team_score();
                         }
+
+                        if (gamesPlayed <= STREAK_GAMES) { // try for a streak with last x games played
+                            if (game.getHome_team_score() > game.getVisitor_team_score()) {
+                                winStreak++;
+                            } else {
+                                loseStreak++;
+                            }
+                        }
+                        if (homeGameIdx <= STREAK_GAMES) { // try for a streak with last x games played at home
+                            if (game.getHome_team_score() > game.getVisitor_team_score()) {
+                                homeWinStreak++;
+                            } else {
+                                homeLoseStreak++;
+                            }
+                        }
+                        if (game.getHome_team_score() > game.getVisitor_team_score()) {
+                            totalWins++;
+                        } else {
+                            totalLoss++;
+                        }
                     }
                 }
                 if ((game.getVisitor_team().getId() == teamId)) {
@@ -282,6 +317,25 @@ public class TeamUtil {
                             last10Pa += game.getHome_team_score();
                             last10Pf += game.getVisitor_team_score();
                         }
+                        if (gamesPlayed <= STREAK_GAMES) { // try for a streak with last x games played
+                            if (game.getHome_team_score() < game.getVisitor_team_score()) {
+                                winStreak++;
+                            } else {
+                                loseStreak++;
+                            }
+                        }
+                        if (awayGameIdx <= STREAK_GAMES) { // try for a streak with last x games played
+                            if (game.getHome_team_score() < game.getVisitor_team_score()) {
+                                awayWinStreak++;
+                            } else {
+                                awayLoseStreak++;
+                            }
+                        }
+                        if (game.getHome_team_score() < game.getVisitor_team_score()) {
+                            totalWins++;
+                        } else {
+                            totalLoss++;
+                        }
                     }
                 }
             }
@@ -296,18 +350,12 @@ public class TeamUtil {
 
             boolean isHomeTeam = nextGame.getHome_team().getId() == teamId;
 
-            // }
             // TODO LIST
-
-            // make a hot/cold streak (3-5g W or L streak -- also do for home/away)
-            // remove pace and time of possession
-            // can pull in ranks for variance here https://www.espn.com/nba/bpi
-            // (defenseRating/offensiveRating)
-            // refactor for loop
-            // try scraping for hasStartingInjury
-            // refactor all lastPf and Pa to be a map, PF is key, PA is value
+            // refactor for loop -- killing load time
+            // refactor all lastPf and Pa to be a map, PF is key, PA is value ---
+            // refactor total wins and win streak to be simpler with indexes
             // fix pf pa calculations above, can be refactored to be simpler with indexes
-            // calculations
+            // calculations -- add if over .600 team plays under .400 team, add variance
             Team team = new Team.Builder(TeamUtil.TeamName.getById(teamId))
                     .teamName(teamName)
                     .teamId(teamId)
@@ -331,6 +379,16 @@ public class TeamUtil {
                     .last2HomePf(Math.round(last2HomePf / 2 * 10) / 10.0)
                     .last5HomePf(Math.round(last5HomePf / 5 * 10) / 10.0)
                     .last5HomePa(Math.round(last5HomePa / 5 * 10) / 10.0)
+                    .isHotStreak(winStreak == STREAK_GAMES)
+                    .isColdStreak(loseStreak == STREAK_GAMES)
+                    .isHomeColdStreak(homeLoseStreak == STREAK_GAMES)
+                    .isHomeHotStreak(homeWinStreak == STREAK_GAMES)
+                    .isAwayColdStreak(awayLoseStreak == STREAK_GAMES)
+                    .isAwayHotStreak(awayWinStreak == STREAK_GAMES)
+                    .totalWins(totalWins)
+                    .totalLoss(totalLoss)
+                    .numStartersInjured(numStartersInjured)
+                    .injuredPlayers(injuredPlayerVec)
                     .build();
 
             teamMap.put(TeamUtil.TeamName.getById(teamId), team);

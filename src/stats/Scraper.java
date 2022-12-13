@@ -2,7 +2,9 @@ package stats;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -70,6 +72,52 @@ public class Scraper {
                 jo.put("pa5", pa5);
                 jo.put("pf10", pf10);
                 jo.put("pa10", pa10);
+
+                return jo;
+        }
+
+        // public static void main(String[] args) throws IOException {
+        public static JSONObject getInjuries(String teamShortName, String espnUrlString) throws IOException {
+                // IOException {
+                Document teamInjuries = Jsoup
+                                .connect("https://www.espn.com/nba/team/depth/_/name/" + teamShortName + "/"
+                                                + espnUrlString)
+                                .timeout(6000)
+                                .get();
+
+                Elements injBody = teamInjuries
+                                .select("tbody.Table__TBODY");
+                Elements injRows = injBody.get(1)
+                                .select("tr.Table__TR.Table__TR--sm.Table__even"); // get 1st table__tbody
+                                                                                   // set, which contains players
+                Elements players = injRows
+                                .select("td:lt(2).Table__TD a.AnchorLink"); // get first 2 tds
+                // set, which contains players
+                Elements designation = injRows
+                                .select("td:lt(2).Table__TD span.nfl-injuries-status.n8");
+                // System.out.println(injRows.size());
+
+                Map<String, String> injuryMap = new HashMap<>();
+                int totalStartersInjured = 0;
+                List<String> injuredPlayers = new Vector<>();
+                for (int i = 0; i < players.size(); i++) {
+                        try {
+                                injuryMap.put(players.get(i).text(), designation.get(i).text());
+                        } catch (NumberFormatException e) {
+                                System.out.println("Error handling injury parsing: " + e);
+                        }
+                }
+
+                for (Map.Entry<String, String> injuredPlayerEntry : injuryMap.entrySet()) {
+                        if ("O".equals(injuredPlayerEntry.getValue())) {
+                                injuredPlayers.add(injuredPlayerEntry.getKey());
+                                totalStartersInjured++;
+                        }
+                }
+
+                JSONObject jo = new JSONObject();
+                jo.put("totalStartersInjured", totalStartersInjured);
+                jo.put("injuredPlayers", injuredPlayers);
 
                 return jo;
         }
