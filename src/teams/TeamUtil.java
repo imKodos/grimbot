@@ -13,6 +13,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -121,7 +122,7 @@ public class TeamUtil {
     public static ArrayList<Team> generateTeamList()
             throws KeyManagementException, NoSuchAlgorithmException, ParseException,
             org.json.simple.parser.ParseException {
-        HashMap<String, String> playersPropertiesMap = new HashMap<>();
+        Map<String, String> playersPropertiesMap = new HashMap<>();
         playersPropertiesMap.put("X-RapidAPI-Key", "0d5ab3a4bfmsh5174a54093fd0f6p12a4ffjsn47f368b3d6ea");
         // JSONObject players = stats.get("https://free-nba.p.rapidapi.com/players",
         // "?page=0&per_page=25", playersPropertiesMap);
@@ -146,7 +147,7 @@ public class TeamUtil {
         return teamList;
     }
 
-    public static HashMap<TeamName, Team> generateTeamMap()
+    public static Map<TeamName, Team> generateTeamMap()
             throws KeyManagementException, NoSuchAlgorithmException, ParseException,
             org.json.simple.parser.ParseException, IOException {
 
@@ -170,7 +171,7 @@ public class TeamUtil {
         Games[] gamesArray = gson.fromJson(gamesJoArr.toString(), Games[].class); // populate Game objects from array
         Collections.sort(Arrays.asList(gamesArray));
 
-        HashMap<TeamName, Team> teamMap = new HashMap<>();
+        Map<TeamName, Team> teamMap = new HashMap<>();
         JSONObject teams = FetchStats.get("https://www.balldontlie.io/api/v1/teams");
         JSONArray teamsJson = (JSONArray) teams.get("data");
 
