@@ -121,4 +121,15 @@ public class Scraper {
 
                 return jo;
         }
+
+        public static void main(String[] args) throws IOException {
+
+                JSONObject jo = new JSONObject();
+                jo.put("test", 2);
+                jo.put(2, 3);
+                // int testInt = jo.get("test12") == null;
+                // System.out.println(jo.get("test"));
+                System.out.println(jo.get(2));
+        }
+
 }
