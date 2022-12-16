@@ -194,45 +194,15 @@ public class TeamUtil {
             JSONObject startingInjuries = Scraper.getInjuries(shortName, espnUrl);
             int numStartersInjured = (int) startingInjuries.get("totalStartersInjured");
             Vector<String> injuredPlayerVec = (Vector<String>) startingInjuries.get("injuredPlayers");
-
-            // int lastPf = 0;
-            // int lastPa = 0;
-            // double last5Pf = 0;
-            // double last5Pa = 0;
-            // double last10Pf = 0;
-            // double last10Pa = 0;
-            // String lastGameDateStr = "";
-            // long daysRested = -1;
-            // double last2HomePf = 0;
-            // double last5HomePf = 0;
-            // double last2HomePa = 0;
-            // double last5HomePa = 0;
-            // double last2AwayPf = 0;
-            // double last5AwayPf = 0;
-            // double last2AwayPa = 0;
-            // double last5AwayPa = 0;
-            // double homeGameIdx = 0;
-            // double awayGameIdx = 0;
-            // int winStreak = 0;
-            // int loseStreak = 0;
-            // int homeWinStreak = 0;
-            // int homeLoseStreak = 0;
-            // int awayWinStreak = 0;
-            // int awayLoseStreak = 0;
-            // int totalWins = 0;
-            // int totalLoss = 0;
-
-            // boolean isHomeTeam = nextGame.getHome_team().getId() == teamId;
-
             // TODO LIST
-            // refactor for loop -- killing load time
-            // refactor all lastPf and Pa to be a map, PF is key, PA is value ---
-            // refactor total wins and win streak to be simpler with indexes
             // can i refactor putting stats straight into object, instead of creating a
             // variable first then adding to map later?
             // look into adding a method to handle the above?
             // fix pf pa calculations above, can be refactored to be simpler with indexes
             // calculations -- add if over .600 team plays under .400 team, add variance
+            // can i refactor any of the above methods and generators
+            // fix ui
+            // get rid of team builder and just add team setters
             Team team = new Team.Builder(TeamUtil.TeamName.getById(teamId))
                     .teamName(teamName)
                     .teamId(teamId)
@@ -331,15 +301,27 @@ public class TeamUtil {
                         homeGameIdx++;
                         if (game.getHome_team_score() > game.getVisitor_team_score()) {
                             totalWins++;
+                            if (homeGameIdx <= STREAK_GAMES) {
+                                homeWinStreak++;
+                            }
                         } else {
                             totalLoss++;
+                            if (homeGameIdx <= STREAK_GAMES) {
+                                homeLoseStreak++;
+                            }
                         }
                     } else {
                         awayGameIdx++;
                         if (game.getHome_team_score() < game.getVisitor_team_score()) {
                             totalWins++;
+                            if (awayGameIdx <= STREAK_GAMES) {
+                                awayWinStreak++;
+                            }
                         } else {
                             totalLoss++;
+                            if (awayGameIdx <= STREAK_GAMES) {
+                                awayLoseStreak++;
+                            }
                         }
                     }
 
@@ -398,24 +380,6 @@ public class TeamUtil {
                                 winStreak++;
                             } else {
                                 loseStreak++;
-                            }
-                        }
-                    }
-
-                    if (isHomeTeam) {
-                        if (homeGameIdx <= STREAK_GAMES) {
-                            if (game.getHome_team_score() > game.getVisitor_team_score()) {
-                                homeWinStreak++;
-                            } else {
-                                homeLoseStreak++;
-                            }
-                        }
-                    } else {
-                        if (awayGameIdx <= STREAK_GAMES) {
-                            if (game.getHome_team_score() < game.getVisitor_team_score()) {
-                                awayWinStreak++;
-                            } else {
-                                awayLoseStreak++;
                             }
                         }
                     }
