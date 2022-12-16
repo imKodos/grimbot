@@ -177,7 +177,7 @@ public class TeamUtil {
         JSONArray teamsJson = (JSONArray) teams.get("data");
         int numTeams = teamsJson.size();
 
-        JSONArray teamStatsFromGamesJo = generateGames(gamesArray); // returns teamId and details
+        Map<Integer, JSONObject> totalTeamStatsMap = generateGames(gamesArray); // returns teamId and details
 
         for (int i = 0; i < numTeams; i++) {
             JSONObject teamObj = (JSONObject) teamsJson.get(i);
@@ -222,20 +222,15 @@ public class TeamUtil {
             // int totalWins = 0;
             // int totalLoss = 0;
 
-            // compare date objects to set playedYesterday
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            Calendar lastGame = Calendar.getInstance();
-            Calendar today = Calendar.getInstance();
-            lastGame.setTime(sdf.parse(lastGameDateStr));
-            // subtract 1 in daysRested because we dont want to count today as a rest day
-            daysRested = TimeUnit.MILLISECONDS.toDays(today.getTimeInMillis() - lastGame.getTimeInMillis()) - 1;
-
-            boolean isHomeTeam = nextGame.getHome_team().getId() == teamId;
+            // boolean isHomeTeam = nextGame.getHome_team().getId() == teamId;
 
             // TODO LIST
             // refactor for loop -- killing load time
             // refactor all lastPf and Pa to be a map, PF is key, PA is value ---
             // refactor total wins and win streak to be simpler with indexes
+            // can i refactor putting stats straight into object, instead of creating a
+            // variable first then adding to map later?
+            // look into adding a method to handle the above?
             // fix pf pa calculations above, can be refactored to be simpler with indexes
             // calculations -- add if over .600 team plays under .400 team, add variance
             Team team = new Team.Builder(TeamUtil.TeamName.getById(teamId))
@@ -243,206 +238,221 @@ public class TeamUtil {
                     .teamId(teamId)
                     .shortName(shortName)
                     .lastGameInfo(lastGameInfo)
-                    .seasonAvgPf(Math.round(seasonPpg / gamesPlayed * 10) / 10.0)
-                    .seasonAvgPa(Math.round(seasonOppg / gamesPlayed * 10) / 10.0)
-                    .lastPF(lastPf)
-                    .lastPA(lastPa)
-                    .last5PF(Math.round(last5Pf / 5 * 10) / 10.0)
-                    .last5PA(Math.round(last5Pa / 5 * 10) / 10.0)
-                    .last10PF(Math.round(last10Pf / 10 * 10) / 10.0)
-                    .last10PA(Math.round(last10Pa / 10 * 10) / 10.0)
-                    .daysRested(daysRested)
-                    .isHomeTeam(isHomeTeam)
-                    .last2AwayPa(Math.round(last2AwayPa / 2 * 10) / 10.0)
-                    .last2AwayPf(Math.round(last2AwayPf / 2 * 10) / 10.0)
-                    .last5AwayPf(Math.round(last5AwayPf / 5 * 10) / 10.0)
-                    .last5AwayPa(Math.round(last5AwayPa / 5 * 10) / 10.0)
-                    .last2HomePa(Math.round(last2HomePa / 2 * 10) / 10.0)
-                    .last2HomePf(Math.round(last2HomePf / 2 * 10) / 10.0)
-                    .last5HomePf(Math.round(last5HomePf / 5 * 10) / 10.0)
-                    .last5HomePa(Math.round(last5HomePa / 5 * 10) / 10.0)
-                    .isHotStreak(winStreak == STREAK_GAMES)
-                    .isColdStreak(loseStreak == STREAK_GAMES)
-                    .isHomeColdStreak(homeLoseStreak == STREAK_GAMES)
-                    .isHomeHotStreak(homeWinStreak == STREAK_GAMES)
-                    .isAwayColdStreak(awayLoseStreak == STREAK_GAMES)
-                    .isAwayHotStreak(awayWinStreak == STREAK_GAMES)
-                    .totalWins(totalWins)
-                    .totalLoss(totalLoss)
+                    .seasonAvgPf(Math.round((double) totalTeamStatsMap.get(teamId).get("seasonPpg")
+                            / (int) totalTeamStatsMap.get(teamId).get("gamesPlayed") * 10) / 10.0)
+                    .seasonAvgPa(Math.round((double) totalTeamStatsMap.get(teamId).get("seasonOppg")
+                            / (int) totalTeamStatsMap.get(teamId).get("gamesPlayed") * 10) / 10.0)
+                    .lastPF((int) totalTeamStatsMap.get(teamId).get("lastPf"))
+                    .lastPA((int) totalTeamStatsMap.get(teamId).get("lastPa"))
+                    .last5PF(Math.round((double) totalTeamStatsMap.get(teamId).get("last5Pf") / 5 * 10) / 10.0)
+                    .last5PA(Math.round((double) totalTeamStatsMap.get(teamId).get("last5Pa") / 5 * 10) / 10.0)
+                    .last10PF(Math.round((double) totalTeamStatsMap.get(teamId).get("last10Pf")) / 10.0)
+                    .last10PA(Math.round((double) totalTeamStatsMap.get(teamId).get("last10Pa")) / 10.0)
+                    .daysRested((long) totalTeamStatsMap.get(teamId).get("daysRested"))
+                    .isHomeTeam((boolean) totalTeamStatsMap.get(teamId).get("isHomeTeam"))
+                    .last2AwayPa(Math.round((double) totalTeamStatsMap.get(teamId).get("last2AwayPa") / 2 * 10) / 10.0)
+                    .last2AwayPf(Math.round((double) totalTeamStatsMap.get(teamId).get("last2AwayPf") / 2 * 10) / 10.0)
+                    .last5AwayPf(Math.round((double) totalTeamStatsMap.get(teamId).get("last5AwayPf") / 5 * 10) / 10.0)
+                    .last5AwayPa(Math.round((double) totalTeamStatsMap.get(teamId).get("last5AwayPa") / 5 * 10) / 10.0)
+                    .last2HomePa(Math.round((double) totalTeamStatsMap.get(teamId).get("last2HomePa") / 2 * 10) / 10.0)
+                    .last2HomePf(Math.round((double) totalTeamStatsMap.get(teamId).get("last2HomePf") / 2 * 10) / 10.0)
+                    .last5HomePf(Math.round((double) totalTeamStatsMap.get(teamId).get("last5HomePf") / 5 * 10) / 10.0)
+                    .last5HomePa(Math.round((double) totalTeamStatsMap.get(teamId).get("last5HomePa") / 5 * 10) / 10.0)
+                    .isHotStreak((int) totalTeamStatsMap.get(teamId).get("winStreak") == STREAK_GAMES)
+                    .isColdStreak((int) totalTeamStatsMap.get(teamId).get("loseStreak") == STREAK_GAMES)
+                    .isHomeColdStreak((int) totalTeamStatsMap.get(teamId).get("homeLoseStreak") == STREAK_GAMES)
+                    .isHomeHotStreak((int) totalTeamStatsMap.get(teamId).get("homeWinStreak") == STREAK_GAMES)
+                    .isAwayColdStreak((int) totalTeamStatsMap.get(teamId).get("awayLoseStreak") == STREAK_GAMES)
+                    .isAwayHotStreak((int) totalTeamStatsMap.get(teamId).get("awayWinStreak") == STREAK_GAMES)
+                    .totalWins((int) totalTeamStatsMap.get(teamId).get("totalWins"))
+                    .totalLoss((int) totalTeamStatsMap.get(teamId).get("totalLoss"))
                     .numStartersInjured(numStartersInjured)
                     .injuredPlayers(injuredPlayerVec)
+                    .teamJsonObj(totalTeamStatsMap.get(teamId))
                     .build();
-
             teamMap.put(TeamUtil.TeamName.getById(teamId), team);
         }
         return teamMap;
     }
 
-    private static boolean varExists(JSONObject jo, String key) {
-        return jo.get(key) == null;
-    }
-
-    public static JSONArray generateGames(Games[] gamesArray) {
-        JSONArray retGamesJa = new JSONArray();
-        Games nextGame = new Games();
+    public static Map<Integer, JSONObject> generateGames(Games[] gamesArray) throws ParseException {
+        Map<Integer, JSONObject> teamMap = new HashMap<>();
         for (Games game : gamesArray) {
             int homeTeamId = game.getHome_team().getId();
             int awayTeamId = game.getVisitor_team().getId();
-            JSONObject retGamesJo = new JSONObject();
+
             for (int i = 0; i < 2; i++) { // iterate over the two teams in the game
+                JSONObject teamStatsJo = new JSONObject();
+                boolean isHomeTeam = i == 0;
+                int teamId = isHomeTeam ? homeTeamId : awayTeamId;
                 // set up variables.
                 // if the team exists, import them
-                double seasonPpg = varExists(retGamesJo, "seasonPpg") ? (double) retGamesJo.get("seasonPpg") : 0;
-                double seasonOppg = varExists(retGamesJo, "seasonOppg") ? (double) retGamesJo.get("seasonPpg") : 0;
-                int gamesPlayed = varExists(retGamesJo, "gamesPlayed") ? (int) retGamesJo.get("gamesPlayed") : 0;
-                int lastPf = varExists(retGamesJo, "lastPf") ? (int) retGamesJo.get("lastPf") : 0;
-                int lastPa = varExists(retGamesJo, "lastPa") ? (int) retGamesJo.get("lastPa") : 0;
-                double last5Pf = varExists(retGamesJo, "last5Pf") ? (double) retGamesJo.get("last5Pf") : 0;
-                double last5Pa = varExists(retGamesJo, "last5Pa") ? (double) retGamesJo.get("last5Pa") : 0;
-                double last10Pf = varExists(retGamesJo, "last10Pf") ? (double) retGamesJo.get("last10Pf") : 0;
-                double last10Pa = varExists(retGamesJo, "last10Pa") ? (double) retGamesJo.get("last10Pa") : 0;
-                String lastGameDateStr = varExists(retGamesJo, "lastGameDateStr")
-                        ? (String) retGamesJo.get("lastGameDateStr")
-                        : "";
-                long daysRested = varExists(retGamesJo, "daysRested") ? (long) retGamesJo.get("daysRested") : -1;
-                double last2HomePf = varExists(retGamesJo, "last2HomePf") ? (double) retGamesJo.get("last2HomePf") : 0;
-                double last5HomePf = varExists(retGamesJo, "last5HomePf") ? (double) retGamesJo.get("last5HomePf") : 0;
-                double last2HomePa = varExists(retGamesJo, "last2HomePa") ? (double) retGamesJo.get("last2HomePa") : 0;
-                double last5HomePa = varExists(retGamesJo, "last5HomePa") ? (double) retGamesJo.get("last5HomePa") : 0;
-                double last2AwayPf = varExists(retGamesJo, "last2AwayPf") ? (double) retGamesJo.get("last2AwayPf") : 0;
-                double last5AwayPf = varExists(retGamesJo, "last5AwayPf") ? (double) retGamesJo.get("last5AwayPf") : 0;
-                double last2AwayPa = varExists(retGamesJo, "last2AwayPa") ? (double) retGamesJo.get("last2AwayPa") : 0;
-                double last5AwayPa = varExists(retGamesJo, "last5AwayPa") ? (double) retGamesJo.get("last5AwayPa") : 0;
-                double homeGameIdx = varExists(retGamesJo, "homeGameIdx") ? (double) retGamesJo.get("homeGameIdx") : 0;
-                double awayGameIdx = varExists(retGamesJo, "awayGameIdx") ? (double) retGamesJo.get("awayGameIdx") : 0;
-                int winStreak = varExists(retGamesJo, "winStreak") ? (int) retGamesJo.get("winStreak") : 0;
-                int loseStreak = varExists(retGamesJo, "loseStreak") ? (int) retGamesJo.get("loseStreak") : 0;
-                int homeWinStreak = varExists(retGamesJo, "homeWinStreak") ? (int) retGamesJo.get("homeWinStreak") : 0;
-                int homeLoseStreak = varExists(retGamesJo, "homeLoseStreak") ? (int) retGamesJo.get("homeLoseStreak")
-                        : 0;
-                int awayWinStreak = varExists(retGamesJo, "awayWinStreak") ? (int) retGamesJo.get("awayWinStreak") : 0;
-                int awayLoseStreak = varExists(retGamesJo, "awayLoseStreak") ? (int) retGamesJo.get("awayLoseStreak")
-                        : 0;
-                int totalWins = varExists(retGamesJo, "totalWins") ? (int) retGamesJo.get("totalWins") : 0;
-                int totalLoss = varExists(retGamesJo, "totalLoss") ? (int) retGamesJo.get("totalLoss") : 0;
+                boolean nextGameHomeTeam = teamMap.get(teamId) != null
+                        ? (boolean) teamMap.get(teamId).get("isHomeTeam")
+                        : false;
+                double seasonPpg = teamMap.get(teamId) != null ? (double) teamMap.get(teamId).get("seasonPpg") : 0;
+                double seasonOppg = teamMap.get(teamId) != null ? (double) teamMap.get(teamId).get("seasonOppg") : 0;
+                int gamesPlayed = teamMap.get(teamId) != null ? (int) teamMap.get(teamId).get("gamesPlayed") : 0;
+                int lastPf = teamMap.get(teamId) != null ? (int) teamMap.get(teamId).get("lastPf") : 0;
+                int lastPa = teamMap.get(teamId) != null ? (int) teamMap.get(teamId).get("lastPa") : 0;
+                long daysRested = teamMap.get(teamId) != null ? (long) teamMap.get(teamId).get("daysRested") : -1;
+                double last5Pf = teamMap.get(teamId) != null ? (double) teamMap.get(teamId).get("last5Pf") : 0;
+                double last5Pa = teamMap.get(teamId) != null ? (double) teamMap.get(teamId).get("last5Pa") : 0;
+                double last10Pf = teamMap.get(teamId) != null ? (double) teamMap.get(teamId).get("last10Pf") : 0;
+                double last10Pa = teamMap.get(teamId) != null ? (double) teamMap.get(teamId).get("last10Pa") : 0;
+                double homeGameIdx = teamMap.get(teamId) != null ? (double) teamMap.get(teamId).get("homeGameIdx") : 0;
+                double awayGameIdx = teamMap.get(teamId) != null ? (double) teamMap.get(teamId).get("awayGameIdx") : 0;
+                double last2HomePf = teamMap.get(teamId) != null ? (double) teamMap.get(teamId).get("last2HomePf") : 0;
+                double last2HomePa = teamMap.get(teamId) != null ? (double) teamMap.get(teamId).get("last2HomePa") : 0;
+                double last5HomePf = teamMap.get(teamId) != null ? (double) teamMap.get(teamId).get("last5HomePf") : 0;
+                double last5HomePa = teamMap.get(teamId) != null ? (double) teamMap.get(teamId).get("last5HomePa") : 0;
+                double last2AwayPf = teamMap.get(teamId) != null ? (double) teamMap.get(teamId).get("last2AwayPf") : 0;
+                double last5AwayPf = teamMap.get(teamId) != null ? (double) teamMap.get(teamId).get("last5AwayPf") : 0;
+                double last2AwayPa = teamMap.get(teamId) != null ? (double) teamMap.get(teamId).get("last2AwayPa") : 0;
+                double last5AwayPa = teamMap.get(teamId) != null ? (double) teamMap.get(teamId).get("last5AwayPa") : 0;
+                int winStreak = teamMap.get(teamId) != null ? (int) teamMap.get(teamId).get("winStreak") : 0;
+                int loseStreak = teamMap.get(teamId) != null ? (int) teamMap.get(teamId).get("loseStreak") : 0;
+                int homeWinStreak = teamMap.get(teamId) != null ? (int) teamMap.get(teamId).get("homeWinStreak") : 0;
+                int homeLoseStreak = teamMap.get(teamId) != null ? (int) teamMap.get(teamId).get("homeLoseStreak") : 0;
+                int awayWinStreak = teamMap.get(teamId) != null ? (int) teamMap.get(teamId).get("awayWinStreak") : 0;
+                int awayLoseStreak = teamMap.get(teamId) != null ? (int) teamMap.get(teamId).get("awayLoseStreak") : 0;
+                int totalWins = teamMap.get(teamId) != null ? (int) teamMap.get(teamId).get("totalWins") : 0;
+                int totalLoss = teamMap.get(teamId) != null ? (int) teamMap.get(teamId).get("totalLoss") : 0;
 
-            }
-            // if (homeTeamId == teamId) {
-            if (0 == game.getPeriod()) {// keep the next game state up to date
-                nextGame = game;
-            }
-
-            if ("Final".equals(game.getStatus())) {
-                seasonPpg += game.getHome_team_score();
-                seasonOppg += game.getVisitor_team_score();
-                gamesPlayed++;// can refactor this with homegameidx + awaygameidx
-                homeGameIdx++;
-                if (homeGameIdx <= 2) {
-                    last2HomePf += game.getHome_team_score();
-                    last2HomePa += game.getVisitor_team_score();
-                }
-
-                if (homeGameIdx <= 5) { // can refactor this to be in the same block as other homeGameIdx
-                                        // calculations
-                    last5HomePf += game.getHome_team_score();
-                    last5HomePa += game.getVisitor_team_score();
-                }
-
-                if (gamesPlayed == 1) {
-                    lastPf += game.getHome_team_score();
-                    lastPa += game.getVisitor_team_score();
-                    lastGameDateStr = game.getDate().replace("T00:00:00.000Z", "");
-                }
-
-                if (gamesPlayed <= 5) {
-                    last5Pf += game.getHome_team_score();
-                    last5Pa += game.getVisitor_team_score();
-                }
-
-                if (gamesPlayed <= 10) {
-                    last10Pf += game.getHome_team_score();
-                    last10Pa += game.getVisitor_team_score();
-                }
-
-                if (gamesPlayed <= STREAK_GAMES) { // try for a streak with last x games played
-                    if (game.getHome_team_score() > game.getVisitor_team_score()) {
-                        winStreak++;
-                    } else {
-                        loseStreak++;
-                    }
-                }
-                if (homeGameIdx <= STREAK_GAMES) { // try for a streak with last x games played at home
-                    if (game.getHome_team_score() > game.getVisitor_team_score()) {
-                        homeWinStreak++;
-                    } else {
-                        homeLoseStreak++;
-                    }
-                }
-                if (game.getHome_team_score() > game.getVisitor_team_score()) {
-                    totalWins++;
-                } else {
-                    totalLoss++;
-                }
-            }
-            // }
-
-            if ((game.getVisitor_team().getId() == teamId)) {
                 if (0 == game.getPeriod()) {// keep the next game state up to date
-                    nextGame = game;
+                    nextGameHomeTeam = game.getHome_team().getId() == teamId;
                 }
-                if ("Final".equals(game.getStatus())) {
-                    seasonPpg += game.getVisitor_team_score();
-                    seasonOppg += game.getHome_team_score();
-                    gamesPlayed++;
-                    awayGameIdx++;
 
-                    if (awayGameIdx <= 2) {
+                if ("Final".equals(game.getStatus())) {
+                    gamesPlayed++;// can refactor this with homegameidx + awaygameidx
+                    seasonPpg += isHomeTeam ? game.getHome_team_score() : game.getVisitor_team_score();
+                    seasonOppg += isHomeTeam ? game.getVisitor_team_score() : game.getHome_team_score();
+                    if (isHomeTeam) {
+                        homeGameIdx++;
+                        if (game.getHome_team_score() > game.getVisitor_team_score()) {
+                            totalWins++;
+                        } else {
+                            totalLoss++;
+                        }
+                    } else {
+                        awayGameIdx++;
+                        if (game.getHome_team_score() < game.getVisitor_team_score()) {
+                            totalWins++;
+                        } else {
+                            totalLoss++;
+                        }
+                    }
+
+                    if (gamesPlayed == 1) {
+                        lastPf += isHomeTeam ? game.getHome_team_score() : game.getVisitor_team_score();
+                        lastPa += isHomeTeam ? game.getVisitor_team_score() : game.getHome_team_score();
+
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                        Calendar lastGame = Calendar.getInstance();
+                        Calendar today = Calendar.getInstance();
+                        lastGame.setTime(sdf.parse(game.getDate().replace("T00:00:00.000Z", "")));
+                        // subtract 1 in daysRested because we dont want to count today as a rest day
+                        daysRested = TimeUnit.MILLISECONDS.toDays(today.getTimeInMillis() - lastGame.getTimeInMillis())
+                                - 1;
+                    }
+
+                    if (gamesPlayed <= 5) {
+                        last5Pf += isHomeTeam ? game.getHome_team_score() : game.getVisitor_team_score();
+                        last5Pa += isHomeTeam ? game.getVisitor_team_score() : game.getHome_team_score();
+                    }
+
+                    if (gamesPlayed <= 10) {
+                        last10Pf += isHomeTeam ? game.getHome_team_score() : game.getVisitor_team_score();
+                        last10Pa += isHomeTeam ? game.getVisitor_team_score() : game.getHome_team_score();
+                    }
+
+                    if (isHomeTeam && homeGameIdx <= 2) {
+                        last2HomePf += game.getHome_team_score();
+                        last2HomePa += game.getVisitor_team_score();
+                    }
+
+                    if (isHomeTeam && homeGameIdx <= 5) { // can refactor this to be in the same block as other
+                        last5HomePf += game.getHome_team_score();
+                        last5HomePa += game.getVisitor_team_score();
+                    }
+
+                    if (!isHomeTeam && awayGameIdx <= 2) {
                         last2AwayPa += game.getHome_team_score();
                         last2AwayPf += game.getVisitor_team_score();
                     }
 
-                    if (awayGameIdx <= 5) { // can refactor this to be in the same block as other homeGameIdx
-                                            // calculations
+                    if (!isHomeTeam && awayGameIdx <= 5) { // can refactor this to be in the same block as other
                         last5AwayPa += game.getHome_team_score();
                         last5AwayPf += game.getVisitor_team_score();
                     }
 
-                    if (gamesPlayed == 1) {
-                        lastPa += game.getHome_team_score();
-                        lastPf += game.getVisitor_team_score();
-                        lastGameDateStr = game.getDate().replace("T00:00:00.000Z", "");
-                    }
-                    if (gamesPlayed <= 5) {
-                        last5Pa += game.getHome_team_score();
-                        last5Pf += game.getVisitor_team_score();
-                    }
-                    if (gamesPlayed <= 10) {
-                        last10Pa += game.getHome_team_score();
-                        last10Pf += game.getVisitor_team_score();
-                    }
-                    if (gamesPlayed <= STREAK_GAMES) { // try for a streak with last x games played
-                        if (game.getHome_team_score() < game.getVisitor_team_score()) {
-                            winStreak++;
+                    if (gamesPlayed <= STREAK_GAMES) {
+                        if (isHomeTeam) {
+                            if (game.getHome_team_score() < game.getVisitor_team_score()) {
+                                winStreak++;
+                            } else {
+                                loseStreak++;
+                            }
                         } else {
-                            loseStreak++;
+                            if (game.getHome_team_score() > game.getVisitor_team_score()) {
+                                winStreak++;
+                            } else {
+                                loseStreak++;
+                            }
                         }
                     }
-                    if (awayGameIdx <= STREAK_GAMES) { // try for a streak with last x games played
-                        if (game.getHome_team_score() < game.getVisitor_team_score()) {
-                            awayWinStreak++;
-                        } else {
-                            awayLoseStreak++;
+
+                    if (isHomeTeam) {
+                        if (homeGameIdx <= STREAK_GAMES) {
+                            if (game.getHome_team_score() > game.getVisitor_team_score()) {
+                                homeWinStreak++;
+                            } else {
+                                homeLoseStreak++;
+                            }
                         }
-                    }
-                    if (game.getHome_team_score() < game.getVisitor_team_score()) {
-                        totalWins++;
                     } else {
-                        totalLoss++;
+                        if (awayGameIdx <= STREAK_GAMES) {
+                            if (game.getHome_team_score() < game.getVisitor_team_score()) {
+                                awayWinStreak++;
+                            } else {
+                                awayLoseStreak++;
+                            }
+                        }
                     }
                 }
+                teamStatsJo.put("seasonPpg", seasonPpg);
+                teamStatsJo.put("seasonOppg", seasonOppg);
+                teamStatsJo.put("gamesPlayed", gamesPlayed);
+                teamStatsJo.put("lastPf", lastPf);
+                teamStatsJo.put("lastPa", lastPa);
+                teamStatsJo.put("daysRested", daysRested);
+                teamStatsJo.put("last5Pf", last5Pf);
+                teamStatsJo.put("last5Pa", last5Pa);
+                teamStatsJo.put("last10Pf", last10Pf);
+                teamStatsJo.put("last10Pa", last10Pa);
+                teamStatsJo.put("isHomeTeam", nextGameHomeTeam);
+                teamStatsJo.put("homeGameIdx", homeGameIdx);
+                teamStatsJo.put("awayGameIdx", awayGameIdx);
+                teamStatsJo.put("last2HomePf", last2HomePf);
+                teamStatsJo.put("last2HomePa", last2HomePa);
+                teamStatsJo.put("last5HomePf", last5HomePf);
+                teamStatsJo.put("last5HomePa", last5HomePa);
+                teamStatsJo.put("last2AwayPf", last2AwayPf);
+                teamStatsJo.put("last2AwayPa", last2AwayPa);
+                teamStatsJo.put("last5AwayPf", last5AwayPf);
+                teamStatsJo.put("last5AwayPa", last5AwayPa);
+                teamStatsJo.put("winStreak", winStreak);
+                teamStatsJo.put("loseStreak", loseStreak);
+                teamStatsJo.put("homeWinStreak", homeWinStreak);
+                teamStatsJo.put("homeLoseStreak", homeLoseStreak);
+                teamStatsJo.put("awayWinStreak", awayWinStreak);
+                teamStatsJo.put("awayLoseStreak", awayLoseStreak);
+                teamStatsJo.put("totalLoss", totalLoss);
+                teamStatsJo.put("totalWins", totalWins);
+                teamMap.put(teamId, teamStatsJo);
             }
         }
-        return retGamesJa;
+        return teamMap;
     }
 
     public boolean compareTeams(int a, int b) {

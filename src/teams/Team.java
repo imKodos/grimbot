@@ -43,7 +43,7 @@ public class Team {
     private final int totalLoss;
     private final int numStartersInjured;
     private final Vector<String> injuredPlayers;
-    private final JSONArray teamJsonArr;
+    private final JSONObject teamJsonObj;
 
     public TeamName getName() {
         return this.name;
@@ -185,6 +185,10 @@ public class Team {
         return injuredPlayers;
     }
 
+    public JSONObject getTeamJsonObj() {
+        return teamJsonObj;
+    }
+
     public static class Builder {
         // required fields
         private final TeamName name;
@@ -226,7 +230,7 @@ public class Team {
         private int totalLoss = 0;
         private int numStartersInjured = 0;
         private Vector<String> injuredPlayers;;
-        private JSONArray teamJsonArr;
+        private JSONObject teamJsonObj;
 
         public Builder(TeamName name) {
             this.name = name;
@@ -402,6 +406,11 @@ public class Team {
             return this;
         }
 
+        public Builder teamJsonObj(JSONObject val) {
+            teamJsonObj = val;
+            return this;
+        }
+
         public Team build() {
             return new Team(this);
         }
@@ -443,37 +452,7 @@ public class Team {
         totalLoss = builder.totalLoss;
         numStartersInjured = builder.numStartersInjured;
         injuredPlayers = builder.injuredPlayers;
-
-        // build a JSONArray on each team build
-        JSONObject curTeamJo = new JSONObject();
-        teamJsonArr = new JSONArray();
-        curTeamJo.put("name", name);
-        curTeamJo.put("shortName", shortName);
-        curTeamJo.put("teamName", teamName);
-        curTeamJo.put("teamId", teamId);
-        curTeamJo.put("totalWins", totalWins);
-        curTeamJo.put("totalLoss", totalLoss);
-        curTeamJo.put("lastGameInfo", lastGameInfo);
-        curTeamJo.put("lastPF", lastPF);
-        curTeamJo.put("lastPA", lastPA);
-        curTeamJo.put("last5PF", last5PF);
-        curTeamJo.put("last5PA", last5PA);
-        curTeamJo.put("last10PF", last10PF);
-        curTeamJo.put("last10PA", last10PA);
-        curTeamJo.put("seasonAvgPf", seasonAvgPf);
-        curTeamJo.put("seasonAvgPa", seasonAvgPa);
-        curTeamJo.put("daysRested", daysRested);
-        curTeamJo.put("isHomeTeam", isHomeTeam);
-        curTeamJo.put("last2AwayPa", last2AwayPa);
-        curTeamJo.put("last2AwayPf", last2AwayPf);
-        curTeamJo.put("last5AwayPa", last5AwayPa);
-        curTeamJo.put("last5AwayPf", last5AwayPf);
-        curTeamJo.put("last2HomePa", last2HomePa);
-        curTeamJo.put("last2HomePf", last2HomePf);
-        curTeamJo.put("last5HomePa", last5HomePa);
-        curTeamJo.put("last5HomePf", last5HomePf);
-        teamJsonArr.add(curTeamJo);
-
+        teamJsonObj = builder.teamJsonObj;
     }
 
 }

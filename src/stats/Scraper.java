@@ -1,9 +1,11 @@
 package stats;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Vector;
 
 import org.json.simple.JSONArray;
@@ -12,6 +14,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import teams.Team;
 
 public class Scraper {
 
@@ -123,13 +127,20 @@ public class Scraper {
         }
 
         public static void main(String[] args) throws IOException {
+                HashMap<Integer, JSONObject> teamMap = new HashMap<>();
 
                 JSONObject jo = new JSONObject();
                 jo.put("test", 2);
                 jo.put(2, 3);
-                // int testInt = jo.get("test12") == null;
-                // System.out.println(jo.get("test"));
-                System.out.println(jo.get(2));
+                jo.put("teamId", 3);
+                teamMap.put(3, jo);
+
+                jo = new JSONObject();
+                jo.put("test", 2);
+                jo.put(2, 3);
+                jo.put("teamId", 2);
+                teamMap.put(2, jo);
+                System.out.println(teamMap.get(3).get("test"));
         }
 
 }
