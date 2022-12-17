@@ -195,14 +195,12 @@ public class TeamUtil {
             int numStartersInjured = (int) startingInjuries.get("totalStartersInjured");
             Vector<String> injuredPlayerVec = (Vector<String>) startingInjuries.get("injuredPlayers");
             // TODO LIST
-            // can i refactor putting stats straight into object, instead of creating a
-            // variable first then adding to map later?
             // look into adding a method to handle the above?
             // fix pf pa calculations above, can be refactored to be simpler with indexes
             // calculations -- add if over .600 team plays under .400 team, add variance
             // can i refactor any of the above methods and generators
             // fix ui
-            // get rid of team builder and just add team setters
+            // get rid of team builder and just add team setters??
             Team team = new Team.Builder(TeamUtil.TeamName.getById(teamId))
                     .teamName(teamName)
                     .teamId(teamId)

@@ -133,10 +133,6 @@ public class Team {
         return seasonAvgPf;
     }
 
-    public JSONArray getTeamJsonArray() {
-        return teamJsonArr;
-    }
-
     public long getDaysRested() {
         return daysRested;
     }
