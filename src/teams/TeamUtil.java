@@ -3,8 +3,10 @@ package teams;
 import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -121,37 +123,12 @@ public class TeamUtil {
 
     }
 
-    public static ArrayList<Team> generateTeamList()
-            throws KeyManagementException, NoSuchAlgorithmException, ParseException,
-            org.json.simple.parser.ParseException {
-        Map<String, String> playersPropertiesMap = new HashMap<>();
-        playersPropertiesMap.put("X-RapidAPI-Key", "0d5ab3a4bfmsh5174a54093fd0f6p12a4ffjsn47f368b3d6ea");
-        // JSONObject players = stats.get("https://free-nba.p.rapidapi.com/players",
-        // "?page=0&per_page=25", playersPropertiesMap);
-        JSONObject teams = FetchStats.get("https://www.balldontlie.io/api/v1/teams");
-        // https://www.balldontlie.io/api/v1/games?seasons[]=2022&page=50
-        ArrayList<Team> teamList = new ArrayList<>();
-        JSONArray teamsJson = (JSONArray) teams.get("data");
-        for (int i = 0; i < teamsJson.size(); i++) { // build each team -- todo maybe look into making this a map where
-                                                     // the key is the teamId or team name enum
-            JSONObject teamObj = (JSONObject) teamsJson.get(i);
-            Long longId = (Long) teamObj.get("id");// comes from json as a long
-            int teamId = longId.intValue();
-            Team team = new Team.Builder(TeamUtil.TeamName.getById(teamId))
-                    .teamName(TeamUtil.TeamName.getTeamByName(teamId).get().getName())
-                    .teamId(teamId)
-                    .last5PF(100)
-                    .last5PA(110)
-                    .build();
-
-            teamList.add(team);
-        }
-        return teamList;
-    }
-
     public static Map<TeamName, Team> generateTeamMap()
             throws KeyManagementException, NoSuchAlgorithmException, ParseException,
             org.json.simple.parser.ParseException, IOException {
+
+        long start = System.nanoTime();
+        System.out.println("entry generate Teams: " + (System.nanoTime() - start) / 1000000 + "ms");
 
         // build all the games
         // start with 1 page of games
@@ -160,6 +137,8 @@ public class TeamUtil {
         JSONArray gamesJoArr = (JSONArray) gamesJo.get("data");
         JSONObject gamesMetaObj = (JSONObject) gamesJo.get("meta");
         Long gamesPages = (Long) gamesMetaObj.get("total_pages"); // total number of
+
+        System.out.println("start retrieve games via api: " + (System.nanoTime() - start) / 1000000 + "ms");
         // pages to iterate
         for (int i = 2; i <= gamesPages.intValue(); i++) {
             JSONObject curGamesJo = FetchStats
@@ -168,10 +147,14 @@ public class TeamUtil {
             JSONArray curGamesArr = (JSONArray) curGamesJo.get("data");
             gamesJoArr.addAll(curGamesArr);
         }
+
+        System.out.println("end retrieve games via api: " + (System.nanoTime() - start) / 1000000 + "ms");
+
         Gson gson = new Gson();
         Games[] gamesArray = gson.fromJson(gamesJoArr.toString(), Games[].class); // populate Game objects from array
         Collections.sort(Arrays.asList(gamesArray));
 
+        System.out.println("parsed games to gson: " + (System.nanoTime() - start) / 1000000 + "ms");
         Map<TeamName, Team> teamMap = new HashMap<>();
         JSONObject teams = FetchStats.get("https://www.balldontlie.io/api/v1/teams");
         JSONArray teamsJson = (JSONArray) teams.get("data");
@@ -179,6 +162,9 @@ public class TeamUtil {
 
         Map<Integer, JSONObject> totalTeamStatsMap = generateGames(gamesArray); // returns teamId and details
 
+        System.out.println("iterated all games and populated map: " + (System.nanoTime() - start) / 1000000 + "ms");
+
+        System.out.println("start team builder iterator: " + (System.nanoTime() - start) / 1000000 + "ms");
         for (int i = 0; i < numTeams; i++) {
             JSONObject teamObj = (JSONObject) teamsJson.get(i);
             Long longId = (Long) teamObj.get("id");// comes from json as a long
@@ -187,7 +173,6 @@ public class TeamUtil {
             String shortName = TeamUtil.TeamName.getShortName(teamId);
             String espnUrl = TeamUtil.TeamName.getEspnUrl(teamId);
             String teamName = TeamUtil.TeamName.getTeamByName(teamId).get().getName();
-
             JSONObject recentGameStats = Scraper.getRecentGameStats(shortName, espnUrl);
             String lastGameInfo = (String) recentGameStats.get("lastGameInfo");
 
@@ -201,6 +186,13 @@ public class TeamUtil {
             // can i refactor any of the above methods and generators
             // fix ui
             // get rid of team builder and just add team setters??
+            // use ajax
+            // figure out how to cut down time from scraping and api call
+            // remove the recent game stats scrape
+            // can i skip through the images and extra page load stuff on screen scrape?
+            // get api to call to be more efficient by using the dates. serialize data to a
+            // file, read file, get last finished date-- use search from there as a start
+            // date, end date as finals game
             Team team = new Team.Builder(TeamUtil.TeamName.getById(teamId))
                     .teamName(teamName)
                     .teamId(teamId)
@@ -240,6 +232,7 @@ public class TeamUtil {
                     .build();
             teamMap.put(TeamUtil.TeamName.getById(teamId), team);
         }
+        System.out.println("all teams built: " + (System.nanoTime() - start) / 1000000 + "ms");
         return teamMap;
     }
 
@@ -417,10 +410,6 @@ public class TeamUtil {
         return teamMap;
     }
 
-    public boolean compareTeams(int a, int b) {
-        return a > b;
-    }
-
     public static Team validateTeam(String request, HashMap<TeamName, Team> teamMap) {
         if (request != null && !request.equals("-1") && !request.equals("") && !request.equals("null")) {
             return teamMap.get(TeamUtil.TeamName.getById(Integer.parseInt(request)));// get from teamMap
@@ -431,7 +420,6 @@ public class TeamUtil {
                     .build();
             return team;
         }
-
     }
 
 }

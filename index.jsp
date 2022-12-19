@@ -1,4 +1,5 @@
 <%@ page import="stats.FetchStats" %>
+
 <%@ page import="teams.TeamUtil" %>
 <%@ page import="teams.TeamUtil.TeamName" %>
 <%@ page import="teams.Team" %>
@@ -8,15 +9,20 @@
 <%@ page import="java.util.Iterator" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.Optional" %>
+<%@ page import="stats.Prediction" %>
 
 <%
 //on entry, if theres no handle on the list of teams, generate them -- prevents unnecessary api calls
+
 if(session.getAttribute("teamMap") == null){ 
         session.setAttribute("teamMap",  TeamUtil.generateTeamMap());
 }
 
 Team team1 = TeamUtil.validateTeam(request.getParameter("t1"), (HashMap<TeamName, Team>) session.getAttribute("teamMap"));
 Team team2 = TeamUtil.validateTeam(request.getParameter("t2"), (HashMap<TeamName, Team>) session.getAttribute("teamMap"));
+
+Prediction p = new Prediction(team1, team2);
+
 %>
 
 <html>
@@ -94,7 +100,7 @@ Team team2 = TeamUtil.validateTeam(request.getParameter("t2"), (HashMap<TeamName
                       </p>
                     </div>
                     <div style="background: red">
-                        <p>Projected Score: </p>
+                        <p>Projected Score: <%=p.getScorePrediction()%></p>
                         <p>Projected Total:</p>
                     </div>
                 </div>
