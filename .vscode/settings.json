@@ -5,7 +5,7 @@
   ],
   "java.project.sourcePaths": ["src"],
   "java.project.outputPath": "WEB-INF/classes",
-  "prettier.printWidth": 120,
+  "prettier.printWidth": 150,
   // "java.dependency.packagePresentation": "hierarchical"
   // "java.project.sourcePaths": ["src"]
 

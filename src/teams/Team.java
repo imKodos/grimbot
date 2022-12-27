@@ -11,6 +11,8 @@ public class Team {
     private final TeamName name;
     private final String teamName;
     private final String shortName;
+    private final String fullName;
+    // private final String city;
     // private final String espnUrl;
     private final String lastGameInfo;
     private final int teamId;
@@ -30,7 +32,8 @@ public class Team {
     private final double last2HomePf;
     private final double last5HomePa;
     private final double last5HomePf;
-    private final double varianceWeight;
+    private final double normalizedPf;
+    private final double normalizedPa;
     private final long daysRested;
     private final boolean isHotStreak;
     private final boolean isColdStreak;
@@ -113,8 +116,20 @@ public class Team {
         return last5HomePf;
     }
 
+    public double getNormalizedPf() {
+        return normalizedPf;
+    }
+
+    public double getNormalizedPa() {
+        return normalizedPa;
+    }
+
     public String getShortName() {
         return shortName;
+    }
+
+    public String getFullName() {
+        return fullName;
     }
 
     // public String getEspnCode() {
@@ -190,6 +205,7 @@ public class Team {
         private final TeamName name;
         private int teamId = -1;
         private String shortName = "";
+        private String fullName = "";
         // private String espnUrl = "";
 
         // optional fields
@@ -211,6 +227,8 @@ public class Team {
         private double last2HomePa = -1;
         private double last5HomePf = -1;
         private double last5HomePa = -1;
+        private double normalizedPf = -1;
+        private double normalizedPa = -1;
         private double varianceWeight = 1.00; // will fluctuate depending on the booleans below. will multiply outcome
         private long daysRested = -1;
 
@@ -239,6 +257,11 @@ public class Team {
 
         public Builder shortName(String val) {
             shortName = val;
+            return this;
+        }
+
+        public Builder fullName(String val) {
+            fullName = val;
             return this;
         }
 
@@ -337,6 +360,16 @@ public class Team {
             return this;
         }
 
+        public Builder normalizedPf(double val) {
+            normalizedPf = val;
+            return this;
+        }
+
+        public Builder normalizedPa(double val) {
+            normalizedPa = val;
+            return this;
+        }
+
         public Builder varianceWeight(double val) {
             varianceWeight = val;
             return this;
@@ -415,6 +448,7 @@ public class Team {
     private Team(Builder builder) {
         name = builder.name;
         shortName = builder.shortName;
+        fullName = builder.fullName;
         // espnUrl = builder.espnUrl;
         teamId = builder.teamId;
         lastGameInfo = builder.lastGameInfo;
@@ -435,7 +469,8 @@ public class Team {
         last2HomePf = builder.last2HomePf;
         last5HomePa = builder.last5HomePa;
         last5HomePf = builder.last5HomePf;
-        varianceWeight = builder.varianceWeight;
+        normalizedPf = builder.normalizedPf;
+        normalizedPa = builder.normalizedPa;
         daysRested = builder.daysRested;
         isHomeTeam = builder.isHomeTeam;
         isHotStreak = builder.isHotStreak;

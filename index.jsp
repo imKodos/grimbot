@@ -8,19 +8,32 @@
 <%@ page import="org.json.simple.JSONArray"%>
 <%@ page import="java.util.Iterator" %>
 <%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.List" %>
 <%@ page import="java.util.Optional" %>
 <%@ page import="stats.Prediction" %>
+<%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="java.util.Date" %>
 
 <%
+ SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");  
+ Date date = new Date();  
 //on entry, if theres no handle on the list of teams, generate them -- prevents unnecessary api calls
 
 if(session.getAttribute("teamMap") == null){ 
         session.setAttribute("teamMap",  TeamUtil.generateTeamMap());
 }
 
-Team team1 = TeamUtil.validateTeam(request.getParameter("t1"), (HashMap<TeamName, Team>) session.getAttribute("teamMap"));
-Team team2 = TeamUtil.validateTeam(request.getParameter("t2"), (HashMap<TeamName, Team>) session.getAttribute("teamMap"));
+//if(session.getAttribute("OffrankingsList") == null){ 
+       // session.setAttribute("teamMap",  TeamUtil.generateTeamMap());
+    //  List<Double> offensiveRankings= new ArrayList<Double>();
+       //for (HashMap.Entry<TeamName,Team> teamEntry : teamMap.entrySet()) {
+  //     for(Team curTeam: (HashMap<TeamName,Team>) session.getAttribute("teamMap")){
 
+    //   }
+//}
+
+Team team1 = TeamUtil.validateTeam(request.getParameter("t1"), (HashMap<TeamName, Team>) session.getAttribute("teamMap"));
+Team team2 = TeamUtil.validateTeam(request.getParameter("t2"), (HashMap<TeamName, Team>) session.getAttribute("teamMap")); 
 Prediction p = new Prediction(team1, team2);
 
 %>
@@ -99,9 +112,11 @@ Prediction p = new Prediction(team1, team2);
                         <input id="t2" class="teamList" value="<%=team2.getTeamId()%>" />
                       </p>
                     </div>
-                    <div style="background: red">
+                    <div style="background: black">
                         <p>Projected Score: <%=p.getScorePrediction()%></p>
-                        <p>Projected Total:</p>
+                        <p>Projected Total: <%=p.getTotalScorePrediction()%></p>
+                        <p><%=team1.getShortName() + " variance: " + p.getT1Variance()%></p>
+                        <p><%=team2.getShortName() + " variance: " + p.getT2Variance()%></p>
                     </div>
                 </div>
                 <div class="midView">
@@ -118,8 +133,14 @@ Prediction p = new Prediction(team1, team2);
                         <p>Season OPPG: <%=team1.getSeasonAvgPa()%></p>
                         <p>Days Rest: <%=team1.getDaysRested()%></p>  
                         <p>is home team: <%=team1.isHomeTeam()%></p>               
-                        <p>last 2 home PF: <%=team1.getLast2HomePf()%></p>               
-                        <p>last 2 away PF: <%=team1.getLast2AwayPf()%></p>               
+                        <p>Last 2 home PF: <%=team1.getLast2HomePf()%></p>               
+                        <p>Last 2 home PA: <%=team1.getLast2HomePa()%></p> 
+                        <p>Last 5 home PF: <%=team1.getLast5HomePf()%></p>               
+                        <p>Last 5 home PA: <%=team1.getLast5HomePa()%></p>                 
+                        <p>Last 2 away PF: <%=team1.getLast2AwayPf()%></p>               
+                        <p>Last 2 away PA: <%=team1.getLast2AwayPa()%></p>              
+                        <p>Last 5 away PF: <%=team1.getLast5AwayPf()%></p>               
+                        <p>Last 5 away PA: <%=team1.getLast5AwayPa()%></p>               
                         <p>home Streak <%=team1.isHomeHotStreak()%></p>               
                         <p>home cold Streak <%=team1.isHomeColdStreak()%></p>                
                         <p>away Streak <%=team1.isAwayHotStreak()%></p>               
@@ -140,14 +161,156 @@ Prediction p = new Prediction(team1, team2);
                     </div>
                 </div>
                 <div class="botView">
-                   <div>
-                        <p id="t2Name">Team 1: <%=team2.getTeamName()%></p>
-                        <p>Last Game Result</p>
-                        <p>Last 5 PF: <%=team2.getLast5PF()%></p>
-                        <p>Last 5 PA: <%=team2.getLast5PA()%></p>
-                        <p>Offensive Ranking</p>
-                        <p>Defensive Ranking</p>
+                  <div>
+                        <p id="t2Name">Team 2: <%=team2.getTeamName() + "  (" + team2.getShortName()+") " + team2.getTotalWins() +"-" +team1.getTotalLoss()%></p>
+                        <p>Last Game Result: <%=team2.getLastGameInfo()%></p>
+                        <p>Last PF: <%=team2.getLastPF()%></p>
+                        <p>Last PA: <%=team2.getLastPA()%></p>
+                        <p>Last 5 PF Average: <%=team2.getLast5PF()%></p>
+                        <p>Last 5 PA Average: <%=team2.getLast5PA()%></p>
+                        <p>Last 10 PF Average: <%=team2.getLast10PF()%></p>
+                        <p>Last 10 PA Average: <%=team2.getLast10PA()%></p>
+                        <p>Season PPG: <%=team2.getSeasonAvgPf()%></p>
+                        <p>Season OPPG: <%=team2.getSeasonAvgPa()%></p>
+                        <p>Days Rest: <%=team2.getDaysRested()%></p>  
+                        <p>is home team: <%=team2.isHomeTeam()%></p>               
+                        <p>Last 2 home PF: <%=team2.getLast2HomePf()%></p>               
+                        <p>Last 2 home PA: <%=team2.getLast2HomePa()%></p>  
+                        <p>Last 5 home PF: <%=team2.getLast5HomePf()%></p>               
+                        <p>Last 5 home PA: <%=team2.getLast5HomePa()%></p>              
+                        <p>Last 2 away PF: <%=team2.getLast2AwayPf()%></p>               
+                        <p>Last 2 away PA: <%=team2.getLast2AwayPa()%></p>                           
+                        <p>Last 5 away PF: <%=team2.getLast5AwayPf()%></p>               
+                        <p>Last 5 away PA: <%=team2.getLast5AwayPa()%></p>               
+                        <p>home Streak <%=team2.isHomeHotStreak()%></p>               
+                        <p>home cold Streak <%=team2.isHomeColdStreak()%></p>                
+                        <p>away Streak <%=team2.isAwayHotStreak()%></p>               
+                        <p>away cold Streak <%=team2.isAwayColdStreak()%></p>               
+                        <p>num Injuries <%=team2.getNumStartersInjured()%></p>  
+
+                        <p>Injured Players List: 
+                        <%
+                        if(team2.getInjuredPlayers()==null || team2.getInjuredPlayers().isEmpty()){
+                             out.print(" None");
+                        }else{
+                            for(String s: team2.getInjuredPlayers()){
+                                out.print("<br>"+s);
+                            }
+                        }                   
+                        %>
+                        </p>               
                     </div>
+                </div>
+                <div id="wpWriteUp">
+                <p>
+                <%=team1.getFullName() + (team1.isHomeTeam()?" vs ": " @ ") + team2.getFullName() + " Prediction and Picks NBA (" + formatter.format(date) +")" %> 
+                </p>
+                <p>
+                Let's analyze the matchup between the <%=team1.getFullName() + " (" + team1.getTotalWins()+"-" + team1.getTotalLoss()+")"%>
+                &nbsp;and the <%=team2.getFullName() + " (" + team2.getTotalWins()+"-" +team2.getTotalLoss()+")"%>
+                </p>
+                <h2>
+                <%=team1.getFullName()%>
+                </h2>
+                <p>
+                The result from the last <%=team1.getTeamName()%> game was:<br>
+                <%=team1.getLastGameInfo()%><br>
+                If we take a look deeper into the team stats:
+                <p>Days Rest: <%=team1.getDaysRested()%></p>
+                <p>Last 5 PF Average: <%=team1.getLast5PF()%></p>
+                <p>Last 5 PA Average: <%=team1.getLast5PA()%></p>
+                <p>Last 10 PF Average: <%=team1.getLast10PF()%></p>
+                <p>Last 10 PA Average: <%=team1.getLast10PA()%></p>
+                <% if(team1.isHomeTeam()){ %>
+                <p>Last 2 home PF: <%=team1.getLast2HomePf()%></p>               
+                <p>Last 2 home PA: <%=team1.getLast2HomePa()%></p> 
+                <p>Last 5 home PF: <%=team1.getLast5HomePf()%></p>               
+                <p>Last 5 home PA: <%=team1.getLast5HomePa()%></p> 
+                  <%if(team1.isHomeHotStreak()){ %>
+                   <p> <%=team1.getTeamName() + " is currently on a hot streak at home."%></p>
+                  <%} %>
+                  <%if(team1.isHomeColdStreak()){ %>
+                    <p> <%=team1.getTeamName() +" is currently on a cold streak at home."%></p>
+                  <%} %>
+                <% }else{ %>
+                <p>Last 2 away PF: <%=team1.getLast2AwayPf()%></p>               
+                <p>Last 2 away PA: <%=team1.getLast2AwayPa()%></p>              
+                <p>Last 5 away PF: <%=team1.getLast5AwayPf()%></p>               
+                <p>Last 5 away PA: <%=team1.getLast5AwayPa()%></p> 
+                    <%if(team1.isAwayHotStreak()){ %>
+                   <p> <%=team1.getTeamName() +" is currently on a hot streak on the road."%></p>
+                  <%} %>
+                  <%if(team1.isAwayColdStreak()){ %>
+                    <p> <%=team1.getTeamName() +" is currently on a cold streak on the road."%></p>
+                  <%} %>
+                <% } %>
+                </p>
+                <p>There's <%=team1.getNumStartersInjured() +" injured players on the starting lineup"%></p>  
+                <p><%if(team1.getNumStartersInjured()>0){%>
+                <%
+                if(team1.getInjuredPlayers()==null || team1.getInjuredPlayers().isEmpty()){
+                        out.print(" None");
+                }else{
+                    for(String s: team1.getInjuredPlayers()){
+                        out.print("<br>"+s);
+                    }
+                }                   
+                }%>
+                </p> 
+                 <h2>
+                <%=team2.getFullName()%>
+                </h2>
+                <p>
+                The result from the last <%=team2.getTeamName()%> game was:<br>
+                <%=team2.getLastGameInfo()%><br>
+                If we take a look deeper into the team stats:
+                <p>Days Rest: <%=team2.getDaysRested()%></p>
+                <p>Last 5 PF Average: <%=team2.getLast5PF()%></p>
+                <p>Last 5 PA Average: <%=team2.getLast5PA()%></p>
+                <p>Last 10 PF Average: <%=team2.getLast10PF()%></p>
+                <p>Last 10 PA Average: <%=team2.getLast10PA()%></p>
+                <% if(team2.isHomeTeam()){ %>
+                <p>Last 2 home PF: <%=team2.getLast2HomePf()%></p>               
+                <p>Last 2 home PA: <%=team2.getLast2HomePa()%></p> 
+                <p>Last 5 home PF: <%=team2.getLast5HomePf()%></p>               
+                <p>Last 5 home PA: <%=team2.getLast5HomePa()%></p> 
+                  <%if(team2.isHomeHotStreak()){ %>
+                   <p> <%=team2.getTeamName() + " is currently on a hot streak at home."%></p>
+                  <%} %>
+                  <%if(team2.isHomeColdStreak()){ %>
+                    <p> <%=team2.getTeamName() +" is currently on a cold streak at home."%></p>
+                  <%} %>
+                <% }else{ %>
+                <p>Last 2 away PF: <%=team2.getLast2AwayPf()%></p>               
+                <p>Last 2 away PA: <%=team2.getLast2AwayPa()%></p>              
+                <p>Last 5 away PF: <%=team2.getLast5AwayPf()%></p>               
+                <p>Last 5 away PA: <%=team2.getLast5AwayPa()%></p> 
+                    <%if(team2.isAwayHotStreak()){ %>
+                   <p> <%=team2.getTeamName() +" is currently on a hot streak on the road."%></p>
+                  <%} %>
+                  <%if(team2.isAwayColdStreak()){ %>
+                    <p> <%=team2.getTeamName() +" is currently on a cold streak on the road."%></p>
+                  <%} %>
+                <% } %>
+                </p>
+                <p>There's <%=team2.getNumStartersInjured() +" injured players on the starting lineup"%></p>  
+                <p><%if(team2.getNumStartersInjured()>0){%>
+                <%
+                if(team2.getInjuredPlayers()==null || team2.getInjuredPlayers().isEmpty()){
+                        out.print(" None");
+                }else{
+                    for(String s: team2.getInjuredPlayers()){
+                        out.print("<br>"+s);
+                    }
+                }                   
+                }%>
+                </p> 
+                <h2>
+                Prediction and Picks
+                </h2>
+                <p>Projected Score: <%=p.getScorePrediction()%></p>
+                <p>Projected Total: <%=p.getTotalScorePrediction()%></p>
+                <p></p>
                 </div>
             </div>
         </div> 

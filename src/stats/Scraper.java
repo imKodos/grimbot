@@ -1,18 +1,15 @@
 package stats;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Vector;
-
-import org.json.simple.JSONArray;
+// import javax.lang.model.util.Elements;
 import org.json.simple.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
+// import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import teams.Team;

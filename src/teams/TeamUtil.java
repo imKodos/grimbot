@@ -24,7 +24,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 
 import stats.FetchStats;
 import stats.Games;
@@ -36,36 +35,47 @@ public class TeamUtil {
     public static int STREAK_GAMES = 4;
 
     public enum TeamName {
-        CELTICS(2, "Celtics", "BOS", "boston-celtics"), NETS(3, "Nets", "BKN", "brooklyn-nets"),
-        KNICKS(20, "Knicks", "NY", "new-york-knicks"), SIXERS(23, "76ers", "PHI", "philadelphia-76ers"),
-        RAPTORS(28, "Raptors", "TOR", "toronto-raptors"), // atlantic
-        BULLS(5, "Bulls", "CHI", "chicago-bulls"), CAVALIERS(6, "Cavaliers", "CLE", "cleveland-cavaliers"),
-        PISTONS(9, "Pistons", "DET", "detroit-pistons"), PACERS(12, "Pacers", "IND", "indiana-pacers"),
-        BUCKS(17, "Bucks", "MIL", "milwaukee-bucks"), // central
-        HAWKS(1, "Hawks", "ATL", "atlanta-hawks"), HORNETS(4, "Hornets", "CHA", "charlotte-hornets"),
-        HEAT(16, "Heat", "MIA", "miami-heat"), MAGIC(22, "Magic", "ORL", "orlando-magic"),
-        WIZARDS(30, "Wizards", "WSH", "washington-wizards"), // Southeast
-        NUGGETS(8, "Nuggets", "DEN", "denver-nuggets"),
-        TIMBERWOLVES(18, "Timberwolves", "MIN", "minnesota-timberwolves"),
-        BLAZERS(25, "Blazers", "POR", "portland-trail-blazers"), JAZZ(29, "Jazz", "UTAH", "utah-jazz"),
-        THUNDER(21, "Thunder", "OKC", "oklahoma-city-thunder"), // northwest
-        WARRIORS(10, "Warriors", "GS", "golden-state-warriors"), CLIPPERS(13, "Clippers", "LAC", "la-clippers"),
-        LAKERS(14, "Lakers", "LAL", "los-angeles-lakers"), SUNS(24, "Suns", "PHX", "phoenix-suns"),
-        KINGS(26, "Kings", "SAC", "sacramento-kings"), // pacific
-        MAVERICKS(7, "Mavericks", "DAL", "dallas-mavericks"), ROCKETS(11, "Rockets", "HOU", "houston-rockets"),
-        GRIZZLIES(15, "Grizzlies", "MEM", "memphis-grizzlies"), PELICANS(19, "Pelicans", "NO", "new-orleans-pelicans"),
-        SPURS(27, "Spurs", "SA", "san-antonio-spurs"), // southwest
-        UNKNOWN(-1, "N/A", "N/A", "N/A");
+        CELTICS(2, "Celtics", "BOS", "Boston", "boston-celtics"), NETS(3, "Nets", "BKN", "Brooklyn", "brooklyn-nets"),
+        KNICKS(20, "Knicks", "NY", "New York", "new-york-knicks"),
+        SIXERS(23, "76ers", "PHI", "Philadelphia", "philadelphia-76ers"),
+        RAPTORS(28, "Raptors", "TOR", "Toronto", "toronto-raptors"), // atlantic
+        BULLS(5, "Bulls", "CHI", "Chicago", "chicago-bulls"),
+        CAVALIERS(6, "Cavaliers", "CLE", "Cleveland", "cleveland-cavaliers"),
+        PISTONS(9, "Pistons", "DET", "Detroit", "detroit-pistons"),
+        PACERS(12, "Pacers", "IND", "Indiana", "indiana-pacers"),
+        BUCKS(17, "Bucks", "MIL", "Milwaukee", "milwaukee-bucks"), // central
+        HAWKS(1, "Hawks", "ATL", "Atlanta", "atlanta-hawks"),
+        HORNETS(4, "Hornets", "CHA", "Charlotte", "charlotte-hornets"),
+        HEAT(16, "Heat", "MIA", "Miami", "miami-heat"), MAGIC(22, "Magic", "ORL", "Orlando", "orlando-magic"),
+        WIZARDS(30, "Wizards", "WSH", "Washington", "washington-wizards"), // Southeast
+        NUGGETS(8, "Nuggets", "DEN", "Denver", "denver-nuggets"),
+        TIMBERWOLVES(18, "Timberwolves", "MIN", "Minnesota", "minnesota-timberwolves"),
+        BLAZERS(25, "Blazers", "POR", "Portland", "portland-trail-blazers"),
+        JAZZ(29, "Jazz", "UTAH", "Utah", "utah-jazz"),
+        THUNDER(21, "Thunder", "OKC", "Oklahoma City", "oklahoma-city-thunder"), // northwest
+        WARRIORS(10, "Warriors", "GS", "Golden State", "golden-state-warriors"),
+        CLIPPERS(13, "Clippers", "LAC", "Los Angeles", "la-clippers"),
+        LAKERS(14, "Lakers", "LAL", "Los Angeles", "los-angeles-lakers"),
+        SUNS(24, "Suns", "PHX", "Phoenix", "phoenix-suns"),
+        KINGS(26, "Kings", "SAC", "Sacramento", "sacramento-kings"), // pacific
+        MAVERICKS(7, "Mavericks", "DAL", "Dallas", "dallas-mavericks"),
+        ROCKETS(11, "Rockets", "HOU", "Houston", "houston-rockets"),
+        GRIZZLIES(15, "Grizzlies", "MEM", "Memphis", "memphis-grizzlies"),
+        PELICANS(19, "Pelicans", "NO", "New Orleans", "new-orleans-pelicans"),
+        SPURS(27, "Spurs", "SA", "San Antonio", "san-antonio-spurs"), // southwest
+        UNKNOWN(-1, "N/A", "N/A", "N/A", "N/A");
 
         private final int tId;
         private final String tName;
         private final String tShortName;
+        private final String tFullName;
         private final String tEspnUrlCode;
 
-        TeamName(final int id, final String name, final String shortName, final String espnUrlCode) {
+        TeamName(final int id, final String name, final String shortName, final String city, final String espnUrlCode) {
             tId = id;
             tName = name;
             tShortName = shortName;
+            tFullName = city + " " + name;
             tEspnUrlCode = espnUrlCode;
         }
 
@@ -75,6 +85,10 @@ public class TeamUtil {
 
         public int getId() {
             return tId;
+        }
+
+        public String getFullName() {
+            return tFullName;
         }
 
         public static Optional<TeamName> getTeamByName(String value) {
@@ -109,6 +123,14 @@ public class TeamUtil {
             for (TeamName e : values()) {
                 if (e.tId == (id))
                     return e.tShortName;
+            }
+            return "";
+        }
+
+        public static String getFullName(int id) {
+            for (TeamName e : values()) {
+                if (e.tId == (id))
+                    return e.tFullName;
             }
             return "";
         }
@@ -165,39 +187,52 @@ public class TeamUtil {
         System.out.println("iterated all games and populated map: " + (System.nanoTime() - start) / 1000000 + "ms");
 
         System.out.println("start team builder iterator: " + (System.nanoTime() - start) / 1000000 + "ms");
+
         for (int i = 0; i < numTeams; i++) {
             JSONObject teamObj = (JSONObject) teamsJson.get(i);
             Long longId = (Long) teamObj.get("id");// comes from json as a long
             int teamId = longId.intValue();
 
             String shortName = TeamUtil.TeamName.getShortName(teamId);
+            String fullName = TeamUtil.TeamName.getFullName(teamId);
             String espnUrl = TeamUtil.TeamName.getEspnUrl(teamId);
             String teamName = TeamUtil.TeamName.getTeamByName(teamId).get().getName();
-            JSONObject recentGameStats = Scraper.getRecentGameStats(shortName, espnUrl);
-            String lastGameInfo = (String) recentGameStats.get("lastGameInfo");
 
             JSONObject startingInjuries = Scraper.getInjuries(shortName, espnUrl);
             int numStartersInjured = (int) startingInjuries.get("totalStartersInjured");
             Vector<String> injuredPlayerVec = (Vector<String>) startingInjuries.get("injuredPlayers");
+
             // TODO LIST
-            // look into adding a method to handle the above?
-            // fix pf pa calculations above, can be refactored to be simpler with indexes
-            // calculations -- add if over .600 team plays under .400 team, add variance
+            // get a readable WP template build every team switch with stats and text
+            // (finish team 2 and prediction)
+
+            // get correct lines on excel sheet
+
+            // links from grimcodes back to results page that gets updated with results and
+            // stats
+
+            // dive into stats to see what teams or what picks are being called correctly --
+            // get more data on this for a chart
+
+            // obtain team offense and defense rank based on seasonPpg and last 5 ppg
             // can i refactor any of the above methods and generators
+            // get a normalized oppg and ppg
+            // get details on next game next to last game results
+            // add differential to score calculation instead of variance?
             // fix ui
-            // get rid of team builder and just add team setters??
             // use ajax
             // figure out how to cut down time from scraping and api call
-            // remove the recent game stats scrape
             // can i skip through the images and extra page load stuff on screen scrape?
             // get api to call to be more efficient by using the dates. serialize data to a
             // file, read file, get last finished date-- use search from there as a start
             // date, end date as finals game
+
             Team team = new Team.Builder(TeamUtil.TeamName.getById(teamId))
                     .teamName(teamName)
                     .teamId(teamId)
                     .shortName(shortName)
-                    .lastGameInfo(lastGameInfo)
+                    .fullName(fullName)
+                    .lastGameInfo((String) totalTeamStatsMap.get(teamId).get("lastGameInfo"))
                     .seasonAvgPf(Math.round((double) totalTeamStatsMap.get(teamId).get("seasonPpg")
                             / (int) totalTeamStatsMap.get(teamId).get("gamesPlayed") * 10) / 10.0)
                     .seasonAvgPa(Math.round((double) totalTeamStatsMap.get(teamId).get("seasonOppg")
@@ -279,6 +314,8 @@ public class TeamUtil {
                 int awayLoseStreak = teamMap.get(teamId) != null ? (int) teamMap.get(teamId).get("awayLoseStreak") : 0;
                 int totalWins = teamMap.get(teamId) != null ? (int) teamMap.get(teamId).get("totalWins") : 0;
                 int totalLoss = teamMap.get(teamId) != null ? (int) teamMap.get(teamId).get("totalLoss") : 0;
+                String lastGameInfo = teamMap.get(teamId) != null ? (String) teamMap.get(teamId).get("lastGameInfo")
+                        : "";
 
                 if (0 == game.getPeriod()) {// keep the next game state up to date
                     nextGameHomeTeam = game.getHome_team().getId() == teamId;
@@ -288,6 +325,7 @@ public class TeamUtil {
                     gamesPlayed++;// can refactor this with homegameidx + awaygameidx
                     seasonPpg += isHomeTeam ? game.getHome_team_score() : game.getVisitor_team_score();
                     seasonOppg += isHomeTeam ? game.getVisitor_team_score() : game.getHome_team_score();
+
                     if (isHomeTeam) {
                         homeGameIdx++;
                         if (game.getHome_team_score() > game.getVisitor_team_score()) {
@@ -319,6 +357,17 @@ public class TeamUtil {
                     if (gamesPlayed == 1) {
                         lastPf += isHomeTeam ? game.getHome_team_score() : game.getVisitor_team_score();
                         lastPa += isHomeTeam ? game.getVisitor_team_score() : game.getHome_team_score();
+
+                        lastGameInfo = isHomeTeam ? "vs " : "@ ";
+                        lastGameInfo += isHomeTeam ? game.getVisitor_team().getName()
+                                : game.getHome_team().getName();
+                        if (isHomeTeam) {
+                            lastGameInfo += game.getHome_team_score() > game.getVisitor_team_score() ? " W" : " L";
+                            lastGameInfo += game.getHome_team_score() + " - " + game.getVisitor_team_score();
+                        } else {
+                            lastGameInfo += game.getHome_team_score() < game.getVisitor_team_score() ? " W" : " L";
+                            lastGameInfo += game.getVisitor_team_score() + " - " + game.getHome_team_score();
+                        }
 
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                         Calendar lastGame = Calendar.getInstance();
@@ -378,6 +427,7 @@ public class TeamUtil {
                 teamStatsJo.put("seasonPpg", seasonPpg);
                 teamStatsJo.put("seasonOppg", seasonOppg);
                 teamStatsJo.put("gamesPlayed", gamesPlayed);
+                teamStatsJo.put("lastGameInfo", lastGameInfo);
                 teamStatsJo.put("lastPf", lastPf);
                 teamStatsJo.put("lastPa", lastPa);
                 teamStatsJo.put("daysRested", daysRested);
