@@ -3,18 +3,12 @@ package teams;
 import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Vector;
@@ -203,29 +197,25 @@ public class TeamUtil {
             Vector<String> injuredPlayerVec = (Vector<String>) startingInjuries.get("injuredPlayers");
 
             // TODO LIST
-            // get a readable WP template build every team switch with stats and text
-            // (finish team 2 and prediction)
-
-            // get correct lines on excel sheet
-
-            // links from grimcodes back to results page that gets updated with results and
-            // stats
-
             // dive into stats to see what teams or what picks are being called correctly --
             // get more data on this for a chart
 
             // obtain team offense and defense rank based on seasonPpg and last 5 ppg
-            // can i refactor any of the above methods and generators
             // get a normalized oppg and ppg
-            // get details on next game next to last game results
-            // add differential to score calculation instead of variance?
+
             // fix ui
             // use ajax
+
             // figure out how to cut down time from scraping and api call
             // can i skip through the images and extra page load stuff on screen scrape?
             // get api to call to be more efficient by using the dates. serialize data to a
             // file, read file, get last finished date-- use search from there as a start
             // date, end date as finals game
+
+            // get a readable WP template build every team switch with stats and text
+            // (finish team 2 and prediction)
+
+            // get bovada link and get 600 words a page
 
             Team team = new Team.Builder(TeamUtil.TeamName.getById(teamId))
                     .teamName(teamName)
@@ -233,6 +223,7 @@ public class TeamUtil {
                     .shortName(shortName)
                     .fullName(fullName)
                     .lastGameInfo((String) totalTeamStatsMap.get(teamId).get("lastGameInfo"))
+                    .nextGameInfo((String) totalTeamStatsMap.get(teamId).get("nextGameInfo"))
                     .seasonAvgPf(Math.round((double) totalTeamStatsMap.get(teamId).get("seasonPpg")
                             / (int) totalTeamStatsMap.get(teamId).get("gamesPlayed") * 10) / 10.0)
                     .seasonAvgPa(Math.round((double) totalTeamStatsMap.get(teamId).get("seasonOppg")
@@ -316,9 +307,15 @@ public class TeamUtil {
                 int totalLoss = teamMap.get(teamId) != null ? (int) teamMap.get(teamId).get("totalLoss") : 0;
                 String lastGameInfo = teamMap.get(teamId) != null ? (String) teamMap.get(teamId).get("lastGameInfo")
                         : "";
+                String nextGameInfo = teamMap.get(teamId) != null ? (String) teamMap.get(teamId).get("nextGameInfo")
+                        : "";
 
                 if (0 == game.getPeriod()) {// keep the next game state up to date
                     nextGameHomeTeam = game.getHome_team().getId() == teamId;
+
+                    nextGameInfo = "The next game is " + game.getVisitor_team().getFull_name() + " at "
+                            + game.getHome_team().getFull_name() + " on "
+                            + game.getDate().replace("T00:00:00.000Z", "");
                 }
 
                 if ("Final".equals(game.getStatus())) {
@@ -428,6 +425,7 @@ public class TeamUtil {
                 teamStatsJo.put("seasonOppg", seasonOppg);
                 teamStatsJo.put("gamesPlayed", gamesPlayed);
                 teamStatsJo.put("lastGameInfo", lastGameInfo);
+                teamStatsJo.put("nextGameInfo", nextGameInfo);
                 teamStatsJo.put("lastPf", lastPf);
                 teamStatsJo.put("lastPa", lastPa);
                 teamStatsJo.put("daysRested", daysRested);

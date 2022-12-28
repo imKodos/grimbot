@@ -123,6 +123,7 @@ Prediction p = new Prediction(team1, team2);
                    <div>
                         <p id="t1Name">Team 1: <%=team1.getTeamName() + "  (" + team1.getShortName()+") " + team1.getTotalWins() +"-" +team1.getTotalLoss()%></p>
                         <p>Last Game Result: <%=team1.getLastGameInfo()%></p>
+                        <p><%=team1.getNextGameInfo()%></p>
                         <p>Last PF: <%=team1.getLastPF()%></p>
                         <p>Last PA: <%=team1.getLastPA()%></p>
                         <p>Last 5 PF Average: <%=team1.getLast5PF()%></p>
@@ -164,6 +165,7 @@ Prediction p = new Prediction(team1, team2);
                   <div>
                         <p id="t2Name">Team 2: <%=team2.getTeamName() + "  (" + team2.getShortName()+") " + team2.getTotalWins() +"-" +team1.getTotalLoss()%></p>
                         <p>Last Game Result: <%=team2.getLastGameInfo()%></p>
+                        <p><%=team2.getNextGameInfo()%></p>
                         <p>Last PF: <%=team2.getLastPF()%></p>
                         <p>Last PA: <%=team2.getLastPA()%></p>
                         <p>Last 5 PF Average: <%=team2.getLast5PF()%></p>

@@ -15,6 +15,7 @@ public class Team {
     // private final String city;
     // private final String espnUrl;
     private final String lastGameInfo;
+    private final String nextGameInfo;
     private final int teamId;
     private final double seasonAvgPf;
     private final double seasonAvgPa;
@@ -140,6 +141,10 @@ public class Team {
         return lastGameInfo;
     }
 
+    public String getNextGameInfo() {
+        return nextGameInfo;
+    }
+
     public double getSeasonAvgPa() {
         return seasonAvgPa;
     }
@@ -211,6 +216,7 @@ public class Team {
         // optional fields
         private String teamName = "";
         private String lastGameInfo = "";
+        private String nextGameInfo = "";
         private double seasonAvgPf = -1;
         private double seasonAvgPa = -1;
         private int lastPF = -1;
@@ -272,6 +278,11 @@ public class Team {
 
         public Builder lastGameInfo(String val) {
             lastGameInfo = val;
+            return this;
+        }
+
+        public Builder nextGameInfo(String val) {
+            nextGameInfo = val;
             return this;
         }
 
@@ -452,6 +463,7 @@ public class Team {
         // espnUrl = builder.espnUrl;
         teamId = builder.teamId;
         lastGameInfo = builder.lastGameInfo;
+        nextGameInfo = builder.nextGameInfo;
         teamName = builder.teamName;
         seasonAvgPf = builder.seasonAvgPf;
         seasonAvgPa = builder.seasonAvgPa;
