@@ -5,10 +5,12 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Vector;
@@ -215,8 +217,6 @@ public class TeamUtil {
             // get a readable WP template build every team switch with stats and text
             // (finish team 2 and prediction)
 
-            // get bovada link and get 600 words a page
-
             Team team = new Team.Builder(TeamUtil.TeamName.getById(teamId))
                     .teamName(teamName)
                     .teamId(teamId)
@@ -259,11 +259,46 @@ public class TeamUtil {
             teamMap.put(TeamUtil.TeamName.getById(teamId), team);
         }
         System.out.println("all teams built: " + (System.nanoTime() - start) / 1000000 + "ms");
+
+        System.out.println("start building rankings: " + (System.nanoTime() - start) / 1000000 + "ms");
+        // really only care about season average and a smaller sample size of last 10
+        // games, anything less is probably too volatile
+        List<Double> offensiveRankings = new ArrayList<>();
+        List<Double> defensiveRankings = new ArrayList<>();
+        List<Double> last10OffensiveRankings = new ArrayList<>();
+        List<Double> last10DefensiveRankings = new ArrayList<>();
+
+        // build up active offense and defensive ranks -- use tree set to sort.
+        for (Team curTeam : teamMap.values()) {
+            offensiveRankings.add(curTeam.getSeasonAvgPf());
+            defensiveRankings.add(curTeam.getSeasonAvgPa());
+            last10OffensiveRankings.add(curTeam.getLast10PF());
+            last10DefensiveRankings.add(curTeam.getLast10PA());
+        }
+
+        // offense needs to be descendingSet so we get higher points as highest rank
+        Collections.sort(offensiveRankings, Collections.reverseOrder());
+        Collections.sort(last10OffensiveRankings, Collections.reverseOrder());
+
+        Collections.sort(defensiveRankings);
+        Collections.sort(last10DefensiveRankings);
+
+        // update each team with their ranks
+        for (Team curTeam : teamMap.values()) {
+            curTeam.setORank(offensiveRankings.indexOf(curTeam.getSeasonAvgPf()) + 1);
+            curTeam.setDRank(defensiveRankings.indexOf(curTeam.getSeasonAvgPa()) + 1);
+            curTeam.setO10Rank(last10OffensiveRankings.indexOf(curTeam.getLast10PF()) + 1);
+            curTeam.setD10Rank(last10DefensiveRankings.indexOf(curTeam.getLast10PA()) + 1);
+        }
+        System.out.println("End building rankings: " + (System.nanoTime() - start) / 1000000 + "ms");
+
         return teamMap;
     }
 
     public static Map<Integer, JSONObject> generateGames(Games[] gamesArray) throws ParseException {
         Map<Integer, JSONObject> teamMap = new HashMap<>();
+
+        // Map<Integer, Double> rankingsMap = new HashMap<>();
         for (Games game : gamesArray) {
             int homeTeamId = game.getHome_team().getId();
             int awayTeamId = game.getVisitor_team().getId();

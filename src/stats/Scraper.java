@@ -110,7 +110,7 @@ public class Scraper {
                 }
 
                 for (Map.Entry<String, String> injuredPlayerEntry : injuryMap.entrySet()) {
-                        if ("O".equals(injuredPlayerEntry.getValue())) {
+                        if ("O".equals(injuredPlayerEntry.getValue()) || "DD".equals(injuredPlayerEntry.getValue())) {
                                 injuredPlayers.add(injuredPlayerEntry.getKey());
                                 totalStartersInjured++;
                         }

@@ -1,5 +1,7 @@
 package teams;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import org.json.simple.JSONArray;
@@ -48,6 +50,21 @@ public class Team {
     private final int numStartersInjured;
     private final Vector<String> injuredPlayers;
     private final JSONObject teamJsonObj;
+
+    // to be set in the games creation
+    private Map<Double, Double> oppLastODR;
+    private Map<Double, Double> oppLast5ODR;
+    private Map<Double, Double> oppLast10ODR;
+    private Map<Double, Double> oppLast2AwayODR;
+    private Map<Double, Double> oppLast2HomeODR;
+    private Map<Double, Double> oppLast5AwayODR;
+    private Map<Double, Double> oppLast5HomeODR;
+    // to set in post team creation
+
+    private int oRank;
+    private int dRank;
+    private int o10Rank;
+    private int d10Rank;
 
     public TeamName getName() {
         return this.name;
@@ -133,10 +150,6 @@ public class Team {
         return fullName;
     }
 
-    // public String getEspnCode() {
-    // return espnUrl;
-    // }
-
     public String getLastGameInfo() {
         return lastGameInfo;
     }
@@ -205,6 +218,66 @@ public class Team {
         return teamJsonObj;
     }
 
+    public Map<Double, Double> getOppLastODR() {
+        return oppLastODR;
+    }
+
+    public Map<Double, Double> getOppLast5ODR() {
+        return oppLast5ODR;
+    }
+
+    public Map<Double, Double> getOppLast10ODR() {
+        return oppLast10ODR;
+    }
+
+    public Map<Double, Double> getOppLast2AwayODR() {
+        return oppLast2AwayODR;
+    }
+
+    public Map<Double, Double> getOppLast2HomeODR() {
+        return oppLast2HomeODR;
+    }
+
+    public Map<Double, Double> getOppLast5AwayODR() {
+        return oppLast5AwayODR;
+    }
+
+    public Map<Double, Double> getOppLast5HomeODR() {
+        return oppLast5HomeODR;
+    }
+
+    public void setORank(int offRank) {
+        oRank = offRank;
+    }
+
+    public void setDRank(int defRank) {
+        dRank = defRank;
+    }
+
+    public void setO10Rank(int offRank) {
+        o10Rank = offRank;
+    }
+
+    public void setD10Rank(int defRank) {
+        d10Rank = defRank;
+    }
+
+    public int getORank() {
+        return oRank;
+    }
+
+    public int getDRank() {
+        return dRank;
+    }
+
+    public int getO10Rank() {
+        return o10Rank;
+    }
+
+    public int getD10Rank() {
+        return d10Rank;
+    }
+
     public static class Builder {
         // required fields
         private final TeamName name;
@@ -235,7 +308,6 @@ public class Team {
         private double last5HomePa = -1;
         private double normalizedPf = -1;
         private double normalizedPa = -1;
-        private double varianceWeight = 1.00; // will fluctuate depending on the booleans below. will multiply outcome
         private long daysRested = -1;
 
         // addtl stats
@@ -249,8 +321,15 @@ public class Team {
         private int totalWins = 0;
         private int totalLoss = 0;
         private int numStartersInjured = 0;
-        private Vector<String> injuredPlayers;;
+        private Vector<String> injuredPlayers;
         private JSONObject teamJsonObj;
+        private Map<Double, Double> oppLastODR;
+        private Map<Double, Double> oppLast5ODR;
+        private Map<Double, Double> oppLast10ODR;
+        private Map<Double, Double> oppLast2AwayODR;
+        private Map<Double, Double> oppLast2HomeODR;
+        private Map<Double, Double> oppLast5AwayODR;
+        private Map<Double, Double> oppLast5HomeODR;
 
         public Builder(TeamName name) {
             this.name = name;
@@ -270,11 +349,6 @@ public class Team {
             fullName = val;
             return this;
         }
-
-        // public Builder espnUrl(String val) {
-        // espnUrl = val;
-        // return this;
-        // }
 
         public Builder lastGameInfo(String val) {
             lastGameInfo = val;
@@ -381,11 +455,6 @@ public class Team {
             return this;
         }
 
-        public Builder varianceWeight(double val) {
-            varianceWeight = val;
-            return this;
-        }
-
         public Builder daysRested(long val) {
             daysRested = val;
             return this;
@@ -451,6 +520,51 @@ public class Team {
             return this;
         }
 
+        public Builder oppLastODR(Map<Double, Double> val) {
+            oppLastODR = val;
+            return this;
+        }
+
+        public Builder oppLast5ODR(Map<Double, Double> val) {
+            oppLast5ODR = val;
+            return this;
+        }
+
+        public Builder oppLast10ODR(Map<Double, Double> val) {
+            oppLast10ODR = val;
+            return this;
+        }
+
+        public Builder oppLast2AwayODR(Map<Double, Double> val) {
+            oppLast2AwayODR = val;
+            return this;
+        }
+
+        public Builder oppLast2HomeODR(Map<Double, Double> val) {
+            oppLast2HomeODR = val;
+            return this;
+        }
+
+        public Builder oppLast5AwayODR(Map<Double, Double> val) {
+            oppLast5AwayODR = val;
+            return this;
+        }
+
+        public Builder oppLast5HomeODR(Map<Double, Double> val) {
+            oppLast5HomeODR = val;
+            return this;
+        }
+
+        // public Builder teamODR(Map<Integer, Integer> val) {
+        // teamODR = val;
+        // return this;
+        // }
+
+        // public Builder last10ODR(Map<Integer, Integer> val) {
+        // last10ODR = val;
+        // return this;
+        // }
+
         public Team build() {
             return new Team(this);
         }
@@ -460,7 +574,6 @@ public class Team {
         name = builder.name;
         shortName = builder.shortName;
         fullName = builder.fullName;
-        // espnUrl = builder.espnUrl;
         teamId = builder.teamId;
         lastGameInfo = builder.lastGameInfo;
         nextGameInfo = builder.nextGameInfo;
@@ -496,6 +609,13 @@ public class Team {
         numStartersInjured = builder.numStartersInjured;
         injuredPlayers = builder.injuredPlayers;
         teamJsonObj = builder.teamJsonObj;
+        oppLastODR = builder.oppLastODR;
+        oppLast5ODR = builder.oppLast5ODR;
+        oppLast10ODR = builder.oppLast10ODR;
+        oppLast2AwayODR = builder.oppLast2AwayODR;
+        oppLast2HomeODR = builder.oppLast2HomeODR;
+        oppLast5AwayODR = builder.oppLast5AwayODR;
+        oppLast5HomeODR = builder.oppLast5HomeODR;
     }
 
 }

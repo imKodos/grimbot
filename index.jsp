@@ -3,7 +3,10 @@
 <%@ page import="teams.TeamUtil" %>
 <%@ page import="teams.TeamUtil.TeamName" %>
 <%@ page import="teams.Team" %>
+<%@ page import="java.util.Collections" %>
+<%@ page import="java.util.TreeSet" %>
 <%@ page import="java.util.HashMap" %>
+<%@ page import="java.util.Map" %>
 <%@ page import="org.json.simple.JSONObject"%>
 <%@ page import="org.json.simple.JSONArray"%>
 <%@ page import="java.util.Iterator" %>
@@ -20,20 +23,12 @@
 //on entry, if theres no handle on the list of teams, generate them -- prevents unnecessary api calls
 
 if(session.getAttribute("teamMap") == null){ 
-        session.setAttribute("teamMap",  TeamUtil.generateTeamMap());
+      session.setAttribute("teamMap",  TeamUtil.generateTeamMap());
 }
-
-//if(session.getAttribute("OffrankingsList") == null){ 
-       // session.setAttribute("teamMap",  TeamUtil.generateTeamMap());
-    //  List<Double> offensiveRankings= new ArrayList<Double>();
-       //for (HashMap.Entry<TeamName,Team> teamEntry : teamMap.entrySet()) {
-  //     for(Team curTeam: (HashMap<TeamName,Team>) session.getAttribute("teamMap")){
-
-    //   }
-//}
 
 Team team1 = TeamUtil.validateTeam(request.getParameter("t1"), (HashMap<TeamName, Team>) session.getAttribute("teamMap"));
 Team team2 = TeamUtil.validateTeam(request.getParameter("t2"), (HashMap<TeamName, Team>) session.getAttribute("teamMap")); 
+
 Prediction p = new Prediction(team1, team2);
 
 %>
@@ -129,6 +124,8 @@ Prediction p = new Prediction(team1, team2);
                         <p id="t1Name">Team 1: <%=team1.getTeamName() + "  (" + team1.getShortName()+") " + team1.getTotalWins() +"-" +team1.getTotalLoss()%></p>
                         <p>Last Game Result: <%=team1.getLastGameInfo()%></p>
                         <p><%=team1.getNextGameInfo()%></p>
+                        <p>O Rank: <%=team1.getORank() + " (" + team1.getO10Rank()+")"%></p>
+                        <p>D Rank: <%=team1.getDRank() + " (" + team1.getD10Rank()+")"%></p>
                         <p>Last PF: <%=team1.getLastPF()%></p>
                         <p>Last PA: <%=team1.getLastPA()%></p>
                         <p>Last 5 PF Average: <%=team1.getLast5PF()%></p>
@@ -171,6 +168,8 @@ Prediction p = new Prediction(team1, team2);
                         <p id="t2Name">Team 2: <%=team2.getTeamName() + "  (" + team2.getShortName()+") " + team2.getTotalWins() +"-" +team1.getTotalLoss()%></p>
                         <p>Last Game Result: <%=team2.getLastGameInfo()%></p>
                         <p><%=team2.getNextGameInfo()%></p>
+                        <p>O Rank: <%=team2.getORank() + " (" + team2.getO10Rank()+")"%></p>
+                        <p>D Rank: <%=team2.getDRank() + " (" + team2.getD10Rank()+")"%></p>
                         <p>Last PF: <%=team2.getLastPF()%></p>
                         <p>Last PA: <%=team2.getLastPA()%></p>
                         <p>Last 5 PF Average: <%=team2.getLast5PF()%></p>
@@ -228,6 +227,10 @@ Prediction p = new Prediction(team1, team2);
                 If we take a look deeper into the team stats:
                 <pre>
                 Days Rest: <%=team1.getDaysRested()%>
+                Offensive Rank: <%=team1.getORank()%>
+                Offensive Rank in last 10 games: <%=team1.getO10Rank()%>
+                Defensive Rank: <%=team1.getDRank()%>
+                Defensive Rank in last 10 games: <%=team1.getD10Rank()%>
                 Last 5 PF Average: <%=team1.getLast5PF()%>
                 Last 5 PA Average: <%=team1.getLast5PA()%>
                 Last 10 PF Average: <%=team1.getLast10PF()%>
@@ -277,6 +280,10 @@ Prediction p = new Prediction(team1, team2);
                 If we take a look deeper into the team stats:
                 <pre>
                 Days Rest: <%=team2.getDaysRested()%>
+                Offensive Rank: <%=team2.getORank()%>
+                Offensive Rank in last 10 games: <%=team2.getO10Rank()%>
+                Defensive Rank: <%=team2.getDRank()%>
+                Defensive Rank in last 10 games: <%=team2.getD10Rank()%>
                 Last 5 PF Average: <%=team2.getLast5PF()%>
                 Last 5 PA Average: <%=team2.getLast5PA()%>
                 Last 10 PF Average: <%=team2.getLast10PF()%>
