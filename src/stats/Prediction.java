@@ -71,7 +71,7 @@ public class Prediction {
                 // luci prediction = grim + reverse weights + remove playing to defense cap
                 // doom prediction = theory of odds -- if things are going well, they will soon
                 // -- add rng to variance depending on record; will be a diff score every sim
-                // falter.
+                // falter. (reverse double variance)
 
                 // totalRankEntries in case we need to get a handle on percentile rank
                 // System.out.println(totalRankEntries.get("oRankTotals"));
