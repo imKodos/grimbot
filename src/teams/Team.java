@@ -23,6 +23,8 @@ public class Team {
     private final double seasonAvgPa;
     private final int lastPF;
     private final int lastPA;
+    private final int lastOppDefRank;
+    private final int lastOppOffRank;
     private final double last5PF;
     private final double last5PA;
     private final double last10PF;
@@ -84,6 +86,14 @@ public class Team {
 
     public int getLastPA() {
         return lastPA;
+    }
+
+    public int getLastOppOffRank() {
+        return lastOppOffRank;
+    }
+
+    public int getLastOppDefRank() {
+        return lastOppDefRank;
     }
 
     public double getLast5PF() {
@@ -294,6 +304,8 @@ public class Team {
         private double seasonAvgPa = -1;
         private int lastPF = -1;
         private int lastPA = -1;
+        private int lastOppOffRank = -1;
+        private int lastOppDefRank = -1;
         private double last5PF = -1;
         private double last5PA = -1;
         private double last10PF = -1;
@@ -382,6 +394,16 @@ public class Team {
 
         public Builder lastPF(int val) {
             lastPF = val;
+            return this;
+        }
+
+        public Builder lastOppOffRank(int val) {
+            lastOppOffRank = val;
+            return this;
+        }
+
+        public Builder lastOppDefRank(int val) {
+            lastOppOffRank = val;
             return this;
         }
 
@@ -582,6 +604,8 @@ public class Team {
         seasonAvgPa = builder.seasonAvgPa;
         lastPF = builder.lastPF;
         lastPA = builder.lastPA;
+        lastOppOffRank = builder.lastOppOffRank;
+        lastOppDefRank = builder.lastOppDefRank;
         last5PF = builder.last5PF;
         last5PA = builder.last5PA;
         last10PF = builder.last10PF;

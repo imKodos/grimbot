@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 
@@ -230,6 +231,8 @@ public class TeamUtil {
                             / (int) totalTeamStatsMap.get(teamId).get("gamesPlayed") * 10) / 10.0)
                     .lastPF((int) totalTeamStatsMap.get(teamId).get("lastPf"))
                     .lastPA((int) totalTeamStatsMap.get(teamId).get("lastPa"))
+                    .lastOppOffRank((int) totalTeamStatsMap.get(teamId).get("lastOppOffRank"))
+                    .lastOppDefRank((int) totalTeamStatsMap.get(teamId).get("lastOppDefRank"))
                     .last5PF(Math.round((double) totalTeamStatsMap.get(teamId).get("last5Pf") / 5 * 10) / 10.0)
                     .last5PA(Math.round((double) totalTeamStatsMap.get(teamId).get("last5Pa") / 5 * 10) / 10.0)
                     .last10PF(Math.round((double) totalTeamStatsMap.get(teamId).get("last10Pf")) / 10.0)
@@ -268,7 +271,7 @@ public class TeamUtil {
         List<Double> last10OffensiveRankings = new ArrayList<>();
         List<Double> last10DefensiveRankings = new ArrayList<>();
 
-        // build up active offense and defensive ranks -- use tree set to sort.
+        // build up active offense and defensive ranks
         for (Team curTeam : teamMap.values()) {
             offensiveRankings.add(curTeam.getSeasonAvgPf());
             defensiveRankings.add(curTeam.getSeasonAvgPa());
@@ -297,26 +300,59 @@ public class TeamUtil {
 
     public static Map<Integer, JSONObject> generateGames(Games[] gamesArray) throws ParseException {
         Map<Integer, JSONObject> teamMap = new HashMap<>();
-
-        // Map<Integer, Double> rankingsMap = new HashMap<>();
+        List<Double> offensiveRankings = new ArrayList<>();
+        List<Double> defensiveRankings = new ArrayList<>();
         for (Games game : gamesArray) {
             int homeTeamId = game.getHome_team().getId();
             int awayTeamId = game.getVisitor_team().getId();
+
+            // get ranks before building up the latest game
+            double homeSeasonPpg = teamMap.get(homeTeamId) != null ? (double) teamMap.get(homeTeamId).get("seasonPpg")
+                    : 0;
+            double homeSeasonOppg = teamMap.get(homeTeamId) != null ? (double) teamMap.get(homeTeamId).get("seasonOppg")
+                    : 0;
+            int homeSeasonOffRank = offensiveRankings.indexOf(homeSeasonPpg) + 1;
+            int homeSeasonDefRank = defensiveRankings.indexOf(homeSeasonOppg) + 1;
+
+            double awaySeasonPpg = teamMap.get(homeTeamId) != null ? (double) teamMap.get(homeTeamId).get("seasonPpg")
+                    : 0;
+            double awaySeasonOppg = teamMap.get(homeTeamId) != null ? (double) teamMap.get(homeTeamId).get("seasonOppg")
+                    : 0;
+            int awaySeasonOffRank = offensiveRankings.indexOf(awaySeasonPpg) + 1;
+            int awaySeasonDefRank = defensiveRankings.indexOf(awaySeasonOppg) + 1;
+
+            // once we pick up the rank,remove the average from the list and update it later
+            if (homeSeasonOffRank > 0 && "Final".equals(game.getStatus())) {
+                offensiveRankings.remove(homeSeasonPpg);
+            }
+            if (homeSeasonDefRank > 0 && "Final".equals(game.getStatus())) {
+                defensiveRankings.remove(homeSeasonOppg);
+            }
+
+            // remove the old stat so we can update it at a later time
+            if (awaySeasonOffRank > 0 && "Final".equals(game.getStatus())) {
+                offensiveRankings.remove(awaySeasonPpg);
+            }
+            if (awaySeasonDefRank > 0 && "Final".equals(game.getStatus())) {
+                defensiveRankings.remove(awaySeasonOppg);
+            }
 
             for (int i = 0; i < 2; i++) { // iterate over the two teams in the game
                 JSONObject teamStatsJo = new JSONObject();
                 boolean isHomeTeam = i == 0;
                 int teamId = isHomeTeam ? homeTeamId : awayTeamId;
-                // set up variables.
-                // if the team exists, import them
                 boolean nextGameHomeTeam = teamMap.get(teamId) != null
                         ? (boolean) teamMap.get(teamId).get("isHomeTeam")
                         : false;
-                double seasonPpg = teamMap.get(teamId) != null ? (double) teamMap.get(teamId).get("seasonPpg") : 0;
-                double seasonOppg = teamMap.get(teamId) != null ? (double) teamMap.get(teamId).get("seasonOppg") : 0;
+                double seasonPpg = isHomeTeam ? homeSeasonPpg : awaySeasonPpg;
+                double seasonOppg = isHomeTeam ? homeSeasonOppg : awaySeasonOppg;
                 int gamesPlayed = teamMap.get(teamId) != null ? (int) teamMap.get(teamId).get("gamesPlayed") : 0;
                 int lastPf = teamMap.get(teamId) != null ? (int) teamMap.get(teamId).get("lastPf") : 0;
                 int lastPa = teamMap.get(teamId) != null ? (int) teamMap.get(teamId).get("lastPa") : 0;
+                int lastOffRank = teamMap.get(teamId) != null ? (int) teamMap.get(teamId).get("lastOffRank") : 0;
+                int lastDefRank = teamMap.get(teamId) != null ? (int) teamMap.get(teamId).get("lastDefRank") : 0;
+                int lastOppOffRank = teamMap.get(teamId) != null ? (int) teamMap.get(teamId).get("lastOppOffRank") : 0;
+                int lastOppDefRank = teamMap.get(teamId) != null ? (int) teamMap.get(teamId).get("lastOppDefRank") : 0;
                 long daysRested = teamMap.get(teamId) != null ? (long) teamMap.get(teamId).get("daysRested") : -1;
                 double last5Pf = teamMap.get(teamId) != null ? (double) teamMap.get(teamId).get("last5Pf") : 0;
                 double last5Pa = teamMap.get(teamId) != null ? (double) teamMap.get(teamId).get("last5Pa") : 0;
@@ -358,6 +394,14 @@ public class TeamUtil {
                     seasonPpg += isHomeTeam ? game.getHome_team_score() : game.getVisitor_team_score();
                     seasonOppg += isHomeTeam ? game.getVisitor_team_score() : game.getHome_team_score();
 
+                    // build up active offense and defensive ranks
+                    // offense needs to be descendingSet so we get higher points as highest rank
+                    offensiveRankings.add(seasonPpg);
+                    Collections.sort(offensiveRankings, Collections.reverseOrder());
+
+                    defensiveRankings.add(seasonOppg);
+                    Collections.sort(defensiveRankings);
+
                     if (isHomeTeam) {
                         homeGameIdx++;
                         if (game.getHome_team_score() > game.getVisitor_team_score()) {
@@ -387,6 +431,11 @@ public class TeamUtil {
                     }
 
                     if (gamesPlayed == 1) {
+                        lastOffRank = isHomeTeam ? homeSeasonOffRank : awaySeasonOffRank;
+                        lastDefRank = isHomeTeam ? homeSeasonDefRank : awaySeasonDefRank;
+                        lastOppOffRank = isHomeTeam ? awaySeasonOffRank : homeSeasonOffRank;
+                        lastOppDefRank = isHomeTeam ? awaySeasonDefRank : homeSeasonDefRank;
+
                         lastPf += isHomeTeam ? game.getHome_team_score() : game.getVisitor_team_score();
                         lastPa += isHomeTeam ? game.getVisitor_team_score() : game.getHome_team_score();
 
@@ -463,6 +512,10 @@ public class TeamUtil {
                 teamStatsJo.put("nextGameInfo", nextGameInfo);
                 teamStatsJo.put("lastPf", lastPf);
                 teamStatsJo.put("lastPa", lastPa);
+                teamStatsJo.put("lastOppOffRank", lastOppOffRank);
+                teamStatsJo.put("lastOppDefRank", lastOppDefRank);
+                teamStatsJo.put("lastDefRank", lastDefRank);
+                teamStatsJo.put("lastOffRank", lastOffRank);
                 teamStatsJo.put("daysRested", daysRested);
                 teamStatsJo.put("last5Pf", last5Pf);
                 teamStatsJo.put("last5Pa", last5Pa);
