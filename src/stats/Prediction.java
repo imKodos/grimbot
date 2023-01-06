@@ -49,7 +49,7 @@ public class Prediction {
 
     public double scoreCalculation(double pointsFor, double pointsAgainst) {
         if (pointsFor > pointsAgainst) {// play closer to defense
-            return ((0.96 * pointsFor) + pointsAgainst) / 2;
+            return ((0.99 * pointsFor) + pointsAgainst) / 2;
         } else {
             return (pointsFor + pointsAgainst) / 2;
         }
