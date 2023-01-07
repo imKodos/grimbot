@@ -29,7 +29,7 @@ import stats.Scraper;
 public class TeamUtil {
     // https://www.espn.com/nba/team/stats/_/name/bos/boston-celtics
     // https://www.espn.com/nba/standings/_/group/league
-    public static int STREAK_GAMES = 4;
+    public static int STREAK_GAMES = 3;
 
     public enum TeamName {
         CELTICS(2, "Celtics", "BOS", "Boston", "boston-celtics"), NETS(3, "Nets", "BKN", "Brooklyn", "brooklyn-nets"),
@@ -200,8 +200,7 @@ public class TeamUtil {
             Vector<String> injuredPlayerVec = (Vector<String>) startingInjuries.get("injuredPlayers");
 
             // TODO LIST
-            // dive into stats to see what teams or what picks are being called correctly --
-            // get more data on this for a chart
+            // get ranks for last op, last 5, last 10, and home/away sets
 
             // obtain team offense and defense rank based on seasonPpg and last 5 ppg
             // get a normalized oppg and ppg
@@ -231,8 +230,6 @@ public class TeamUtil {
                             / (int) totalTeamStatsMap.get(teamId).get("gamesPlayed") * 10) / 10.0)
                     .lastPF((int) totalTeamStatsMap.get(teamId).get("lastPf"))
                     .lastPA((int) totalTeamStatsMap.get(teamId).get("lastPa"))
-                    .lastOppOffRank((int) totalTeamStatsMap.get(teamId).get("lastOppOffRank"))
-                    .lastOppDefRank((int) totalTeamStatsMap.get(teamId).get("lastOppDefRank"))
                     .last5PF(Math.round((double) totalTeamStatsMap.get(teamId).get("last5Pf") / 5 * 10) / 10.0)
                     .last5PA(Math.round((double) totalTeamStatsMap.get(teamId).get("last5Pa") / 5 * 10) / 10.0)
                     .last10PF(Math.round((double) totalTeamStatsMap.get(teamId).get("last10Pf")) / 10.0)
@@ -247,12 +244,12 @@ public class TeamUtil {
                     .last2HomePf(Math.round((double) totalTeamStatsMap.get(teamId).get("last2HomePf") / 2 * 10) / 10.0)
                     .last5HomePf(Math.round((double) totalTeamStatsMap.get(teamId).get("last5HomePf") / 5 * 10) / 10.0)
                     .last5HomePa(Math.round((double) totalTeamStatsMap.get(teamId).get("last5HomePa") / 5 * 10) / 10.0)
-                    .isHotStreak((int) totalTeamStatsMap.get(teamId).get("winStreak") == STREAK_GAMES)
-                    .isColdStreak((int) totalTeamStatsMap.get(teamId).get("loseStreak") == STREAK_GAMES)
-                    .isHomeColdStreak((int) totalTeamStatsMap.get(teamId).get("homeLoseStreak") == STREAK_GAMES)
-                    .isHomeHotStreak((int) totalTeamStatsMap.get(teamId).get("homeWinStreak") == STREAK_GAMES)
-                    .isAwayColdStreak((int) totalTeamStatsMap.get(teamId).get("awayLoseStreak") == STREAK_GAMES)
-                    .isAwayHotStreak((int) totalTeamStatsMap.get(teamId).get("awayWinStreak") == STREAK_GAMES)
+                    .isHotStreak((int) totalTeamStatsMap.get(teamId).get("winStreak") > STREAK_GAMES)
+                    .isColdStreak((int) totalTeamStatsMap.get(teamId).get("loseStreak") > STREAK_GAMES)
+                    .isHomeColdStreak((int) totalTeamStatsMap.get(teamId).get("homeLoseStreak") > STREAK_GAMES)
+                    .isHomeHotStreak((int) totalTeamStatsMap.get(teamId).get("homeWinStreak") > STREAK_GAMES)
+                    .isAwayColdStreak((int) totalTeamStatsMap.get(teamId).get("awayLoseStreak") > STREAK_GAMES)
+                    .isAwayHotStreak((int) totalTeamStatsMap.get(teamId).get("awayWinStreak") > STREAK_GAMES)
                     .totalWins((int) totalTeamStatsMap.get(teamId).get("totalWins"))
                     .totalLoss((int) totalTeamStatsMap.get(teamId).get("totalLoss"))
                     .numStartersInjured(numStartersInjured)
@@ -286,13 +283,38 @@ public class TeamUtil {
         Collections.sort(defensiveRankings);
         Collections.sort(last10DefensiveRankings);
 
-        // update each team with their ranks
+        // update each team with their ranks -- as well as their opponent ranks
         for (Team curTeam : teamMap.values()) {
             curTeam.setORank(offensiveRankings.indexOf(curTeam.getSeasonAvgPf()) + 1);
             curTeam.setDRank(defensiveRankings.indexOf(curTeam.getSeasonAvgPa()) + 1);
             curTeam.setO10Rank(last10OffensiveRankings.indexOf(curTeam.getLast10PF()) + 1);
             curTeam.setD10Rank(last10DefensiveRankings.indexOf(curTeam.getLast10PA()) + 1);
+
+            // last 1, 5, and 10 team ranks
+            int lastTeamOffRank = 0;
+            int lastTeamDefRank = 0;
+            int last5TeamOffRank = 0;
+            int last5TeamDefRank = 0;
+            int last10TeamOffRank = 0;
+            int last10TeamDefRank = 0;
+            int[] last10TeamsPlayedArr = (int[]) totalTeamStatsMap.get(curTeam.getTeamId()).get("last10TeamsPlayedArr");
+            for (int i = 0; i < last10TeamsPlayedArr.length; i++) {
+                Team opponent = teamMap.get(TeamUtil.TeamName.getById(last10TeamsPlayedArr[i]));
+                double opponentPf = opponent.getSeasonAvgPf();
+                double opponentPa = opponent.getSeasonAvgPa();
+
+                if (opponentPf > 0 && opponentPa > 0) {// valid team
+                    lastTeamOffRank = offensiveRankings.indexOf(opponentPf) + 1;
+                    lastTeamDefRank = defensiveRankings.indexOf(opponentPa) + 1;
+                }
+            }
+            curTeam.setLastOppORank(lastTeamOffRank);
+            curTeam.setLastOppDRank(lastTeamDefRank);
+            // todo last 5, 10, and home/away
+            // last5AwayTeamsPlayedArr
+            // last5HomeTeamsPlayedArr
         }
+
         System.out.println("End building rankings: " + (System.nanoTime() - start) / 1000000 + "ms");
 
         return teamMap;
@@ -300,43 +322,9 @@ public class TeamUtil {
 
     public static Map<Integer, JSONObject> generateGames(Games[] gamesArray) throws ParseException {
         Map<Integer, JSONObject> teamMap = new HashMap<>();
-        List<Double> currentOffRankings = new ArrayList<>();
-        List<Double> currentDefRankings = new ArrayList<>();
         for (Games game : gamesArray) {
             int homeTeamId = game.getHome_team().getId();
             int awayTeamId = game.getVisitor_team().getId();
-
-            // get ranks before building up the latest game
-            double homeSeasonPpg = teamMap.get(homeTeamId) != null ? (double) teamMap.get(homeTeamId).get("seasonPpg")
-                    : 0;
-            double homeSeasonOppg = teamMap.get(homeTeamId) != null ? (double) teamMap.get(homeTeamId).get("seasonOppg")
-                    : 0;
-            int homeSeasonOffRank = currentOffRankings.indexOf(homeSeasonPpg) + 1;
-            int homeSeasonDefRank = currentDefRankings.indexOf(homeSeasonOppg) + 1;
-
-            double awaySeasonPpg = teamMap.get(awayTeamId) != null ? (double) teamMap.get(awayTeamId).get("seasonPpg")
-                    : 0;
-            double awaySeasonOppg = teamMap.get(awayTeamId) != null ? (double) teamMap.get(awayTeamId).get("seasonOppg")
-                    : 0;
-            int awaySeasonOffRank = currentOffRankings.indexOf(awaySeasonPpg) + 1;
-            int awaySeasonDefRank = currentDefRankings.indexOf(awaySeasonOppg) + 1;
-
-            // once we pick up the rank,remove the average from the list and update it later
-            if (homeSeasonOffRank > 0 && "Final".equals(game.getStatus())) {
-                currentOffRankings.remove(homeSeasonPpg);
-            }
-            if (homeSeasonDefRank > 0 && "Final".equals(game.getStatus())) {
-                currentDefRankings.remove(homeSeasonOppg);
-            }
-
-            // remove the old stat so we can update it at a later time
-            if (awaySeasonOffRank > 0 && "Final".equals(game.getStatus())) {
-                currentOffRankings.remove(awaySeasonPpg);
-            }
-            if (awaySeasonDefRank > 0 && "Final".equals(game.getStatus())) {
-                currentDefRankings.remove(awaySeasonOppg);
-            }
-
             for (int i = 0; i < 2; i++) { // iterate over the two teams in the game
                 JSONObject teamStatsJo = new JSONObject();
                 boolean isHomeTeam = i == 0;
@@ -344,22 +332,20 @@ public class TeamUtil {
                 boolean nextGameHomeTeam = teamMap.get(teamId) != null
                         ? (boolean) teamMap.get(teamId).get("isHomeTeam")
                         : false;
-                double seasonPpg = isHomeTeam ? homeSeasonPpg : awaySeasonPpg;
-                double seasonOppg = isHomeTeam ? homeSeasonOppg : awaySeasonOppg;
+                double seasonPpg = teamMap.get(teamId) != null
+                        ? (double) teamMap.get(teamId).get("seasonPpg")
+                        : 0;
+                double seasonOppg = teamMap.get(teamId) != null
+                        ? (double) teamMap.get(teamId).get("seasonOppg")
+                        : 0;
                 int gamesPlayed = teamMap.get(teamId) != null ? (int) teamMap.get(teamId).get("gamesPlayed") : 0;
                 int lastPf = teamMap.get(teamId) != null ? (int) teamMap.get(teamId).get("lastPf") : 0;
                 int lastPa = teamMap.get(teamId) != null ? (int) teamMap.get(teamId).get("lastPa") : 0;
-                int lastOffRank = teamMap.get(teamId) != null ? (int) teamMap.get(teamId).get("lastOffRank") : 0;
-                int lastDefRank = teamMap.get(teamId) != null ? (int) teamMap.get(teamId).get("lastDefRank") : 0;
-                int lastOppOffRank = teamMap.get(teamId) != null ? (int) teamMap.get(teamId).get("lastOppOffRank") : 0;
-                int lastOppDefRank = teamMap.get(teamId) != null ? (int) teamMap.get(teamId).get("lastOppDefRank") : 0;
                 long daysRested = teamMap.get(teamId) != null ? (long) teamMap.get(teamId).get("daysRested") : -1;
                 double last5Pf = teamMap.get(teamId) != null ? (double) teamMap.get(teamId).get("last5Pf") : 0;
                 double last5Pa = teamMap.get(teamId) != null ? (double) teamMap.get(teamId).get("last5Pa") : 0;
                 double last10Pf = teamMap.get(teamId) != null ? (double) teamMap.get(teamId).get("last10Pf") : 0;
                 double last10Pa = teamMap.get(teamId) != null ? (double) teamMap.get(teamId).get("last10Pa") : 0;
-                double homeGameIdx = teamMap.get(teamId) != null ? (double) teamMap.get(teamId).get("homeGameIdx") : 0;
-                double awayGameIdx = teamMap.get(teamId) != null ? (double) teamMap.get(teamId).get("awayGameIdx") : 0;
                 double last2HomePf = teamMap.get(teamId) != null ? (double) teamMap.get(teamId).get("last2HomePf") : 0;
                 double last2HomePa = teamMap.get(teamId) != null ? (double) teamMap.get(teamId).get("last2HomePa") : 0;
                 double last5HomePf = teamMap.get(teamId) != null ? (double) teamMap.get(teamId).get("last5HomePf") : 0;
@@ -383,6 +369,27 @@ public class TeamUtil {
                 double[] last10GamesPaArr = teamMap.get(teamId) != null
                         ? (double[]) teamMap.get(teamId).get("last10GamesPaArr")
                         : new double[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+                double[] last5HomeGamesPfArr = teamMap.get(teamId) != null
+                        ? (double[]) teamMap.get(teamId).get("last5HomeGamesPfArr")
+                        : new double[] { 0, 0, 0, 0, 0 };
+                double[] last5HomeGamesPaArr = teamMap.get(teamId) != null
+                        ? (double[]) teamMap.get(teamId).get("last5HomeGamesPaArr")
+                        : new double[] { 0, 0, 0, 0, 0 };
+                double[] last5AwayGamesPfArr = teamMap.get(teamId) != null
+                        ? (double[]) teamMap.get(teamId).get("last5AwayGamesPfArr")
+                        : new double[] { 0, 0, 0, 0, 0 };
+                double[] last5AwayGamesPaArr = teamMap.get(teamId) != null
+                        ? (double[]) teamMap.get(teamId).get("last5AwayGamesPaArr")
+                        : new double[] { 0, 0, 0, 0, 0 };
+                int[] last10TeamsPlayedArr = teamMap.get(teamId) != null
+                        ? (int[]) teamMap.get(teamId).get("last10TeamsPlayedArr")
+                        : new int[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+                int[] last5HomeTeamsPlayedArr = teamMap.get(teamId) != null
+                        ? (int[]) teamMap.get(teamId).get("last5HomeTeamsPlayedArr")
+                        : new int[] { -1, -1, -1, -1, -1 };
+                int[] last5AwayTeamsPlayedArr = teamMap.get(teamId) != null
+                        ? (int[]) teamMap.get(teamId).get("last5AwayTeamsPlayedArr")
+                        : new int[] { -1, -1, -1, -1, -1 };
                 String lastGameInfo = teamMap.get(teamId) != null ? (String) teamMap.get(teamId).get("lastGameInfo")
                         : "";
                 String nextGameInfo = teamMap.get(teamId) != null ? (String) teamMap.get(teamId).get("nextGameInfo")
@@ -399,7 +406,7 @@ public class TeamUtil {
                 }
 
                 if ("Final".equals(game.getStatus())) {
-                    gamesPlayed++;// can refactor this with homegameidx + awaygameidx
+                    gamesPlayed++;
                     seasonPpg += isHomeTeam ? game.getHome_team_score() : game.getVisitor_team_score();
                     seasonOppg += isHomeTeam ? game.getVisitor_team_score() : game.getHome_team_score();
 
@@ -408,16 +415,32 @@ public class TeamUtil {
                     last5Pa = 0;
                     last10Pf = 0;
                     last10Pa = 0;
+                    if (isHomeTeam) { // if home team, update the home stats
+                        last2HomePf = 0;
+                        last2HomePa = 0;
+                        last5HomePf = 0;
+                        last5HomePa = 0;
+                    } else { // otherwise update away stats
+                        last5AwayPa = 0;
+                        last5AwayPf = 0;
+                        last2AwayPa = 0;
+                        last2AwayPf = 0;
+                    }
+
                     for (int idx = 0; idx <= 9; idx++) {
                         if (idx <= 8) {
                             last10GamesPfArr[idx] = last10GamesPfArr[(idx + 1)]; // shift last 10 games leftward
                             last10GamesPaArr[idx] = last10GamesPaArr[(idx + 1)];
+                            last10TeamsPlayedArr[idx] = last10TeamsPlayedArr[(idx + 1)];
                         } else {// the last spot in the array, set to most recent game.
                             last10GamesPfArr[idx] = isHomeTeam ? game.getHome_team_score()
                                     : game.getVisitor_team_score();
                             last10GamesPaArr[idx] = isHomeTeam ? game.getVisitor_team_score()
                                     : game.getHome_team_score();
+                            last10TeamsPlayedArr[idx] = isHomeTeam ? game.getVisitor_team().getId()
+                                    : game.getHome_team().getId();
                         }
+
                         if (idx > 4) {
                             last5Pf += last10GamesPfArr[idx];
                             last5Pa += last10GamesPaArr[idx];
@@ -427,93 +450,78 @@ public class TeamUtil {
                     }
                     // end update last 5 and 10 games stats
 
-                    // build up active offense and defensive ranks
-                    // offense needs to be descendingSet so we get higher points as highest rank
-                    // offensiveRankings.add(seasonPpg);
-                    // Collections.sort(offensiveRankings, Collections.reverseOrder());
+                    // start home and away stats
+                    for (int idx = 0; idx <= 4; idx++) {
+                        if (idx <= 3) {
+                            if (isHomeTeam) {
+                                last5HomeGamesPfArr[idx] = last5HomeGamesPfArr[(idx + 1)]; // shift last 5 games
+                                last5HomeGamesPaArr[idx] = last5HomeGamesPaArr[(idx + 1)];
+                                last5HomeTeamsPlayedArr[idx] = last5HomeTeamsPlayedArr[(idx + 1)];
+                            } else {
+                                last5AwayGamesPfArr[idx] = last5AwayGamesPfArr[(idx + 1)]; // shift last 5 games
+                                last5AwayGamesPaArr[idx] = last5AwayGamesPaArr[(idx + 1)];
+                                last5AwayTeamsPlayedArr[idx] = last5AwayTeamsPlayedArr[(idx + 1)];
+                            }
+                        } else {// the last spot in the array, set to most recent game.
+                            if (isHomeTeam) {
+                                last5HomeGamesPfArr[idx] = game.getHome_team_score();
+                                last5HomeGamesPaArr[idx] = game.getVisitor_team_score();
+                                last5HomeTeamsPlayedArr[idx] = game.getVisitor_team().getId();
+                            } else {
+                                last5AwayGamesPfArr[idx] = game.getVisitor_team_score();
+                                last5AwayGamesPaArr[idx] = game.getHome_team_score();
+                                last5AwayTeamsPlayedArr[idx] = game.getHome_team().getId();
+                            }
+                        }
+                        if (isHomeTeam) {
+                            if (idx > 2) {
+                                last2HomePf += last5HomeGamesPfArr[idx];
+                                last2HomePa += last5HomeGamesPaArr[idx];
+                            }
+                            last5HomePf += last5HomeGamesPfArr[idx];
+                            last5HomePa += last5HomeGamesPaArr[idx];
+                        } else {
+                            if (idx > 2) {
+                                last2AwayPf += last5AwayGamesPfArr[idx];
+                                last2AwayPa += last5AwayGamesPaArr[idx];
+                            }
+                            last5AwayPf += last5AwayGamesPfArr[idx];
+                            last5AwayPa += last5AwayGamesPaArr[idx];
+                        }
 
-                    // defensiveRankings.add(seasonOppg);
-                    // Collections.sort(defensiveRankings);
-
-                    // lastOffRank = isHomeTeam ? homeSeasonOffRank : awaySeasonOffRank;
-                    // lastDefRank = isHomeTeam ? homeSeasonDefRank : awaySeasonDefRank;
-                    // lastOppOffRank = isHomeTeam ? awaySeasonOffRank : homeSeasonOffRank;
-                    // lastOppDefRank = isHomeTeam ? awaySeasonDefRank : homeSeasonDefRank;
+                    }
+                    // end home and away stats
 
                     if (isHomeTeam) {
-                        homeGameIdx++;
                         if (game.getHome_team_score() > game.getVisitor_team_score()) {
                             totalWins++;
-                            if (homeGameIdx <= STREAK_GAMES) {
-                                homeWinStreak++;
-                            }
+                            winStreak++;
+                            homeWinStreak++;
+                            homeLoseStreak = 0;
+                            loseStreak = 0;
                         } else {
                             totalLoss++;
-                            if (homeGameIdx <= STREAK_GAMES) {
-                                homeLoseStreak++;
-                            }
+                            loseStreak++;
+                            homeLoseStreak++;
+                            homeWinStreak = 0;
+                            winStreak = 0;
                         }
                     } else {
-                        awayGameIdx++;
                         if (game.getHome_team_score() < game.getVisitor_team_score()) {
                             totalWins++;
-                            if (awayGameIdx <= STREAK_GAMES) {
-                                awayWinStreak++;
-                            }
+                            winStreak++;
+                            awayWinStreak++;
+                            awayLoseStreak = 0;
+                            loseStreak = 0;
                         } else {
                             totalLoss++;
-                            if (awayGameIdx <= STREAK_GAMES) {
-                                awayLoseStreak++;
-                            }
+                            loseStreak++;
+                            awayLoseStreak++;
+                            awayWinStreak = 0;
+                            winStreak = 0;
                         }
                     }
-
-                    // if (gamesPlayed <= 5) {
-                    // last5Pf += isHomeTeam ? game.getHome_team_score() :
-                    // game.getVisitor_team_score();
-                    // last5Pa += isHomeTeam ? game.getVisitor_team_score() :
-                    // game.getHome_team_score();
-                    // }
-
-                    // if (isHomeTeam && homeGameIdx <= 2) {
-                    // last2HomePf += game.getHome_team_score();
-                    // last2HomePa += game.getVisitor_team_score();
-                    // }
-
-                    // if (isHomeTeam && homeGameIdx <= 5) { // can refactor this to be in the same
-                    // block as other
-                    // last5HomePf += game.getHome_team_score();
-                    // last5HomePa += game.getVisitor_team_score();
-                    // }
-
-                    // if (!isHomeTeam && awayGameIdx <= 2) {
-                    // last2AwayPa += game.getHome_team_score();
-                    // last2AwayPf += game.getVisitor_team_score();
-                    // }
-
-                    // if (!isHomeTeam && awayGameIdx <= 5) { // can refactor this to be in the same
-                    // block as other
-                    // last5AwayPa += game.getHome_team_score();
-                    // last5AwayPf += game.getVisitor_team_score();
-                    // }
-
-                    // if (gamesPlayed <= STREAK_GAMES) {
-                    // if (isHomeTeam) {
-                    // if (game.getHome_team_score() < game.getVisitor_team_score()) {
-                    // winStreak++;
-                    // } else {
-                    // loseStreak++;
-                    // }
-                    // } else {
-                    // if (game.getHome_team_score() > game.getVisitor_team_score()) {
-                    // winStreak++;
-                    // } else {
-                    // loseStreak++;
-                    // }
-                    // }
-                    // }
-
-                    // Start Last Game
+                    // Start Last Game rankings and stats
                     lastPf = isHomeTeam ? game.getHome_team_score() : game.getVisitor_team_score();
                     lastPa = isHomeTeam ? game.getVisitor_team_score() : game.getHome_team_score();
                     lastGameInfo = isHomeTeam ? "vs " : "@ ";
@@ -543,10 +551,6 @@ public class TeamUtil {
                 teamStatsJo.put("nextGameInfo", nextGameInfo);
                 teamStatsJo.put("lastPf", lastPf);
                 teamStatsJo.put("lastPa", lastPa);
-                teamStatsJo.put("lastOppOffRank", lastOppOffRank);
-                teamStatsJo.put("lastOppDefRank", lastOppDefRank);
-                teamStatsJo.put("lastDefRank", lastDefRank);
-                teamStatsJo.put("lastOffRank", lastOffRank);
                 teamStatsJo.put("daysRested", daysRested);
                 teamStatsJo.put("last5Pf", last5Pf);
                 teamStatsJo.put("last5Pa", last5Pa);
@@ -554,9 +558,14 @@ public class TeamUtil {
                 teamStatsJo.put("last10Pa", last10Pa);
                 teamStatsJo.put("last10GamesPaArr", last10GamesPaArr);
                 teamStatsJo.put("last10GamesPfArr", last10GamesPfArr);
+                teamStatsJo.put("last10TeamsPlayedArr", last10TeamsPlayedArr);
+                teamStatsJo.put("last5AwayTeamsPlayedArr", last5AwayTeamsPlayedArr);
+                teamStatsJo.put("last5HomeTeamsPlayedArr", last5HomeTeamsPlayedArr);
+                teamStatsJo.put("last5HomeGamesPfArr", last5HomeGamesPfArr);
+                teamStatsJo.put("last5HomeGamesPaArr", last5HomeGamesPaArr);
+                teamStatsJo.put("last5AwayGamesPfArr", last5AwayGamesPfArr);
+                teamStatsJo.put("last5AwayGamesPaArr", last5AwayGamesPaArr);
                 teamStatsJo.put("isHomeTeam", nextGameHomeTeam);
-                teamStatsJo.put("homeGameIdx", homeGameIdx);
-                teamStatsJo.put("awayGameIdx", awayGameIdx);
                 teamStatsJo.put("last2HomePf", last2HomePf);
                 teamStatsJo.put("last2HomePa", last2HomePa);
                 teamStatsJo.put("last5HomePf", last5HomePf);

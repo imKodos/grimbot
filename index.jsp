@@ -124,12 +124,14 @@ Prediction p = new Prediction(team1, team2);
                         <p id="t1Name">Team 1: <%=team1.getTeamName() + "  (" + team1.getShortName()+") " + team1.getTotalWins() +"-" +team1.getTotalLoss()%></p>
                         <p>Last Game Result: <%=team1.getLastGameInfo()%></p>
                         <p><%=team1.getNextGameInfo()%></p>
-                        <p>O Rank: <%=team1.getORank() + " (" + team1.getO10Rank()+")"%></p>
-                        <p>D Rank: <%=team1.getDRank() + " (" + team1.getD10Rank()+")"%></p>
+                        <p>O Rank: <%=team1.getORank()%></p>
+                        <p>D Rank: <%=team1.getDRank()%></p>
+                        <p>O Rank in last 10 games: <%=team1.getO10Rank()%></p>
+                        <p>D Rank in last 10 games: <%=team1.getD10Rank()%></p>
                         <p>Last PF: <%=team1.getLastPF()%></p>
                         <p>Last PA: <%=team1.getLastPA()%></p>
-                        <p>Last Opp O Rank: <%=team1.getLastOppDefRank()%></p>
-                        <p>Last Opp D Rank: <%=team1.getLastOppOffRank()%></p>
+                        <p>Last Opp O Rank: <%=team1.getLastOppORank()%></p>
+                        <p>Last Opp D Rank: <%=team1.getLastOppDRank()%></p>
                         <p>Last 5 PF Average: <%=team1.getLast5PF()%></p>
                         <p>Last 5 PA Average: <%=team1.getLast5PA()%></p>
                         <p>Last 10 PF Average: <%=team1.getLast10PF()%></p>
@@ -145,13 +147,14 @@ Prediction p = new Prediction(team1, team2);
                         <p>Last 2 away PF: <%=team1.getLast2AwayPf()%></p>               
                         <p>Last 2 away PA: <%=team1.getLast2AwayPa()%></p>              
                         <p>Last 5 away PF: <%=team1.getLast5AwayPf()%></p>               
-                        <p>Last 5 away PA: <%=team1.getLast5AwayPa()%></p>               
+                        <p>Last 5 away PA: <%=team1.getLast5AwayPa()%></p> 
+                        <p>Win Streak: <%=team1.isHotStreak()%></p>
+                        <p>Lose Streak: <%=team1.isColdStreak()%></p>      
                         <p>home Streak <%=team1.isHomeHotStreak()%></p>               
                         <p>home cold Streak <%=team1.isHomeColdStreak()%></p>                
                         <p>away Streak <%=team1.isAwayHotStreak()%></p>               
                         <p>away cold Streak <%=team1.isAwayColdStreak()%></p>               
                         <p>num Injuries <%=team1.getNumStartersInjured()%></p>  
-
                         <p>Injured Players List: 
                         <%
                         if(team1.getInjuredPlayers()==null || team1.getInjuredPlayers().isEmpty()){
@@ -170,8 +173,10 @@ Prediction p = new Prediction(team1, team2);
                         <p id="t2Name">Team 2: <%=team2.getTeamName() + "  (" + team2.getShortName()+") " + team2.getTotalWins() +"-" +team1.getTotalLoss()%></p>
                         <p>Last Game Result: <%=team2.getLastGameInfo()%></p>
                         <p><%=team2.getNextGameInfo()%></p>
-                        <p>O Rank: <%=team2.getORank() + " (" + team2.getO10Rank()+")"%></p>
-                        <p>D Rank: <%=team2.getDRank() + " (" + team2.getD10Rank()+")"%></p>
+                        <p>O Rank: <%=team2.getORank()%></p>
+                        <p>D Rank: <%=team2.getDRank()%></p>
+                        <p>O Rank in last 10 games: <%=team2.getO10Rank()%></p>
+                        <p>D Rank in last 10 games: <%=team2.getD10Rank()%></p>
                         <p>Last PF: <%=team2.getLastPF()%></p>
                         <p>Last PA: <%=team2.getLastPA()%></p>
                         <p>Last 5 PF Average: <%=team2.getLast5PF()%></p>
@@ -189,7 +194,9 @@ Prediction p = new Prediction(team1, team2);
                         <p>Last 2 away PF: <%=team2.getLast2AwayPf()%></p>               
                         <p>Last 2 away PA: <%=team2.getLast2AwayPa()%></p>                           
                         <p>Last 5 away PF: <%=team2.getLast5AwayPf()%></p>               
-                        <p>Last 5 away PA: <%=team2.getLast5AwayPa()%></p>               
+                        <p>Last 5 away PA: <%=team2.getLast5AwayPa()%></p>         
+                        <p>Win Streak: <%=team2.isHotStreak()%></p>
+                        <p>Lose Streak: <%=team2.isColdStreak()%></p>       
                         <p>home Streak <%=team2.isHomeHotStreak()%></p>               
                         <p>home cold Streak <%=team2.isHomeColdStreak()%></p>                
                         <p>away Streak <%=team2.isAwayHotStreak()%></p>               
@@ -237,6 +244,8 @@ Prediction p = new Prediction(team1, team2);
                 Last 5 PA Average: <%=team1.getLast5PA()%>
                 Last 10 PF Average: <%=team1.getLast10PF()%>
                 Last 10 PA Average: <%=team1.getLast10PA()%>
+                Win Streak: <%=team1.isHotStreak()%>
+                Lose Streak: <%=team1.isColdStreak()%>
                 <% if(team1.isHomeTeam()){ %>
                 Last 2 home PF: <%=team1.getLast2HomePf()%>              
                 Last 2 home PA: <%=team1.getLast2HomePa()%>
@@ -290,6 +299,8 @@ Prediction p = new Prediction(team1, team2);
                 Last 5 PA Average: <%=team2.getLast5PA()%>
                 Last 10 PF Average: <%=team2.getLast10PF()%>
                 Last 10 PA Average: <%=team2.getLast10PA()%>
+                Win Streak: <%=team2.isHotStreak()%>
+                Lose Streak: <%=team2.isColdStreak()%>
                 <% if(team2.isHomeTeam()){ %>
                 Last 2 home PF: <%=team2.getLast2HomePf()%>              
                 Last 2 home PA: <%=team2.getLast2HomePa()%>
