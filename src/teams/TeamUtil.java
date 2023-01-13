@@ -202,6 +202,7 @@ public class TeamUtil {
             // TODO LIST
             // get ranks for last op, last 5, last 10, and home/away sets
 
+            // can refactor ranks calculations ie last5AwayTeamsPlayedArr etc.
             // obtain team offense and defense rank based on seasonPpg and last 5 ppg
             // get a normalized oppg and ppg
 
@@ -293,31 +294,165 @@ public class TeamUtil {
             // last 1, 5, and 10 team ranks
             int lastTeamOffRank = 0;
             int lastTeamDefRank = 0;
+            double lastScoreNormalizedPf = 0;
+            double lastScoreNormalizedPa = 0;
             int last5TeamOffRank = 0;
             int last5TeamDefRank = 0;
+            double last5NormalizedPf = 0;
+            double last5NormalizedPa = 0;
             int last10TeamOffRank = 0;
             int last10TeamDefRank = 0;
+            double last10NormalizedPf = 0;
+            double last10NormalizedPa = 0;
+            int last2HomeOppOffRank = 0;
+            int last2HomeOppDefRank = 0;
+            double last2HomeNormalizedPf = 0;
+            double last2HomeNormalizedPa = 0;
+            int last5HomeOppOffRank = 0;
+            int last5HomeOppDefRank = 0;
+            double last5HomeNormalizedPf = 0;
+            double last5HomeNormalizedPa = 0;
+            int last2AwayOppOffRank = 0;
+            int last2AwayOppDefRank = 0;
+            double last2AwayNormalizedPf = 0;
+            double last2AwayNormalizedPa = 0;
+            int last5AwayOppOffRank = 0;
+            int last5AwayOppDefRank = 0;
+            double last5AwayNormalizedPf = 0;
+            double last5AwayNormalizedPa = 0;
+
             int[] last10TeamsPlayedArr = (int[]) totalTeamStatsMap.get(curTeam.getTeamId()).get("last10TeamsPlayedArr");
+            int validTeamIdx = 0;
             for (int i = 0; i < last10TeamsPlayedArr.length; i++) {
                 Team opponent = teamMap.get(TeamUtil.TeamName.getById(last10TeamsPlayedArr[i]));
                 double opponentPf = opponent.getSeasonAvgPf();
                 double opponentPa = opponent.getSeasonAvgPa();
 
                 if (opponentPf > 0 && opponentPa > 0) {// valid team
-                    lastTeamOffRank = offensiveRankings.indexOf(opponentPf) + 1;
+                    validTeamIdx++;
+                    lastTeamOffRank = offensiveRankings.indexOf(opponentPf) + 1;// keep track of last valid as last team
                     lastTeamDefRank = defensiveRankings.indexOf(opponentPa) + 1;
+
+                    if (validTeamIdx <= 5) {
+                        last5TeamOffRank += offensiveRankings.indexOf(opponentPf) + 1;
+                        last5TeamDefRank += defensiveRankings.indexOf(opponentPa) + 1;
+                    }
+
+                    last10TeamOffRank += offensiveRankings.indexOf(opponentPf) + 1;
+                    last10TeamDefRank += defensiveRankings.indexOf(opponentPa) + 1;
+                }
+            }
+
+            int[] last5AwayTeamsPlayedArr = (int[]) totalTeamStatsMap.get(curTeam.getTeamId())
+                    .get("last5AwayTeamsPlayedArr");
+            int validAwayTeamIdx = 0;
+            for (int i = 0; i < last5AwayTeamsPlayedArr.length; i++) {
+                Team opponent = teamMap.get(TeamUtil.TeamName.getById(last5AwayTeamsPlayedArr[i]));
+                double opponentPf = opponent.getSeasonAvgPf();
+                double opponentPa = opponent.getSeasonAvgPa();
+
+                if (opponentPf > 0 && opponentPa > 0) {// valid team
+                    validAwayTeamIdx++;
+                    if (validAwayTeamIdx <= 2) {
+                        last2AwayOppOffRank += offensiveRankings.indexOf(opponentPf) + 1;
+                        last2AwayOppDefRank += defensiveRankings.indexOf(opponentPa) + 1;
+                    }
+                    last5AwayOppOffRank += offensiveRankings.indexOf(opponentPf) + 1;
+                    last5AwayOppOffRank += defensiveRankings.indexOf(opponentPa) + 1;
+                }
+            }
+            int[] last5HomeTeamsPlayedArr = (int[]) totalTeamStatsMap.get(curTeam.getTeamId())
+                    .get("last5HomeTeamsPlayedArr");
+            int validHomeTeamIdx = 0;
+            for (int i = 0; i < last5HomeTeamsPlayedArr.length; i++) {
+                Team opponent = teamMap.get(TeamUtil.TeamName.getById(last5HomeTeamsPlayedArr[i]));
+                double opponentPf = opponent.getSeasonAvgPf();
+                double opponentPa = opponent.getSeasonAvgPa();
+
+                if (opponentPf > 0 && opponentPa > 0) {// valid team
+                    validHomeTeamIdx++;
+                    if (validHomeTeamIdx <= 2) {
+                        last2HomeOppOffRank += offensiveRankings.indexOf(opponentPf) + 1;
+                        last2HomeOppDefRank += defensiveRankings.indexOf(opponentPa) + 1;
+                    }
+                    last5HomeOppOffRank += offensiveRankings.indexOf(opponentPf) + 1;
+                    last5HomeOppOffRank += defensiveRankings.indexOf(opponentPa) + 1;
                 }
             }
             curTeam.setLastOppORank(lastTeamOffRank);
             curTeam.setLastOppDRank(lastTeamDefRank);
-            // todo last 5, 10, and home/away
-            // last5AwayTeamsPlayedArr
-            // last5HomeTeamsPlayedArr
+            curTeam.setNormalizedLastPf(getNormalizedScore(curTeam.getLastPF(), lastTeamDefRank, defensiveRankings));
+            curTeam.setNormalizedLastPa(getNormalizedScore(curTeam.getLastPA(), lastTeamOffRank, offensiveRankings));
+            // if we reached our cap of 5 teams, divide by 5, otherwise divide by the last
+            // known number of teams
+            curTeam.setLast5OppORank(validTeamIdx >= 5 ? last5TeamOffRank / 5 : last5TeamOffRank / validTeamIdx);
+            curTeam.setLast5OppDRank(validTeamIdx >= 5 ? last5TeamDefRank / 5 : last5TeamDefRank / validTeamIdx);
+
+            curTeam.setLast10OppORank(validTeamIdx >= 10 ? last10TeamOffRank / 10 : last10TeamOffRank / validTeamIdx);
+            curTeam.setLast10OppDRank(validTeamIdx >= 10 ? last10TeamDefRank / 10 : last10TeamDefRank / validTeamIdx);
+
+            curTeam.setLast2AwayOppORank(
+                    validAwayTeamIdx >= 2 ? last2AwayOppOffRank / 2 : last2AwayOppOffRank / validAwayTeamIdx);
+            curTeam.setLast2AwayOppDRank(
+                    validAwayTeamIdx >= 2 ? last2AwayOppDefRank / 2 : last2AwayOppDefRank / validAwayTeamIdx);
+
+            curTeam.setLast5AwayOppORank(
+                    validAwayTeamIdx >= 5 ? last5AwayOppOffRank / 5 : last5AwayOppOffRank / validAwayTeamIdx);
+            curTeam.setLast5AwayOppDRank(
+                    validAwayTeamIdx >= 5 ? last5AwayOppDefRank / 5 : last5AwayOppDefRank / validAwayTeamIdx);
+
+            curTeam.setLast2HomeOppORank(
+                    validHomeTeamIdx >= 2 ? last2HomeOppOffRank / 2 : last2HomeOppOffRank / validHomeTeamIdx);
+            curTeam.setLast2HomeOppDRank(
+                    validHomeTeamIdx >= 2 ? last2HomeOppDefRank / 2 : last2HomeOppDefRank / validHomeTeamIdx);
+
+            curTeam.setLast5HomeOppORank(
+                    validHomeTeamIdx >= 5 ? last5HomeOppOffRank / 5 : last5HomeOppOffRank / validHomeTeamIdx);
+            curTeam.setLast5HomeOppDRank(
+                    validHomeTeamIdx >= 5 ? last5HomeOppDefRank / 5 : last5HomeOppDefRank / validHomeTeamIdx);
+
         }
 
         System.out.println("End building rankings: " + (System.nanoTime() - start) / 1000000 + "ms");
 
         return teamMap;
+    }
+
+    private static double getNormalizedScore(int score, int oppRank, List<Double> rankings) {
+        return getNormalizedScore(Double.valueOf(score), Double.valueOf(oppRank), rankings);
+    }
+
+    private static double getNormalizedScore(double score, double oppRank, List<Double> rankings) {
+        double retScore = 0;
+        double topRankPoints = rankings.get(0); // best team
+        double midRankPoints = rankings.get(14); // mid team
+        double botRankPoints = rankings.get(29); // worst team
+        double pointPerRankMultiplier = (topRankPoints + midRankPoints + botRankPoints) / 180; // avg points per team
+        // 135 is average points (/3), per team (/30), and an arbitrary 2/3 for balance
+        // 180 is average points (/3), per team (/30), and an arbitrary 1/2 for balance
+
+        double rankDifferential = (15 - oppRank) * pointPerRankMultiplier; // get the score if the opp rank was at 15.
+
+        // need to math out the rank multiplier more
+        retScore = score + rankDifferential;
+
+        // def multi = 2.5
+        // where rank 15=113.5
+        // scenario rank 14 = 113.5
+        // scenario rank 16 = 113.5
+        // expect r14 normalized = 114
+        // expect r16 normalized = 113
+        // actual r14 = 2.5 + 113.5= 116
+        // actual r16 = -2.5 + 113.5 = 111
+
+        // off multi = 1.89
+        // where rank 15 = 114
+        // scenario rank 14 = 114
+        // scenario rank 16 = 114
+        // expect r14 = 113
+        // expect r16 = 115
+        // actual r14 = 1.89 + 114 =
+        return retScore;
     }
 
     public static Map<Integer, JSONObject> generateGames(Games[] gamesArray) throws ParseException {

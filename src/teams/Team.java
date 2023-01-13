@@ -35,8 +35,6 @@ public class Team {
     private final double last2HomePf;
     private final double last5HomePa;
     private final double last5HomePf;
-    private final double normalizedPf;
-    private final double normalizedPa;
     private final long daysRested;
     private final boolean isHotStreak;
     private final boolean isColdStreak;
@@ -68,6 +66,38 @@ public class Team {
 
     private int lastOppORank;
     private int lastOppDRank;
+    private double normalizedLastPf;
+    private double normalizedLastPa;
+
+    private double last5OppORank;
+    private double last5OppDRank;
+    private double normalizedLast5Pf;
+    private double normalizedLast5Pa;
+
+    private double last10OppORank;
+    private double last10OppDRank;
+    private double normalizedLast10Pf;
+    private double normalizedLast10Pa;
+
+    private double last2HomeOppORank;
+    private double last2HomeOppDRank;
+    private double normalizedLast2HomePf;
+    private double normalizedLast2HomePa;
+
+    private double last5HomeOppORank;
+    private double last5HomeOppDRank;
+    private double normalizedLast5HomePf;
+    private double normalizedLast5HomePa;
+
+    private double last2AwayOppORank;
+    private double last2AwayOppDRank;
+    private double normalizedLast2AwayPf;
+    private double normalizedLast2AwayPa;
+
+    private double last5AwayOppORank;
+    private double last5AwayOppDRank;
+    private double normalizedLast5AwayPf;
+    private double normalizedLast5AwayPa;
 
     public TeamName getName() {
         return this.name;
@@ -135,14 +165,6 @@ public class Team {
 
     public double getLast5HomePf() {
         return last5HomePf;
-    }
-
-    public double getNormalizedPf() {
-        return normalizedPf;
-    }
-
-    public double getNormalizedPa() {
-        return normalizedPa;
     }
 
     public String getShortName() {
@@ -289,12 +311,220 @@ public class Team {
         lastOppDRank = defRank;
     }
 
+    public void setLast5OppORank(double offRank) {
+        last5OppORank = offRank;
+    }
+
+    public void setLast5OppDRank(double defRank) {
+        last5OppDRank = defRank;
+    }
+
+    public void setLast10OppORank(double offRank) {
+        last10OppORank = offRank;
+    }
+
+    public void setLast10OppDRank(double defRank) {
+        last10OppDRank = defRank;
+    }
+
+    public void setLast2HomeOppORank(double offRank) {
+        last2HomeOppORank = offRank;
+    }
+
+    public void setLast2HomeOppDRank(double defRank) {
+        last2HomeOppDRank = defRank;
+    }
+
+    public void setLast5HomeOppORank(double offRank) {
+        last5HomeOppORank = offRank;
+    }
+
+    public void setLast5HomeOppDRank(double defRank) {
+        last5HomeOppDRank = defRank;
+    }
+
     public int getLastOppORank() {
         return lastOppORank;
     }
 
     public int getLastOppDRank() {
         return lastOppDRank;
+    }
+
+    public double getLast5OppORank() {
+        return last5OppORank;
+    }
+
+    public double getLast5OppDRank() {
+        return last5OppDRank;
+    }
+
+    public double getLast10OppORank() {
+        return last10OppORank;
+    }
+
+    public double getLast10OppDRank() {
+        return last10OppDRank;
+    }
+
+    public double getLast2HomeOppORank() {
+        return last2HomeOppORank;
+    }
+
+    public double getLast2HomeOppDRank() {
+        return last2HomeOppDRank;
+    }
+
+    public double getLast5HomeOppORank() {
+        return last5HomeOppORank;
+    }
+
+    public double getLast5HomeOppDRank() {
+        return last5HomeOppDRank;
+    }
+
+    public double getLast2AwayOppORank() {
+        return this.last2AwayOppORank;
+    }
+
+    public void setLast2AwayOppORank(double value) {
+        this.last2AwayOppORank = value;
+    }
+
+    public double getLast2AwayOppDRank() {
+        return this.last2AwayOppDRank;
+    }
+
+    public void setLast2AwayOppDRank(double value) {
+        this.last2AwayOppDRank = value;
+    }
+
+    public double getLast5AwayOppORank() {
+        return this.last5AwayOppORank;
+    }
+
+    public void setLast5AwayOppORank(double value) {
+        this.last5AwayOppORank = value;
+    }
+
+    public double getLast5AwayOppDRank() {
+        return this.last5AwayOppDRank;
+    }
+
+    public void setLast5AwayOppDRank(double value) {
+        this.last5AwayOppDRank = value;
+    }
+
+    public double getNormalizedLastPf() {
+        return this.normalizedLastPf;
+    }
+
+    public void setNormalizedLastPf(double value) {
+        this.normalizedLastPf = value;
+    }
+
+    public double getNormalizedLastPa() {
+        return this.normalizedLastPa;
+    }
+
+    public void setNormalizedLastPa(double value) {
+        this.normalizedLastPa = value;
+    }
+
+    public double getNormalizedLast5Pf() {
+        return this.normalizedLast5Pf;
+    }
+
+    public void setNormalizedLast5Pf(double value) {
+        this.normalizedLast5Pf = value;
+    }
+
+    public double getNormalizedLast5Pa() {
+        return this.normalizedLast5Pa;
+    }
+
+    public void setNormalizedLast5Pa(double value) {
+        this.normalizedLast5Pa = value;
+    }
+
+    public double getNormalizedLast10Pf() {
+        return this.normalizedLast10Pf;
+    }
+
+    public void setNormalizedLast10Pf(double value) {
+        this.normalizedLast10Pf = value;
+    }
+
+    public double getNormalizedLast10Pa() {
+        return this.normalizedLast10Pa;
+    }
+
+    public void setNormalizedLast10Pa(double value) {
+        this.normalizedLast10Pa = value;
+    }
+
+    public double getNormalizedLast2HomePf() {
+        return this.normalizedLast2HomePf;
+    }
+
+    public void setNormalizedLast2HomePf(double value) {
+        this.normalizedLast2HomePf = value;
+    }
+
+    public double getNormalizedLast2HomePa() {
+        return this.normalizedLast2HomePa;
+    }
+
+    public void setNormalizedLast2HomePa(double value) {
+        this.normalizedLast2HomePa = value;
+    }
+
+    public double getNormalizedLast5HomePf() {
+        return this.normalizedLast5HomePf;
+    }
+
+    public void setNormalizedLast5HomePf(double value) {
+        this.normalizedLast5HomePf = value;
+    }
+
+    public double getNormalizedLast5HomePa() {
+        return this.normalizedLast5HomePa;
+    }
+
+    public void setNormalizedLast5HomePa(double value) {
+        this.normalizedLast5HomePa = value;
+    }
+
+    public double getNormalizedLast2AwayPf() {
+        return this.normalizedLast2AwayPf;
+    }
+
+    public void setNormalizedLast2AwayPf(double value) {
+        this.normalizedLast2AwayPf = value;
+    }
+
+    public double getNormalizedLast2AwayPa() {
+        return this.normalizedLast2AwayPa;
+    }
+
+    public void setNormalizedLast2AwayPa(double value) {
+        this.normalizedLast2AwayPa = value;
+    }
+
+    public double getNormalizedLast5AwayPf() {
+        return this.normalizedLast5AwayPf;
+    }
+
+    public void setNormalizedLast5AwayPf(double value) {
+        this.normalizedLast5AwayPf = value;
+    }
+
+    public double getNormalizedLast5AwayPa() {
+        return this.normalizedLast5AwayPa;
+    }
+
+    public void setNormalizedLast5AwayPa(double value) {
+        this.normalizedLast5AwayPa = value;
     }
 
     public static class Builder {
@@ -325,8 +555,6 @@ public class Team {
         private double last2HomePa = -1;
         private double last5HomePf = -1;
         private double last5HomePa = -1;
-        private double normalizedPf = -1;
-        private double normalizedPa = -1;
         private long daysRested = -1;
 
         // addtl stats
@@ -457,16 +685,6 @@ public class Team {
             return this;
         }
 
-        public Builder normalizedPf(double val) {
-            normalizedPf = val;
-            return this;
-        }
-
-        public Builder normalizedPa(double val) {
-            normalizedPa = val;
-            return this;
-        }
-
         public Builder daysRested(long val) {
             daysRested = val;
             return this;
@@ -532,51 +750,6 @@ public class Team {
             return this;
         }
 
-        // public Builder oppLastODR(Map<Double, Double> val) {
-        // oppLastODR = val;
-        // return this;
-        // }
-
-        // public Builder oppLast5ODR(Map<Double, Double> val) {
-        // oppLast5ODR = val;
-        // return this;
-        // }
-
-        // public Builder oppLast10ODR(Map<Double, Double> val) {
-        // oppLast10ODR = val;
-        // return this;
-        // }
-
-        // public Builder oppLast2AwayODR(Map<Double, Double> val) {
-        // oppLast2AwayODR = val;
-        // return this;
-        // }
-
-        // public Builder oppLast2HomeODR(Map<Double, Double> val) {
-        // oppLast2HomeODR = val;
-        // return this;
-        // }
-
-        // public Builder oppLast5AwayODR(Map<Double, Double> val) {
-        // oppLast5AwayODR = val;
-        // return this;
-        // }
-
-        // public Builder oppLast5HomeODR(Map<Double, Double> val) {
-        // oppLast5HomeODR = val;
-        // return this;
-        // }
-
-        // public Builder teamODR(Map<Integer, Integer> val) {
-        // teamODR = val;
-        // return this;
-        // }
-
-        // public Builder last10ODR(Map<Integer, Integer> val) {
-        // last10ODR = val;
-        // return this;
-        // }
-
         public Team build() {
             return new Team(this);
         }
@@ -606,8 +779,6 @@ public class Team {
         last2HomePf = builder.last2HomePf;
         last5HomePa = builder.last5HomePa;
         last5HomePf = builder.last5HomePf;
-        normalizedPf = builder.normalizedPf;
-        normalizedPa = builder.normalizedPa;
         daysRested = builder.daysRested;
         isHomeTeam = builder.isHomeTeam;
         isHotStreak = builder.isHotStreak;
@@ -621,13 +792,5 @@ public class Team {
         numStartersInjured = builder.numStartersInjured;
         injuredPlayers = builder.injuredPlayers;
         teamJsonObj = builder.teamJsonObj;
-        // oppLastODR = builder.oppLastODR;
-        // oppLast5ODR = builder.oppLast5ODR;
-        // oppLast10ODR = builder.oppLast10ODR;
-        // oppLast2AwayODR = builder.oppLast2AwayODR;
-        // oppLast2HomeODR = builder.oppLast2HomeODR;
-        // oppLast5AwayODR = builder.oppLast5AwayODR;
-        // oppLast5HomeODR = builder.oppLast5HomeODR;
     }
-
 }

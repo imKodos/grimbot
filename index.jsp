@@ -128,8 +128,8 @@ Prediction p = new Prediction(team1, team2);
                         <p>D Rank: <%=team1.getDRank()%></p>
                         <p>O Rank in last 10 games: <%=team1.getO10Rank()%></p>
                         <p>D Rank in last 10 games: <%=team1.getD10Rank()%></p>
-                        <p>Last PF: <%=team1.getLastPF()%></p>
-                        <p>Last PA: <%=team1.getLastPA()%></p>
+                        <p>Last PF: <%=team1.getLastPF()%>&nbsp;(Normalized: <%=team1.getNormalizedLastPf()%>)</p>
+                        <p>Last PA: <%=team1.getLastPA()%>&nbsp;(Normalized: <%=team1.getNormalizedLastPa()%>)</p>
                         <p>Last Opp O Rank: <%=team1.getLastOppORank()%></p>
                         <p>Last Opp D Rank: <%=team1.getLastOppDRank()%></p>
                         <p>Last 5 PF Average: <%=team1.getLast5PF()%></p>
