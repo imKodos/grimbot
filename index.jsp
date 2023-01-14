@@ -244,8 +244,12 @@ Prediction p = new Prediction(team1, team2);
                 Last 5 PA Average: <%=team1.getLast5PA()%>
                 Last 10 PF Average: <%=team1.getLast10PF()%>
                 Last 10 PA Average: <%=team1.getLast10PA()%>
-                Win Streak: <%=team1.isHotStreak()%>
-                Lose Streak: <%=team1.isColdStreak()%>
+                <%if(team1.isHotStreak()){ %>
+                    <%=team1.getFullName() + " are currently on a hot streak"%>
+                <%} %>
+                <%if(team1.isColdStreak()){ %>
+                   <%=team1.getFullName() +" are currently on a cold streak"%>
+                <%} %>
                 <% if(team1.isHomeTeam()){ %>
                 Last 2 home PF: <%=team1.getLast2HomePf()%>              
                 Last 2 home PA: <%=team1.getLast2HomePa()%>
@@ -299,8 +303,12 @@ Prediction p = new Prediction(team1, team2);
                 Last 5 PA Average: <%=team2.getLast5PA()%>
                 Last 10 PF Average: <%=team2.getLast10PF()%>
                 Last 10 PA Average: <%=team2.getLast10PA()%>
-                Win Streak: <%=team2.isHotStreak()%>
-                Lose Streak: <%=team2.isColdStreak()%>
+                  <%if(team2.isHotStreak()){ %>
+                    <%=team2.getFullName() + " are currently on a hot streak"%>
+                  <%} %>
+                  <%if(team2.isColdStreak()){ %>
+                   <%=team2.getFullName() +" are currently on a cold streak"%>
+                  <%} %>
                 <% if(team2.isHomeTeam()){ %>
                 Last 2 home PF: <%=team2.getLast2HomePf()%>              
                 Last 2 home PA: <%=team2.getLast2HomePa()%>

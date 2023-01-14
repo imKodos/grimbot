@@ -323,6 +323,26 @@ public class Prediction {
                     * scoreCalculation(t2.getLast10PF(), t1.getLast10PA());
         }
 
+        if (t1.getNormalizedLastPf() != -1 && t2.getNormalizedLastPf() != -1 &&
+                t1.getNormalizedLastPa() != -1 && t2.getNormalizedLastPa() != -1) {
+            totalWeight += 1;
+            totalDivisor += totalWeight;
+            t1ScorePrediction += totalWeight
+                    * scoreCalculation(t1.getNormalizedLastPf(), t2.getNormalizedLastPa());
+            t2ScorePrediction += totalWeight
+                    * scoreCalculation(t2.getNormalizedLastPf(), t1.getNormalizedLastPa());
+        }
+
+        if (t1.getNormalizedLast5Pf() != -1 && t2.getNormalizedLast5Pf() != -1 &&
+                t1.getNormalizedLast5Pa() != -1 && t2.getNormalizedLast5Pa() != -1) {
+            totalWeight += 1;
+            totalDivisor += totalWeight;
+            t1ScorePrediction += totalWeight
+                    * scoreCalculation(t1.getNormalizedLast5Pf(), t2.getNormalizedLast5Pa());
+            t2ScorePrediction += totalWeight
+                    * scoreCalculation(t2.getNormalizedLast5Pf(), t1.getNormalizedLast5Pa());
+        }
+
         // get t1 season pf and t2 season pa comparison
         if (t1.getSeasonAvgPf() != -1 && t2.getSeasonAvgPf() != -1 &&
                 t1.getSeasonAvgPa() != -1 && t2.getSeasonAvgPa() != -1) {
