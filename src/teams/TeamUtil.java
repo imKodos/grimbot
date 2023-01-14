@@ -284,6 +284,15 @@ public class TeamUtil {
         Collections.sort(defensiveRankings);
         Collections.sort(last10DefensiveRankings);
 
+        System.out.println("Offensive Rankings:");
+        for (Double double1 : offensiveRankings) {
+            System.out.println(double1);
+        }
+        System.out.println("Defensive Rankings:");
+        for (Double double1 : defensiveRankings) {
+            System.out.println(double1);
+        }
+
         // update each team with their ranks -- as well as their opponent ranks
         for (Team curTeam : teamMap.values()) {
             curTeam.setORank(offensiveRankings.indexOf(curTeam.getSeasonAvgPf()) + 1);
@@ -381,8 +390,10 @@ public class TeamUtil {
             }
             curTeam.setLastOppORank(lastTeamOffRank);
             curTeam.setLastOppDRank(lastTeamDefRank);
-            curTeam.setNormalizedLastPf(getNormalizedScore(curTeam.getLastPF(), lastTeamDefRank, defensiveRankings));
-            curTeam.setNormalizedLastPa(getNormalizedScore(curTeam.getLastPA(), lastTeamOffRank, offensiveRankings));
+            curTeam.setNormalizedLastPf(
+                    getNormalizedScore(curTeam.getLastPF(), lastTeamDefRank, defensiveRankings, true));
+            curTeam.setNormalizedLastPa(
+                    getNormalizedScore(curTeam.getLastPA(), lastTeamOffRank, offensiveRankings, false));
             // if we reached our cap of 5 teams, divide by 5, otherwise divide by the last
             // known number of teams
             curTeam.setLast5OppORank(validTeamIdx >= 5 ? last5TeamOffRank / 5 : last5TeamOffRank / validTeamIdx);
@@ -418,20 +429,23 @@ public class TeamUtil {
         return teamMap;
     }
 
-    private static double getNormalizedScore(int score, int oppRank, List<Double> rankings) {
-        return getNormalizedScore(Double.valueOf(score), Double.valueOf(oppRank), rankings);
+    private static double getNormalizedScore(int score, int oppRank, List<Double> rankings, boolean pf) {
+        return getNormalizedScore(Double.valueOf(score), Double.valueOf(oppRank), rankings, false);
     }
 
-    private static double getNormalizedScore(double score, double oppRank, List<Double> rankings) {
+    private static double getNormalizedScore(double score, double oppRank, List<Double> rankings, boolean pf) {
         double retScore = 0;
         double topRankPoints = rankings.get(0); // best team
         double midRankPoints = rankings.get(14); // mid team
         double botRankPoints = rankings.get(29); // worst team
-        double pointPerRankMultiplier = (topRankPoints + midRankPoints + botRankPoints) / 180; // avg points per team
+        double pointPerRankMultiplier = (topRankPoints + midRankPoints + botRankPoints) / 500; // avg points per team
         // 135 is average points (/3), per team (/30), and an arbitrary 2/3 for balance
         // 180 is average points (/3), per team (/30), and an arbitrary 1/2 for balance
+        // 270 is average points (/3), per team (/30), and an arbitrary 1/3 for balance
+        // 450 is average points (/3), per team (/30), and an arbitrary 1/5 for balance
 
-        double rankDifferential = (15 - oppRank) * pointPerRankMultiplier; // get the score if the opp rank was at 15.
+        // get the score if the opp rank was at 15.
+        double rankDifferential = (pf ? (15 - oppRank) : (oppRank - 15)) * pointPerRankMultiplier;
 
         // need to math out the rank multiplier more
         retScore = score + rankDifferential;
@@ -452,7 +466,7 @@ public class TeamUtil {
         // expect r14 = 113
         // expect r16 = 115
         // actual r14 = 1.89 + 114 =
-        return retScore;
+        return (double) Math.round(retScore * 10) / 10;
     }
 
     public static Map<Integer, JSONObject> generateGames(Games[] gamesArray) throws ParseException {

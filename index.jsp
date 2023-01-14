@@ -170,7 +170,7 @@ Prediction p = new Prediction(team1, team2);
                 </div>
                 <div class="botView">
                   <div>
-                        <p id="t2Name">Team 2: <%=team2.getTeamName() + "  (" + team2.getShortName()+") " + team2.getTotalWins() +"-" +team1.getTotalLoss()%></p>
+                        <p id="t2Name">Team 2: <%=team2.getTeamName() + "  (" + team2.getShortName()+") " + team2.getTotalWins() +"-" +team2.getTotalLoss()%></p>
                         <p>Last Game Result: <%=team2.getLastGameInfo()%></p>
                         <p><%=team2.getNextGameInfo()%></p>
                         <p>O Rank: <%=team2.getORank()%></p>
