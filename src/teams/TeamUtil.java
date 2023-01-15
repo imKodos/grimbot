@@ -406,27 +406,56 @@ public class TeamUtil {
 
             curTeam.setLast10OppORank(validTeamIdx >= 10 ? last10TeamOffRank / 10 : last10TeamOffRank / validTeamIdx);
             curTeam.setLast10OppDRank(validTeamIdx >= 10 ? last10TeamDefRank / 10 : last10TeamDefRank / validTeamIdx);
+            curTeam.setNormalizedLast10Pf(
+                    getNormalizedScore(curTeam.getLast10PF(), curTeam.getLast10OppDRank(), defensiveRankings, true));
+            curTeam.setNormalizedLast10Pa(
+                    getNormalizedScore(curTeam.getLast10PA(), curTeam.getLast10OppORank(), offensiveRankings, false));
 
             curTeam.setLast2AwayOppORank(
                     validAwayTeamIdx >= 2 ? last2AwayOppOffRank / 2 : last2AwayOppOffRank / validAwayTeamIdx);
             curTeam.setLast2AwayOppDRank(
                     validAwayTeamIdx >= 2 ? last2AwayOppDefRank / 2 : last2AwayOppDefRank / validAwayTeamIdx);
+            curTeam.setNormalizedLast2AwayPf(
+                    getNormalizedScore(curTeam.getLast2AwayPf(), curTeam.getLast2AwayOppDRank(), defensiveRankings,
+                            true));
+            curTeam.setNormalizedLast2AwayPa(
+                    getNormalizedScore(curTeam.getLast2AwayPa(), curTeam.getLast2AwayOppORank(), offensiveRankings,
+                            false));
 
             curTeam.setLast5AwayOppORank(
                     validAwayTeamIdx >= 5 ? last5AwayOppOffRank / 5 : last5AwayOppOffRank / validAwayTeamIdx);
             curTeam.setLast5AwayOppDRank(
                     validAwayTeamIdx >= 5 ? last5AwayOppDefRank / 5 : last5AwayOppDefRank / validAwayTeamIdx);
+            curTeam.setNormalizedLast5AwayPf(
+                    getNormalizedScore(curTeam.getLast5AwayPf(), curTeam.getLast5AwayOppDRank(), defensiveRankings,
+                            true));
+            curTeam.setNormalizedLast5AwayPa(
+                    getNormalizedScore(curTeam.getLast5AwayPa(), curTeam.getLast5AwayOppORank(), offensiveRankings,
+                            false));
 
             curTeam.setLast2HomeOppORank(
                     validHomeTeamIdx >= 2 ? last2HomeOppOffRank / 2 : last2HomeOppOffRank / validHomeTeamIdx);
             curTeam.setLast2HomeOppDRank(
                     validHomeTeamIdx >= 2 ? last2HomeOppDefRank / 2 : last2HomeOppDefRank / validHomeTeamIdx);
 
+            curTeam.setNormalizedLast2HomePf(
+                    getNormalizedScore(curTeam.getLast2HomePf(), curTeam.getLast2HomeOppDRank(), defensiveRankings,
+                            true));
+            curTeam.setNormalizedLast2HomePa(
+                    getNormalizedScore(curTeam.getLast2HomePa(), curTeam.getLast2HomeOppORank(), offensiveRankings,
+                            false));
+
             curTeam.setLast5HomeOppORank(
                     validHomeTeamIdx >= 5 ? last5HomeOppOffRank / 5 : last5HomeOppOffRank / validHomeTeamIdx);
             curTeam.setLast5HomeOppDRank(
                     validHomeTeamIdx >= 5 ? last5HomeOppDefRank / 5 : last5HomeOppDefRank / validHomeTeamIdx);
 
+            curTeam.setNormalizedLast5AwayPf(
+                    getNormalizedScore(curTeam.getLast5HomePf(), curTeam.getLast5HomeOppDRank(), defensiveRankings,
+                            true));
+            curTeam.setNormalizedLast5HomePa(
+                    getNormalizedScore(curTeam.getLast5HomePa(), curTeam.getLast5HomeOppORank(), offensiveRankings,
+                            false));
         }
 
         System.out.println("End building rankings: " + (System.nanoTime() - start) / 1000000 + "ms");

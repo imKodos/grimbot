@@ -333,6 +333,54 @@ public class Prediction {
                     * scoreCalculation(t2.getNormalizedLastPf(), t1.getNormalizedLastPa());
         }
 
+        // if t1 is home, t2 is away
+        if (t1.isHomeTeam() && t1.getNormalizedLast2HomePf() != -1 && t2.getNormalizedLast2AwayPa() != -1
+                &&
+                t1.getNormalizedLast2HomePa() != -1 && t2.getNormalizedLast2AwayPf() != -1) {
+            totalWeight += 1; // keep this a standalone value
+            totalDivisor += totalWeight; // will be the sum of total weights used to divide by later
+            t1ScorePrediction += totalWeight
+                    * scoreCalculation(t1.getNormalizedLast2HomePf(), t2.getNormalizedLast2AwayPa());
+            t2ScorePrediction += totalWeight
+                    * scoreCalculation(t2.getNormalizedLast2HomePa(), t1.getNormalizedLast2AwayPf());
+        }
+
+        // t1 away, t2 home
+        if (!t1.isHomeTeam() && t1.getNormalizedLast2AwayPf() != -1 && t2.getNormalizedLast2HomePa() != -1 &&
+                t1.getNormalizedLast2AwayPa() != -1 && t2.getNormalizedLast2HomePf() != -1) {
+            totalWeight += 1; // keep this a standalone value
+            totalDivisor += totalWeight; // will be the sum of total weights used to divide by later
+
+            t1ScorePrediction += totalWeight
+                    * scoreCalculation(t1.getNormalizedLast2AwayPf(), t2.getNormalizedLast2HomePa());
+            t2ScorePrediction += totalWeight
+                    * scoreCalculation(t2.getNormalizedLast2HomePf(), t1.getNormalizedLast2AwayPa());
+        }
+
+        // if t1 is home, t2 is away
+        if (t1.isHomeTeam() && t1.getNormalizedLast5HomePf() != -1 && t2.getNormalizedLast5AwayPa() != -1
+                &&
+                t1.getNormalizedLast5HomePa() != -1 && t2.getNormalizedLast5AwayPf() != -1) {
+            totalWeight += 1; // keep this a standalone value
+            totalDivisor += totalWeight; // will be the sum of total weights used to divide by later
+            t1ScorePrediction += totalWeight
+                    * scoreCalculation(t1.getNormalizedLast5HomePf(), t2.getNormalizedLast5AwayPa());
+            t2ScorePrediction += totalWeight
+                    * scoreCalculation(t2.getNormalizedLast5HomePa(), t1.getNormalizedLast5AwayPf());
+        }
+
+        // t1 away, t2 home
+        if (!t1.isHomeTeam() && t1.getNormalizedLast5AwayPf() != -1 && t2.getNormalizedLast5HomePa() != -1 &&
+                t1.getNormalizedLast5AwayPa() != -1 && t2.getNormalizedLast5HomePf() != -1) {
+            totalWeight += 1; // keep this a standalone value
+            totalDivisor += totalWeight; // will be the sum of total weights used to divide by later
+
+            t1ScorePrediction += totalWeight
+                    * scoreCalculation(t1.getNormalizedLast5AwayPf(), t2.getNormalizedLast5HomePa());
+            t2ScorePrediction += totalWeight
+                    * scoreCalculation(t2.getNormalizedLast5HomePf(), t1.getNormalizedLast5AwayPa());
+        }
+
         if (t1.getNormalizedLast5Pf() != -1 && t2.getNormalizedLast5Pf() != -1 &&
                 t1.getNormalizedLast5Pa() != -1 && t2.getNormalizedLast5Pa() != -1) {
             totalWeight += 1;
@@ -341,6 +389,26 @@ public class Prediction {
                     * scoreCalculation(t1.getNormalizedLast5Pf(), t2.getNormalizedLast5Pa());
             t2ScorePrediction += totalWeight
                     * scoreCalculation(t2.getNormalizedLast5Pf(), t1.getNormalizedLast5Pa());
+        }
+
+        if (t1.getNormalizedLast10Pf() != -1 && t2.getNormalizedLast10Pf() != -1 &&
+                t1.getNormalizedLast10Pa() != -1 && t2.getNormalizedLast10Pa() != -1) {
+            totalWeight += 1;
+            totalDivisor += totalWeight;
+            t1ScorePrediction += totalWeight
+                    * scoreCalculation(t1.getNormalizedLast10Pf(), t2.getNormalizedLast10Pa());
+            t2ScorePrediction += totalWeight
+                    * scoreCalculation(t2.getNormalizedLast10Pf(), t1.getNormalizedLast10Pa());
+        }
+
+        if (t1.getNormalizedLast10Pf() != -1 && t2.getNormalizedLast10Pf() != -1 &&
+                t1.getNormalizedLast10Pa() != -1 && t2.getNormalizedLast10Pa() != -1) {
+            totalWeight += 1;
+            totalDivisor += totalWeight;
+            t1ScorePrediction += totalWeight
+                    * scoreCalculation(t1.getNormalizedLast10Pf(), t2.getNormalizedLast10Pa());
+            t2ScorePrediction += totalWeight
+                    * scoreCalculation(t2.getNormalizedLast10Pf(), t1.getNormalizedLast10Pa());
         }
 
         // get t1 season pf and t2 season pa comparison

@@ -132,22 +132,22 @@ Prediction p = new Prediction(team1, team2);
                         <p>Last PA: <%=team1.getLastPA()%>&nbsp;(Normalized: <%=team1.getNormalizedLastPa()%>)</p>
                         <p>Last Opp O Rank: <%=team1.getLastOppORank()%></p>
                         <p>Last Opp D Rank: <%=team1.getLastOppDRank()%></p>
-                        <p>Last 5 PF Average: <%=team1.getLast5PF()%></p>
-                        <p>Last 5 PA Average: <%=team1.getLast5PA()%></p>
-                        <p>Last 10 PF Average: <%=team1.getLast10PF()%></p>
-                        <p>Last 10 PA Average: <%=team1.getLast10PA()%></p>
+                        <p>Last 5 PF Average: <%=team1.getLast5PF()%>&nbsp;(Normalized: <%=team1.getNormalizedLast5Pf()%> Avg Opp Rank: <%=team1.getLast5OppDRank()%>)</p>
+                        <p>Last 5 PA Average: <%=team1.getLast5PA()%>&nbsp;(Normalized: <%=team1.getNormalizedLast5Pa()%> Avg Opp Rank: <%=team1.getLast5OppORank()%>)</p>
+                        <p>Last 10 PF Average: <%=team1.getLast10PF()%>&nbsp;(Normalized: <%=team1.getNormalizedLast10Pf()%> Avg Opp Rank: <%=team1.getLast10OppDRank()%>)</p>
+                        <p>Last 10 PA Average: <%=team1.getLast10PA()%>&nbsp;(Normalized: <%=team1.getNormalizedLast10Pa()%> Avg Opp Rank: <%=team1.getLast10OppORank()%>)</p>
                         <p>Season PPG: <%=team1.getSeasonAvgPf()%></p>
                         <p>Season OPPG: <%=team1.getSeasonAvgPa()%></p>
                         <p>Days Rest: <%=team1.getDaysRested()%></p>  
                         <p>is home team: <%=team1.isHomeTeam()%></p>               
-                        <p>Last 2 home PF: <%=team1.getLast2HomePf()%></p>               
-                        <p>Last 2 home PA: <%=team1.getLast2HomePa()%></p> 
-                        <p>Last 5 home PF: <%=team1.getLast5HomePf()%></p>               
-                        <p>Last 5 home PA: <%=team1.getLast5HomePa()%></p>                 
-                        <p>Last 2 away PF: <%=team1.getLast2AwayPf()%></p>               
-                        <p>Last 2 away PA: <%=team1.getLast2AwayPa()%></p>              
-                        <p>Last 5 away PF: <%=team1.getLast5AwayPf()%></p>               
-                        <p>Last 5 away PA: <%=team1.getLast5AwayPa()%></p> 
+                        <p>Last 2 home PF: <%=team1.getLast2HomePf()%>&nbsp;(Normalized: <%=team1.getNormalizedLast2HomePf()%> Avg Opp Rank: <%=team1.getLast2HomeOppDRank()%>)</p>               
+                        <p>Last 2 home PA: <%=team1.getLast2HomePa()%>&nbsp;(Normalized: <%=team1.getNormalizedLast2HomePa()%> Avg Opp Rank: <%=team1.getLast2HomeOppORank()%>)</p>  
+                        <p>Last 5 home PF: <%=team1.getLast5HomePf()%>&nbsp;(Normalized: <%=team1.getNormalizedLast5HomePf()%> Avg Opp Rank: <%=team1.getLast5HomeOppDRank()%>)</p>                
+                        <p>Last 5 home PA: <%=team1.getLast5HomePa()%>&nbsp;(Normalized: <%=team1.getNormalizedLast5HomePa()%> Avg Opp Rank: <%=team1.getLast5HomeOppORank()%>)</p>                  
+                        <p>Last 2 away PF: <%=team1.getLast2AwayPf()%>&nbsp;(Normalized: <%=team1.getNormalizedLast2AwayPf()%> Avg Opp Rank: <%=team1.getLast2AwayOppDRank()%>)</p>                
+                        <p>Last 2 away PA: <%=team1.getLast2AwayPa()%>&nbsp;(Normalized: <%=team1.getNormalizedLast2AwayPa()%> Avg Opp Rank: <%=team1.getLast2AwayOppORank()%>)</p>               
+                        <p>Last 5 away PF: <%=team1.getLast5AwayPf()%>&nbsp;(Normalized: <%=team1.getNormalizedLast5AwayPf()%> Avg Opp Rank: <%=team1.getLast5AwayOppDRank()%>)</p>                
+                        <p>Last 5 away PA: <%=team1.getLast5AwayPa()%>&nbsp;(Normalized: <%=team1.getNormalizedLast5AwayPa()%> Avg Opp Rank: <%=team1.getLast5AwayOppORank()%>)</p>  
                         <p>Win Streak: <%=team1.isHotStreak()%></p>
                         <p>Lose Streak: <%=team1.isColdStreak()%></p>      
                         <p>home Streak <%=team1.isHomeHotStreak()%></p>               
