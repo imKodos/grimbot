@@ -64,8 +64,8 @@ public class Team {
     private int o10Rank;
     private int d10Rank;
 
-    private int lastOppORank;
-    private int lastOppDRank;
+    private double lastOppORank;
+    private double lastOppDRank;
     private double normalizedLastPf;
     private double normalizedLastPa;
 
@@ -303,11 +303,11 @@ public class Team {
         return d10Rank;
     }
 
-    public void setLastOppORank(int offRank) {
+    public void setLastOppORank(double offRank) {
         lastOppORank = offRank;
     }
 
-    public void setLastOppDRank(int defRank) {
+    public void setLastOppDRank(double defRank) {
         lastOppDRank = defRank;
     }
 
@@ -343,11 +343,11 @@ public class Team {
         last5HomeOppDRank = defRank;
     }
 
-    public int getLastOppORank() {
+    public double getLastOppORank() {
         return lastOppORank;
     }
 
-    public int getLastOppDRank() {
+    public double getLastOppDRank() {
         return lastOppDRank;
     }
 

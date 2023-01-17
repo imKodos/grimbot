@@ -227,9 +227,9 @@ Prediction p = new Prediction(team1, team2);
                 <h1>
                 Game Line
                 </h1>
-                <h2>
+                <h4>
                 <%=team1.getFullName()%>
-                </h2>
+                </h4>
                 <p>
                 The result from the last <%=team1.getTeamName()%> game was:<br>
                 <%=team1.getLastGameInfo()%><br><br>
@@ -240,10 +240,10 @@ Prediction p = new Prediction(team1, team2);
                 Offensive Rank in last 10 games: <%=team1.getO10Rank()%>
                 Defensive Rank: <%=team1.getDRank()%>
                 Defensive Rank in last 10 games: <%=team1.getD10Rank()%>
-                Last 5 PF Average: <%=team1.getLast5PF()%>
-                Last 5 PA Average: <%=team1.getLast5PA()%>
-                Last 10 PF Average: <%=team1.getLast10PF()%>
-                Last 10 PA Average: <%=team1.getLast10PA()%>
+                Last 5 PF Average: <%=team1.getLast5PF()%>  (Avg Def Rank: <%=team1.getLast5OppDRank()%>)
+                Last 5 PA Average: <%=team1.getLast5PA()%> (Avg Off Rank: <%=team1.getLast5OppORank()%>)
+                Last 10 PF Average: <%=team1.getLast10PF()%> (Avg Def Rank: <%=team1.getLast10OppDRank()%>)
+                Last 10 PA Average: <%=team1.getLast10PA()%> (Avg Off Rank: <%=team1.getLast10OppORank()%>)
                 <%if(team1.isHotStreak()){ %>
                     <%=team1.getFullName() + " are currently on a hot streak"%>
                 <%} %>
@@ -286,9 +286,9 @@ Prediction p = new Prediction(team1, team2);
                 }                   
                 }%>
                 </p> 
-                 <h2>
+                 <h4>
                 <%=team2.getFullName()%>
-                </h2>
+                </h4>
                 <p>
                 The result from the last <%=team2.getTeamName()%> game was:<br>
                 <%=team2.getLastGameInfo()%><br><br>
@@ -299,10 +299,10 @@ Prediction p = new Prediction(team1, team2);
                 Offensive Rank in last 10 games: <%=team2.getO10Rank()%>
                 Defensive Rank: <%=team2.getDRank()%>
                 Defensive Rank in last 10 games: <%=team2.getD10Rank()%>
-                Last 5 PF Average: <%=team2.getLast5PF()%>
-                Last 5 PA Average: <%=team2.getLast5PA()%>
-                Last 10 PF Average: <%=team2.getLast10PF()%>
-                Last 10 PA Average: <%=team2.getLast10PA()%>
+                Last 5 PF Average: <%=team2.getLast5PF()%>  (Avg Def Rank: <%=team2.getLast5OppDRank()%>)
+                Last 5 PA Average: <%=team2.getLast5PA()%> (Avg Off Rank: <%=team2.getLast5OppORank()%>)
+                Last 10 PF Average: <%=team2.getLast10PF()%> (Avg Def Rank: <%=team2.getLast10OppDRank()%>)
+                Last 10 PA Average: <%=team2.getLast10PA()%> (Avg Off Rank: <%=team2.getLast10OppORank()%>)
                   <%if(team2.isHotStreak()){ %>
                     <%=team2.getFullName() + " are currently on a hot streak"%>
                   <%} %>
@@ -345,9 +345,9 @@ Prediction p = new Prediction(team1, team2);
                 }                   
                 }%>
                 </p> 
-                <h2>
+                <h4>
                 Prediction and Picks
-                </h2>
+                </h4>
                 <p>Projected Score: <%=p.getScorePrediction()%><br>
                 Projected Total: <%=p.getTotalScorePrediction()%></p>
                 <p></p>

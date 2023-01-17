@@ -200,7 +200,11 @@ public class TeamUtil {
             Vector<String> injuredPlayerVec = (Vector<String>) startingInjuries.get("injuredPlayers");
 
             // TODO LIST
-            // get ranks for last op, last 5, last 10, and home/away sets
+            // use normalized stats better in predictions
+            // get rid of playing down to defense
+            // play to normalized score / rank
+            // add diff variance
+            // set up 3 models.
 
             // can refactor ranks calculations ie last5AwayTeamsPlayedArr etc.
             // obtain team offense and defense rank based on seasonPpg and last 5 ppg
@@ -301,32 +305,32 @@ public class TeamUtil {
             curTeam.setD10Rank(last10DefensiveRankings.indexOf(curTeam.getLast10PA()) + 1);
 
             // last 1, 5, and 10 team ranks
-            int lastTeamOffRank = 0;
-            int lastTeamDefRank = 0;
+            double lastTeamOffRank = 0;
+            double lastTeamDefRank = 0;
             double lastScoreNormalizedPf = 0;
             double lastScoreNormalizedPa = 0;
-            int last5TeamOffRank = 0;
-            int last5TeamDefRank = 0;
+            double last5TeamOffRank = 0;
+            double last5TeamDefRank = 0;
             double last5NormalizedPf = 0;
             double last5NormalizedPa = 0;
-            int last10TeamOffRank = 0;
-            int last10TeamDefRank = 0;
+            double last10TeamOffRank = 0;
+            double last10TeamDefRank = 0;
             double last10NormalizedPf = 0;
             double last10NormalizedPa = 0;
-            int last2HomeOppOffRank = 0;
-            int last2HomeOppDefRank = 0;
+            double last2HomeOppOffRank = 0;
+            double last2HomeOppDefRank = 0;
             double last2HomeNormalizedPf = 0;
             double last2HomeNormalizedPa = 0;
-            int last5HomeOppOffRank = 0;
-            int last5HomeOppDefRank = 0;
+            double last5HomeOppOffRank = 0;
+            double last5HomeOppDefRank = 0;
             double last5HomeNormalizedPf = 0;
             double last5HomeNormalizedPa = 0;
-            int last2AwayOppOffRank = 0;
-            int last2AwayOppDefRank = 0;
+            double last2AwayOppOffRank = 0;
+            double last2AwayOppDefRank = 0;
             double last2AwayNormalizedPf = 0;
             double last2AwayNormalizedPa = 0;
-            int last5AwayOppOffRank = 0;
-            int last5AwayOppDefRank = 0;
+            double last5AwayOppOffRank = 0;
+            double last5AwayOppDefRank = 0;
             double last5AwayNormalizedPf = 0;
             double last5AwayNormalizedPa = 0;
 
@@ -367,7 +371,7 @@ public class TeamUtil {
                         last2AwayOppDefRank += defensiveRankings.indexOf(opponentPa) + 1;
                     }
                     last5AwayOppOffRank += offensiveRankings.indexOf(opponentPf) + 1;
-                    last5AwayOppOffRank += defensiveRankings.indexOf(opponentPa) + 1;
+                    last5AwayOppDefRank += defensiveRankings.indexOf(opponentPa) + 1;
                 }
             }
             int[] last5HomeTeamsPlayedArr = (int[]) totalTeamStatsMap.get(curTeam.getTeamId())
@@ -385,7 +389,7 @@ public class TeamUtil {
                         last2HomeOppDefRank += defensiveRankings.indexOf(opponentPa) + 1;
                     }
                     last5HomeOppOffRank += offensiveRankings.indexOf(opponentPf) + 1;
-                    last5HomeOppOffRank += defensiveRankings.indexOf(opponentPa) + 1;
+                    last5HomeOppDefRank += defensiveRankings.indexOf(opponentPa) + 1;
                 }
             }
             curTeam.setLastOppORank(lastTeamOffRank);
@@ -450,7 +454,7 @@ public class TeamUtil {
             curTeam.setLast5HomeOppDRank(
                     validHomeTeamIdx >= 5 ? last5HomeOppDefRank / 5 : last5HomeOppDefRank / validHomeTeamIdx);
 
-            curTeam.setNormalizedLast5AwayPf(
+            curTeam.setNormalizedLast5HomePf(
                     getNormalizedScore(curTeam.getLast5HomePf(), curTeam.getLast5HomeOppDRank(), defensiveRankings,
                             true));
             curTeam.setNormalizedLast5HomePa(
@@ -461,10 +465,6 @@ public class TeamUtil {
         System.out.println("End building rankings: " + (System.nanoTime() - start) / 1000000 + "ms");
 
         return teamMap;
-    }
-
-    private static double getNormalizedScore(int score, int oppRank, List<Double> rankings, boolean pf) {
-        return getNormalizedScore(Double.valueOf(score), Double.valueOf(oppRank), rankings, pf);
     }
 
     private static double getNormalizedScore(double score, double oppRank, List<Double> rankings, boolean pf) {

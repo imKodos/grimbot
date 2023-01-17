@@ -1,17 +1,21 @@
 package stats;
 
-import java.util.Map;
-
 import teams.Team;
 
 public class Prediction {
     private int t1ScorePrediction = 0;
     private int t2ScorePrediction = 0;
+    // private int t1GrimScorePrediction = 0;
+    // private int t2GrimScorePrediction = 0;
     private double t1Variance = 0;
     private double t2Variance = 0;
     private double t1Differential = 0;
     private double t2Differential = 0;
+    private double t1Last10Differential = 0;
+    private double t2Last10Differential = 0;
     private String winner = "";
+    // private String grimWinner = "";
+
     private double totalWeight = 0;
     private double totalDivisor = 0;
 
@@ -24,36 +28,21 @@ public class Prediction {
     }
 
     // public String getGrimScorePrediction() {
-    // return t1ScorePrediction + " - " + t2ScorePrediction + " " + winner;
+    // return t1GrimScorePrediction + " - " + t2GrimScorePrediction + " " +
+    // grimWinner;
     // }
 
     // public String getGrimTotalScorePrediction() {
-    // return t1ScorePrediction + t2ScorePrediction + "";
-    // }
-
-    // public String getLuciScorePrediction() {
-    // return t1ScorePrediction + " - " + t2ScorePrediction + " " + winner;
-    // }
-
-    // public String getLuciTotalScorePrediction() {
-    // return t1ScorePrediction + t2ScorePrediction + "";
-    // }
-
-    // public String getDoomScorePrediction() {
-    // return t1ScorePrediction + " - " + t2ScorePrediction + " " + winner;
-    // }
-
-    // public String getDoomTotalScorePrediction() {
-    // return t1ScorePrediction + t2ScorePrediction + "";
+    // return t1GrimScorePrediction + t2GrimScorePrediction + "";
     // }
 
     public double scoreCalculation(double pointsFor, double pointsAgainst) {
-        if (pointsFor > pointsAgainst) {// play closer to defense
-            return ((0.99 * pointsFor) + pointsAgainst) / 2;
-        } else {
-            return (pointsFor + pointsAgainst) / 2;
-        }
+        return (pointsFor + pointsAgainst) / 2;
     }
+
+    // public double grimScoreCalculation(double pointsFor, double pointsAgainst) {
+    // return (pointsFor + pointsAgainst) / 2;
+    // }
 
     public double getT1Variance() {
         return t1Variance;
@@ -72,12 +61,7 @@ public class Prediction {
                 // doom prediction = theory of odds -- if things are going well, they will soon
                 // -- add rng to variance depending on record; will be a diff score every sim
                 // falter. (reverse double variance)
-
-                // totalRankEntries in case we need to get a handle on percentile rank
-                // System.out.println(totalRankEntries.get("oRankTotals"));
-                // System.out.println(totalRankEntries.get("dRankTotals"));
-                // System.out.println(totalRankEntries.get("o10RankTotals"));
-                // System.out.println(totalRankEntries.get("d10RankTotals"));
+                //
 
                 // get variance; little odds and ends to not rely solely on weighted stats.
                 getVariance(t1, t2);
@@ -92,7 +76,6 @@ public class Prediction {
                 System.out.println(e);
             }
         }
-
     }
 
     private void getVariance(Team t1, Team t2) {
@@ -107,67 +90,62 @@ public class Prediction {
         t1Differential = t1.getSeasonAvgPf() - t1.getSeasonAvgPa();
         t2Differential = t2.getSeasonAvgPf() - t2.getSeasonAvgPa();
 
-        if (t1Differential >= 15) {
-            t1Variance += 4;
-            t2Variance -= 4;
-        } else if (t1Differential >= 10) {
+        t1Last10Differential = t1.getLast10PF() - t1.getLast10PA();
+        t2Last10Differential = t2.getLast10PF() - t2.getLast10PA();
+
+        if (t1Differential >= 15 || t1Last10Differential >= 15) {
             t1Variance += 3;
-            t2Variance -= 3;
-        } else if (t1Differential >= 5) {
+            t2Variance -= 1;
+        } else if (t1Differential >= 10 || t1Last10Differential >= 10) {
             t1Variance += 2;
-            t2Variance -= 2;
-        } else if (t1Differential <= -5) {
-            t1Variance -= 2;
-            t2Variance += 2;
-        } else if (t1Differential <= -10) {
-            t1Variance -= 3;
+            t2Variance -= 1;
+        } else if (t1Differential >= 5 || t1Last10Differential >= 5) {
+            t1Variance += 1;
+        } else if (t1Differential <= -15 || t1Last10Differential <= -15) {
+            t1Variance -= 1;
             t2Variance += 3;
-        } else if (t1Differential <= -15) {
-            t1Variance -= 4;
-            t2Variance += 4;
+        } else if (t1Differential <= -10 || t1Last10Differential <= -10) {
+            t1Variance -= 1;
+            t2Variance += 2;
+        } else if (t1Differential <= -5 || t1Last10Differential <= -5) {
+            t2Variance += 1;
         }
 
-        if (t2Differential >= 15) {
-            t2Variance += 4;
-            t1Variance -= 4;
-        } else if (t2Differential >= 10) {
+        if (t2Differential >= 15 || t2Last10Differential >= 15) {
             t2Variance += 3;
-            t1Variance -= 3;
-        } else if (t2Differential >= 5) {
+            t1Variance -= 1;
+        } else if (t2Differential >= 10 || t2Last10Differential >= 10) {
             t2Variance += 2;
-            t1Variance -= 2;
-        } else if (t2Differential <= -5) {
-            t2Variance -= 2;
-            t1Variance += 2;
-        } else if (t2Differential <= -10) {
-            t2Variance -= 3;
+            t1Variance -= 1;
+        } else if (t2Differential >= 5 || t2Last10Differential >= 5) {
+            t2Variance += 1;
+        } else if (t2Differential <= -15 || t2Last10Differential <= -15) {
+            t2Variance -= 1;
             t1Variance += 3;
-        } else if (t2Differential <= -15) {
-            t2Variance -= 4;
-            t1Variance += 4;
+        } else if (t2Differential <= -10 || t2Last10Differential <= -10) {
+            t2Variance -= 1;
+            t1Variance += 2;
+        } else if (t2Differential <= -5 || t2Last10Differential <= -5) {
+            t1Variance += 1;
         }
 
         // if one team has a higher than 0.55 win rate, and the other is below 0.45, add
         // positive variance to that team.
-        if (t1WinPercent >= 0.55 && t2WinPercent <= 0.45) {
-            t1Variance += 2;
-            t2Variance -= 1;
+        if (t1WinPercent >= 0.55 && t2WinPercent <= 0.5) {
+            t1Variance += 1;
         }
 
-        if (t2WinPercent >= 0.55 && t1WinPercent <= 0.45) {
-            t2Variance += 2;
-            t1Variance -= 1;
+        if (t2WinPercent >= 0.55 && t1WinPercent <= 0.5) {
+            t2Variance += 1;
         }
 
         if (t1.getDaysRested() > 0 && t1.getDaysRested() < 3) { // if a team is between 1-2 days rest, add
                                                                 // variance for fresh legs
             t1Variance += t1.getDaysRested();
-            // t2Variance -= 1;
         }
         if (t2.getDaysRested() > 0 && t2.getDaysRested() < 3) { // if a team is between 1-2 days rest, add
                                                                 // variance
             t2Variance += t2.getDaysRested();
-            // t1Variance -= 1;
         }
 
         if (t1.getNumStartersInjured() > 0) {
@@ -230,6 +208,33 @@ public class Prediction {
                 // t1Variance += 1;
             }
         }
+
+        if (t1.getORank() < 10) { // plays at a higher pace, so expect a few more points
+            t2Variance += 2;
+        }
+        if (t2.getORank() < 10) { // plays at a higher pace, so expect a few more points
+            t1Variance += 2;
+        }
+        if (t1.getORank() > 20) { // plays at a slower pace, so expect a few more points
+            t2Variance -= 2;
+        }
+        if (t2.getORank() > 20) { // plays at a slower pace, so expect a few more points
+            t1Variance -= 2;
+        }
+
+        if (t1.getDRank() > 20) { // plays at a higher pace, so expect a few more points
+            t2Variance += 2;
+        }
+        if (t2.getDRank() > 20) { // plays at a higher pace, so expect a few more points
+            t1Variance += 2;
+        }
+
+        if (t1.getDRank() < 10) { // plays at a slower pace, so expect a few more points
+            t2Variance -= 2;
+        }
+        if (t2.getDRank() < 10) { // plays at a higher pace, so expect a few more points
+            t1Variance -= 2;
+        }
     }
 
     private void getWeightedStats(Team t1, Team t2) {
@@ -246,6 +251,13 @@ public class Prediction {
                     * scoreCalculation(t1.getLastPF(), t2.getLastPA());
             t2ScorePrediction += totalWeight
                     * scoreCalculation(t2.getLastPF(), t1.getLastPA());
+
+            // t1GrimScorePrediction += totalWeight
+            // * grimScoreCalculation(t1.getLastPF(), t2.getLastPA(), t1.getORank(),
+            // t2.getDRank());
+            // t2GrimScorePrediction += totalWeight
+            // * grimScoreCalculation(t2.getLastPF(), t1.getLastPA(), t2.getORank(),
+            // t1.getDRank());
         }
 
         // if t1 is home, t2 is away
@@ -323,16 +335,6 @@ public class Prediction {
                     * scoreCalculation(t2.getLast10PF(), t1.getLast10PA());
         }
 
-        if (t1.getNormalizedLastPf() != -1 && t2.getNormalizedLastPf() != -1 &&
-                t1.getNormalizedLastPa() != -1 && t2.getNormalizedLastPa() != -1) {
-            totalWeight += 1;
-            totalDivisor += totalWeight;
-            t1ScorePrediction += totalWeight
-                    * scoreCalculation(t1.getNormalizedLastPf(), t2.getNormalizedLastPa());
-            t2ScorePrediction += totalWeight
-                    * scoreCalculation(t2.getNormalizedLastPf(), t1.getNormalizedLastPa());
-        }
-
         // if t1 is home, t2 is away
         if (t1.isHomeTeam() && t1.getNormalizedLast2HomePf() != -1 && t2.getNormalizedLast2AwayPa() != -1
                 &&
@@ -381,6 +383,28 @@ public class Prediction {
                     * scoreCalculation(t2.getNormalizedLast5HomePf(), t1.getNormalizedLast5AwayPa());
         }
 
+        // get t1 season pf and t2 season pa comparison
+        if (t1.getSeasonAvgPf() != -1 && t2.getSeasonAvgPf() != -1 &&
+                t1.getSeasonAvgPa() != -1 && t2.getSeasonAvgPa() != -1) {
+            totalWeight += 1; // keep this a standalone value
+            totalDivisor += totalWeight; // will be the sum of total weights used to divide by later
+            // ex t1 pf 120, t2 pa 110 -- expected t1 pf is 115, same for t2 pa.
+            t1ScorePrediction += totalWeight
+                    * scoreCalculation(t1.getSeasonAvgPf(), t2.getSeasonAvgPa());
+            t2ScorePrediction += totalWeight
+                    * scoreCalculation(t2.getSeasonAvgPf(), t1.getSeasonAvgPa());
+        }
+
+        if (t1.getNormalizedLastPf() != -1 && t2.getNormalizedLastPf() != -1 &&
+                t1.getNormalizedLastPa() != -1 && t2.getNormalizedLastPa() != -1) {
+            totalWeight += 1;
+            totalDivisor += totalWeight;
+            t1ScorePrediction += totalWeight
+                    * scoreCalculation(t1.getNormalizedLastPf(), t2.getNormalizedLastPa());
+            t2ScorePrediction += totalWeight
+                    * scoreCalculation(t2.getNormalizedLastPf(), t1.getNormalizedLastPa());
+        }
+
         if (t1.getNormalizedLast5Pf() != -1 && t2.getNormalizedLast5Pf() != -1 &&
                 t1.getNormalizedLast5Pa() != -1 && t2.getNormalizedLast5Pa() != -1) {
             totalWeight += 1;
@@ -411,18 +435,6 @@ public class Prediction {
                     * scoreCalculation(t2.getNormalizedLast10Pf(), t1.getNormalizedLast10Pa());
         }
 
-        // get t1 season pf and t2 season pa comparison
-        if (t1.getSeasonAvgPf() != -1 && t2.getSeasonAvgPf() != -1 &&
-                t1.getSeasonAvgPa() != -1 && t2.getSeasonAvgPa() != -1) {
-            totalWeight += 1; // keep this a standalone value
-            totalDivisor += totalWeight; // will be the sum of total weights used to divide by later
-            // ex t1 pf 120, t2 pa 110 -- expected t1 pf is 115, same for t2 pa.
-            t1ScorePrediction += totalWeight
-                    * scoreCalculation(t1.getSeasonAvgPf(), t2.getSeasonAvgPa());
-            t2ScorePrediction += totalWeight
-                    * scoreCalculation(t2.getSeasonAvgPf(), t1.getSeasonAvgPa());
-        }
-
     }
 
     private void calculatePrediction(Team t1, Team t2) {
@@ -445,5 +457,12 @@ public class Prediction {
         } else {
             winner = t1ScorePrediction > t2ScorePrediction ? t1.getShortName() : t2.getShortName();
         }
+
+        // if (t1GrimScorePrediction == t2GrimScorePrediction) {
+        // grimWinner = "N/A";
+        // } else {
+        // grimWinner = t1GrimScorePrediction > t2GrimScorePrediction ?
+        // t1.getShortName() : t2.getShortName();
+        // }
     }
 }
