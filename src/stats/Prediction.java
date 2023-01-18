@@ -5,8 +5,8 @@ import teams.Team;
 public class Prediction {
     private int t1ScorePrediction = 0;
     private int t2ScorePrediction = 0;
-    // private int t1GrimScorePrediction = 0;
-    // private int t2GrimScorePrediction = 0;
+    private int t1GrimScorePrediction = 0;
+    private int t2GrimScorePrediction = 0;
     private double t1Variance = 0;
     private double t2Variance = 0;
     private double t1Differential = 0;
@@ -14,7 +14,7 @@ public class Prediction {
     private double t1Last10Differential = 0;
     private double t2Last10Differential = 0;
     private String winner = "";
-    // private String grimWinner = "";
+    private String grimWinner = "";
 
     private double totalWeight = 0;
     private double totalDivisor = 0;
@@ -27,22 +27,24 @@ public class Prediction {
         return t1ScorePrediction + t2ScorePrediction + "";
     }
 
-    // public String getGrimScorePrediction() {
-    // return t1GrimScorePrediction + " - " + t2GrimScorePrediction + " " +
-    // grimWinner;
-    // }
+    public String getGrimScorePrediction() {
+        return t1GrimScorePrediction + " - " + t2GrimScorePrediction + " " +
+                grimWinner;
+    }
 
-    // public String getGrimTotalScorePrediction() {
-    // return t1GrimScorePrediction + t2GrimScorePrediction + "";
-    // }
+    public String getGrimTotalScorePrediction() {
+        return t1GrimScorePrediction + t2GrimScorePrediction + "";
+    }
 
     public double scoreCalculation(double pointsFor, double pointsAgainst) {
         return (pointsFor + pointsAgainst) / 2;
     }
 
-    // public double grimScoreCalculation(double pointsFor, double pointsAgainst) {
-    // return (pointsFor + pointsAgainst) / 2;
-    // }
+    public double grimScoreCalculation(double pointsFor, double pointsAgainst, double oRank, double oppDRank) {
+        double rankMultiplier = 1;
+
+        return ((rankMultiplier * pointsFor) + pointsAgainst) / 2;
+    }
 
     public double getT1Variance() {
         return t1Variance;
@@ -210,30 +212,30 @@ public class Prediction {
         }
 
         if (t1.getORank() < 10) { // plays at a higher pace, so expect a few more points
-            t2Variance += 2;
+            t2Variance += 1;
         }
         if (t2.getORank() < 10) { // plays at a higher pace, so expect a few more points
-            t1Variance += 2;
+            t1Variance += 1;
         }
         if (t1.getORank() > 20) { // plays at a slower pace, so expect a few more points
-            t2Variance -= 2;
+            t2Variance -= 1;
         }
         if (t2.getORank() > 20) { // plays at a slower pace, so expect a few more points
-            t1Variance -= 2;
+            t1Variance -= 1;
         }
 
         if (t1.getDRank() > 20) { // plays at a higher pace, so expect a few more points
-            t2Variance += 2;
+            t2Variance += 1;
         }
         if (t2.getDRank() > 20) { // plays at a higher pace, so expect a few more points
-            t1Variance += 2;
+            t1Variance += 1;
         }
 
         if (t1.getDRank() < 10) { // plays at a slower pace, so expect a few more points
-            t2Variance -= 2;
+            t2Variance -= 1;
         }
         if (t2.getDRank() < 10) { // plays at a higher pace, so expect a few more points
-            t1Variance -= 2;
+            t1Variance -= 1;
         }
     }
 
@@ -252,12 +254,12 @@ public class Prediction {
             t2ScorePrediction += totalWeight
                     * scoreCalculation(t2.getLastPF(), t1.getLastPA());
 
-            // t1GrimScorePrediction += totalWeight
-            // * grimScoreCalculation(t1.getLastPF(), t2.getLastPA(), t1.getORank(),
-            // t2.getDRank());
-            // t2GrimScorePrediction += totalWeight
-            // * grimScoreCalculation(t2.getLastPF(), t1.getLastPA(), t2.getORank(),
-            // t1.getDRank());
+            t1GrimScorePrediction += totalWeight
+                    * grimScoreCalculation(t1.getLastPF(), t2.getLastPA(), t1.getORank(),
+                            t2.getDRank());
+            t2GrimScorePrediction += totalWeight
+                    * grimScoreCalculation(t2.getLastPF(), t1.getLastPA(), t2.getORank(),
+                            t1.getDRank());
         }
 
         // if t1 is home, t2 is away
