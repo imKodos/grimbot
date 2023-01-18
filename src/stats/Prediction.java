@@ -41,8 +41,15 @@ public class Prediction {
     }
 
     public double grimScoreCalculation(double pointsFor, double pointsAgainst, double oRank, double oppDRank) {
-        double rankMultiplier = 1;
-
+        double rankMultiplier = (oppDRank - oRank) * 0.003 + 1;
+        // ex: 30-1 = 29 * 0.003 = 0.087 + 1 = 1.087
+        // 1.042 1 v 30 29
+        // ..
+        // 1.003
+        // 1 15 v 15 0
+        // 0.97
+        // ..
+        // 0.958 30 v 1 -29
         return ((rankMultiplier * pointsFor) + pointsAgainst) / 2;
     }
 
@@ -272,6 +279,13 @@ public class Prediction {
                     * scoreCalculation(t1.getLast2HomePf(), t2.getLast2AwayPa());
             t2ScorePrediction += totalWeight
                     * scoreCalculation(t2.getLast2AwayPf(), t1.getLast2HomePa());
+
+            t1GrimScorePrediction += totalWeight
+                    * grimScoreCalculation(t1.getLast2HomePf(), t2.getLast2AwayPa(), t1.getORank(),
+                            t2.getDRank());
+            t2GrimScorePrediction += totalWeight
+                    * grimScoreCalculation(t2.getLast2AwayPf(), t1.getLast2HomePa(), t2.getORank(),
+                            t1.getDRank());
         }
 
         // t1 away, t2 home
