@@ -240,10 +240,14 @@ public class TeamUtil {
                     .last5PA(Math.round((double) totalTeamStatsMap.get(teamId).get("last5Pa") / 5 * 10) / 10.0)
                     .last10PF(Math.round((double) totalTeamStatsMap.get(teamId).get("last10Pf")) / 10.0)
                     .last10PA(Math.round((double) totalTeamStatsMap.get(teamId).get("last10Pa")) / 10.0)
-                    .last5Over500Pf(Math.round((double) totalTeamStatsMap.get(teamId).get("last5Over500Pf")) / 10.0)
-                    .last5Over500Pa(Math.round((double) totalTeamStatsMap.get(teamId).get("last5Over500Pa")) / 10.0)
-                    .last5Under500Pf(Math.round((double) totalTeamStatsMap.get(teamId).get("last5Under500Pf")) / 10.0)
-                    .last5Under500Pa(Math.round((double) totalTeamStatsMap.get(teamId).get("last5Under500Pa")) / 10.0)
+                    .last5Over500Pf(
+                            Math.round((double) totalTeamStatsMap.get(teamId).get("last5Over500Pf") / 5 * 10) / 10.0)
+                    .last5Over500Pa(
+                            Math.round((double) totalTeamStatsMap.get(teamId).get("last5Over500Pa") / 5 * 10) / 10.0)
+                    .last5Under500Pf(
+                            Math.round((double) totalTeamStatsMap.get(teamId).get("last5Under500Pf") / 5 * 10) / 10.0)
+                    .last5Under500Pa(
+                            Math.round((double) totalTeamStatsMap.get(teamId).get("last5Under500Pa") / 5 * 10) / 10.0)
                     .last10Over500Pf(Math.round((double) totalTeamStatsMap.get(teamId).get("last10Over500Pf")) / 10.0)
                     .last10Over500Pa(Math.round((double) totalTeamStatsMap.get(teamId).get("last10Over500Pa")) / 10.0)
                     .last10Under500Pf(Math.round((double) totalTeamStatsMap.get(teamId).get("last10Under500Pf")) / 10.0)
@@ -687,8 +691,8 @@ public class TeamUtil {
                             last5Pa += last10GamesPaArr[idx];
 
                             if (isOppOver500) { // opponent over .500 win
-                                last5Over500Pf += last10Under500PfArr[idx];
-                                last5Over500Pa += last10Under500PaArr[idx];
+                                last5Over500Pf += last10Over500PfArr[idx];
+                                last5Over500Pa += last10Over500PaArr[idx];
                             } else { // .500 or less
                                 last5Under500Pf += last10Under500PfArr[idx];
                                 last5Under500Pa += last10Under500PaArr[idx];

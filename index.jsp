@@ -142,6 +142,14 @@ Prediction p = new Prediction(team1, team2);
                         <p>Last 5 PA Average: <%=team1.getLast5PA()%>&nbsp;(Normalized: <%=team1.getNormalizedLast5Pa()%> Avg Opp Rank: <%=team1.getLast5OppORank()%>)</p>
                         <p>Last 10 PF Average: <%=team1.getLast10PF()%>&nbsp;(Normalized: <%=team1.getNormalizedLast10Pf()%> Avg Opp Rank: <%=team1.getLast10OppDRank()%>)</p>
                         <p>Last 10 PA Average: <%=team1.getLast10PA()%>&nbsp;(Normalized: <%=team1.getNormalizedLast10Pa()%> Avg Opp Rank: <%=team1.getLast10OppORank()%>)</p>
+                        <p>Last 5 PF vs team over 500: <%=team1.getLast5Over500Pf()%></p>
+                        <p>Last 5 PA vs team over 500: <%=team1.getLast5Over500Pa()%></p>
+                        <p>Last 5 PF vs team under 500: <%=team1.getLast5Under500Pf()%></p>
+                        <p>Last 5 PA vs team under 500: <%=team1.getLast5Under500Pa()%></p>
+                        <p>Last 10 PF vs team over 500: <%=team1.getLast10Over500Pf()%></p>
+                        <p>Last 10 PA vs team over 500: <%=team1.getLast10Over500Pa()%></p>
+                        <p>Last 10 PF vs team under 500: <%=team1.getLast10Under500Pf()%></p>
+                        <p>Last 10 PA vs team under 500: <%=team1.getLast10Under500Pa()%></p>
                         <p>Season PPG: <%=team1.getSeasonAvgPf()%></p>
                         <p>Season OPPG: <%=team1.getSeasonAvgPa()%></p>
                         <p>Days Rest: <%=team1.getDaysRested()%></p>  
