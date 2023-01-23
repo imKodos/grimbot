@@ -115,6 +115,12 @@ Prediction p = new Prediction(team1, team2);
                     <div style="background: black">
                         <p>Projected Score: <%=p.getScorePrediction()%></p>
                         <p>Projected Total: <%=p.getTotalScorePrediction()%></p>
+                        <p>Grim Score: <%=p.getGrimScorePrediction()%></p>
+                        <p>Grim Total: <%=p.getGrimTotalScorePrediction()%></p>
+                        <p>Luci Score: <%=p.getLuciScorePrediction()%></p>
+                        <p>Luci Total: <%=p.getLuciTotalScorePrediction()%></p>
+                        <p>Doom Score: <%=p.getDoomScorePrediction()%></p>
+                        <p>Doom Total: <%=p.getDoomTotalScorePrediction()%></p>
                         <p><%=team1.getShortName() + " variance: " + p.getT1Variance()%></p>
                         <p><%=team2.getShortName() + " variance: " + p.getT2Variance()%></p>
                     </div>
@@ -218,14 +224,14 @@ Prediction p = new Prediction(team1, team2);
                 </div>
                 <div id="wpWriteUp">
                 <p>
-                <%=team1.getFullName() + (team1.isHomeTeam()?" vs ": " @ ") + team2.getFullName() + " Prediction and Picks NBA (" + formatter.format(date) +")" %> 
+                <h2><%=team1.getFullName() + (team1.isHomeTeam()?" vs ": " @ ") + team2.getFullName() + " NBA Prediction, Picks, and Stats (" + formatter.format(date) +")" %> </h2>
                 </p>
                 <p>
                 Let's analyze the matchup between the <%=team1.getFullName() + " (" + team1.getTotalWins()+"-" + team1.getTotalLoss()+")"%>
                 &nbsp;and the <%=team2.getFullName() + " (" + team2.getTotalWins()+"-" +team2.getTotalLoss()+")"%>
                 </p>
                 <h1>
-                Game Line
+                Game Line TBD
                 </h1>
                 <h4>
                 <%=team1.getFullName()%>
@@ -346,10 +352,28 @@ Prediction p = new Prediction(team1, team2);
                 }%>
                 </p> 
                 <h4>
-                Prediction and Picks
+                NBA Prediction and Picks
                 </h4>
-                <p>Projected Score: <%=p.getScorePrediction()%><br>
-                Projected Total: <%=p.getTotalScorePrediction()%></p>
+                <p><b>Projected Score:</b> <%=p.getScorePrediction()%><br>
+                <b>Projected Total:</b> <%=p.getTotalScorePrediction()%></p>
+                <p></p>
+                <p><b>Grim Score:</b> <%=p.getGrimScorePrediction()%><br>
+                <b>Grim Total:</b> <%=p.getGrimTotalScorePrediction()%><br>
+                <b>Grim Pick: TBD</b>
+                </p>
+                <p></p>
+                <p><b>Lucifer Score:</b> <%=p.getLuciScorePrediction()%><br>
+                <b>Lucifer Total:</b> <%=p.getLuciTotalScorePrediction()%><br>
+                <b>Lucifer Pick: TBD</b>
+                </p>
+                <p></p>
+                <p><b>Doom Score:</b> <%=p.getDoomScorePrediction()%><br>
+                <b>Doom Total:</b> <%=p.getDoomTotalScorePrediction()%><br>
+                <b>Doom Pick: TBD</b> 
+                </p>
+                <p><b>
+                Pick: TBD
+                </b></p>
                 <p></p>
                 </div>
             </div>

@@ -27,6 +27,14 @@ public class Team {
     private final double last5PA;
     private final double last10PF;
     private final double last10PA;
+    private final double last5Over500Pf;
+    private final double last5Over500Pa;
+    private final double last5Under500Pf;
+    private final double last5Under500Pa;
+    private final double last10Over500Pf;
+    private final double last10Over500Pa;
+    private final double last10Under500Pf;
+    private final double last10Under500Pa;
     private final double last2AwayPa;
     private final double last2AwayPf;
     private final double last5AwayPa;
@@ -133,6 +141,38 @@ public class Team {
 
     public double getLast10PA() {
         return last10PA;
+    }
+
+    public double getLast10Over500Pf() {
+        return last10Over500Pf;
+    }
+
+    public double getLast10Over500Pa() {
+        return last10Over500Pa;
+    }
+
+    public double getLast10Under500Pf() {
+        return last10Under500Pf;
+    }
+
+    public double getLast10Under500Pa() {
+        return last10Under500Pa;
+    }
+
+    public double getLast5Over500Pf() {
+        return last5Over500Pf;
+    }
+
+    public double getLast5Over500Pa() {
+        return last5Over500Pa;
+    }
+
+    public double getLast5Under500Pf() {
+        return last5Under500Pf;
+    }
+
+    public double getLast5Under500Pa() {
+        return last5Under500Pa;
     }
 
     public double getLast2AwayPa() {
@@ -242,34 +282,6 @@ public class Team {
     public JSONObject getTeamJsonObj() {
         return teamJsonObj;
     }
-
-    // public Map<Double, Double> getOppLastODR() {
-    // return oppLastODR;
-    // }
-
-    // public Map<Double, Double> getOppLast5ODR() {
-    // return oppLast5ODR;
-    // }
-
-    // public Map<Double, Double> getOppLast10ODR() {
-    // return oppLast10ODR;
-    // }
-
-    // public Map<Double, Double> getOppLast2AwayODR() {
-    // return oppLast2AwayODR;
-    // }
-
-    // public Map<Double, Double> getOppLast2HomeODR() {
-    // return oppLast2HomeODR;
-    // }
-
-    // public Map<Double, Double> getOppLast5AwayODR() {
-    // return oppLast5AwayODR;
-    // }
-
-    // public Map<Double, Double> getOppLast5HomeODR() {
-    // return oppLast5HomeODR;
-    // }
 
     public void setORank(int offRank) {
         oRank = offRank;
@@ -556,6 +568,14 @@ public class Team {
         private double last5HomePf = -1;
         private double last5HomePa = -1;
         private long daysRested = -1;
+        private double last10Over500Pf = -1;
+        private double last10Over500Pa = -1;
+        private double last10Under500Pf = -1;
+        private double last10Under500Pa = -1;
+        private double last5Over500Pf = -1;
+        private double last5Over500Pa = -1;
+        private double last5Under500Pf = -1;
+        private double last5Under500Pa = -1;
 
         // addtl stats
         private boolean isHomeTeam = false;
@@ -642,6 +662,46 @@ public class Team {
 
         public Builder last10PA(double val) {
             last10PA = val;
+            return this;
+        }
+
+        public Builder last10Over500Pf(double val) {
+            last10Over500Pf = val;
+            return this;
+        }
+
+        public Builder last10Over500Pa(double val) {
+            last10Over500Pa = val;
+            return this;
+        }
+
+        public Builder last10Under500Pf(double val) {
+            last10Under500Pf = val;
+            return this;
+        }
+
+        public Builder last10Under500Pa(double val) {
+            last10Under500Pa = val;
+            return this;
+        }
+
+        public Builder last5Over500Pf(double val) {
+            last5Over500Pf = val;
+            return this;
+        }
+
+        public Builder last5Over500Pa(double val) {
+            last5Over500Pa = val;
+            return this;
+        }
+
+        public Builder last5Under500Pf(double val) {
+            last5Under500Pf = val;
+            return this;
+        }
+
+        public Builder last5Under500Pa(double val) {
+            last5Under500Pa = val;
             return this;
         }
 
@@ -771,6 +831,14 @@ public class Team {
         last5PA = builder.last5PA;
         last10PF = builder.last10PF;
         last10PA = builder.last10PA;
+        last5Over500Pf = builder.last5Over500Pf;
+        last5Over500Pa = builder.last5Over500Pa;
+        last5Under500Pf = builder.last5Under500Pf;
+        last5Under500Pa = builder.last5Under500Pa;
+        last10Over500Pf = builder.last10Over500Pf;
+        last10Over500Pa = builder.last10Over500Pa;
+        last10Under500Pf = builder.last10Under500Pf;
+        last10Under500Pa = builder.last10Under500Pa;
         last2AwayPa = builder.last2AwayPa;
         last2AwayPf = builder.last2AwayPf;
         last5AwayPa = builder.last5AwayPa;
