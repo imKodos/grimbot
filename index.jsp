@@ -258,6 +258,17 @@ Prediction p = new Prediction(team1, team2);
                 Last 5 PA Average: <%=team1.getLast5PA()%> (Avg Off Rank: <%=team1.getLast5OppORank()%>)
                 Last 10 PF Average: <%=team1.getLast10PF()%> (Avg Def Rank: <%=team1.getLast10OppDRank()%>)
                 Last 10 PA Average: <%=team1.getLast10PA()%> (Avg Off Rank: <%=team1.getLast10OppORank()%>)
+                <% if(team2.getTotalWins()>team2.getTotalLoss()){ %>
+                    Last 5 PF vs above .500 team: <%=team1.getLast5Over500Pf()%>
+                    Last 5 PA vs above .500 team: <%=team1.getLast5Over500Pa()%>
+                    Last 10 PF vs above .500 team: <%=team1.getLast10Over500Pf()%>
+                    Last 10 Pa vs above .500 team: <%=team1.getLast10Over500Pa()%>
+                <% }else{ %>
+                    Last 5 PF vs below .500 team: <%=team1.getLast5Under500Pf()%>
+                    Last 5 PA vs below .500 team: <%=team1.getLast5Under500Pa()%>
+                    Last 10 PF vs below .500 team: <%=team1.getLast10Under500Pf()%>
+                    Last 10 Pa vs below .500 team: <%=team1.getLast10Under500Pa()%>
+                <% } %>
                 <%if(team1.isHotStreak()){ %>
                     <%=team1.getFullName() + " are currently on a hot streak"%>
                 <%} %>
@@ -317,6 +328,17 @@ Prediction p = new Prediction(team1, team2);
                 Last 5 PA Average: <%=team2.getLast5PA()%> (Avg Off Rank: <%=team2.getLast5OppORank()%>)
                 Last 10 PF Average: <%=team2.getLast10PF()%> (Avg Def Rank: <%=team2.getLast10OppDRank()%>)
                 Last 10 PA Average: <%=team2.getLast10PA()%> (Avg Off Rank: <%=team2.getLast10OppORank()%>)
+                  <% if(team1.getTotalWins()>team1.getTotalLoss()){ %>
+                    Last 5 PF vs above .500 team: <%=team2.getLast5Over500Pf()%>
+                    Last 5 PA vs above .500 team: <%=team2.getLast5Over500Pa()%>
+                    Last 10 PF vs above .500 team: <%=team2.getLast10Over500Pf()%>
+                    Last 10 Pa vs above .500 team: <%=team2.getLast10Over500Pa()%>
+                <% }else{ %>
+                    Last 5 PF vs below .500 team: <%=team2.getLast5Under500Pf()%>
+                    Last 5 PA vs below .500 team: <%=team2.getLast5Under500Pa()%>
+                    Last 10 PF vs below .500 team: <%=team2.getLast10Under500Pf()%>
+                    Last 10 Pa vs below .500 team: <%=team2.getLast10Under500Pa()%>
+                <% } %>
                   <%if(team2.isHotStreak()){ %>
                     <%=team2.getFullName() + " are currently on a hot streak"%>
                   <%} %>

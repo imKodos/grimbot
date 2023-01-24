@@ -568,7 +568,7 @@ public class TeamUtil {
                 int totalLoss = teamMap.get(teamId) != null ? (int) teamMap.get(teamId).get("totalLoss") : 0;
                 int totalOppWins = teamMap.get(oppId) != null ? (int) teamMap.get(oppId).get("totalWins") : 0;
                 int totalOppLosses = teamMap.get(oppId) != null ? (int) teamMap.get(oppId).get("totalLoss") : 0;
-                boolean isOppOver500 = totalOppWins > totalOppLosses;
+                boolean isOppOver500 = (totalOppWins - totalOppLosses) > 0;
 
                 double[] last10GamesPfArr = teamMap.get(teamId) != null
                         ? (double[]) teamMap.get(teamId).get("last10GamesPfArr")
@@ -603,6 +603,12 @@ public class TeamUtil {
                 int[] last10TeamsPlayedArr = teamMap.get(teamId) != null
                         ? (int[]) teamMap.get(teamId).get("last10TeamsPlayedArr")
                         : new int[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+                int[] last10TeamsOver500Arr = teamMap.get(teamId) != null
+                        ? (int[]) teamMap.get(teamId).get("last10TeamsOver500Arr")
+                        : new int[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+                int[] last10TeamsUnder500Arr = teamMap.get(teamId) != null
+                        ? (int[]) teamMap.get(teamId).get("last10TeamsUnder500Arr")
+                        : new int[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
                 int[] last5HomeTeamsPlayedArr = teamMap.get(teamId) != null
                         ? (int[]) teamMap.get(teamId).get("last5HomeTeamsPlayedArr")
                         : new int[] { -1, -1, -1, -1, -1 };
@@ -634,14 +640,18 @@ public class TeamUtil {
                     last5Pa = 0;
                     last10Pf = 0;
                     last10Pa = 0;
-                    last10Over500Pf = 0;
-                    last10Over500Pa = 0;
-                    last10Under500Pf = 0;
-                    last10Under500Pa = 0;
-                    last5Over500Pf = 0;
-                    last5Over500Pa = 0;
-                    last5Under500Pf = 0;
-                    last5Under500Pa = 0;
+                    if (isOppOver500) {
+                        last10Over500Pf = 0;
+                        last10Over500Pa = 0;
+                        last5Over500Pf = 0;
+                        last5Over500Pa = 0;
+                    } else {
+                        last10Under500Pf = 0;
+                        last10Under500Pa = 0;
+                        last5Under500Pf = 0;
+                        last5Under500Pa = 0;
+                    }
+
                     if (isHomeTeam) { // if home team, update the home stats
                         last2HomePf = 0;
                         last2HomePa = 0;
@@ -662,9 +672,11 @@ public class TeamUtil {
                             if (isOppOver500) { // opponent over .500 win
                                 last10Over500PfArr[idx] = last10Over500PfArr[(idx + 1)];
                                 last10Over500PaArr[idx] = last10Over500PaArr[(idx + 1)];
+                                last10TeamsOver500Arr[idx] = last10TeamsOver500Arr[(idx + 1)];
                             } else { // .500 or less
                                 last10Under500PaArr[idx] = last10Under500PaArr[(idx + 1)];
                                 last10Under500PfArr[idx] = last10Under500PfArr[(idx + 1)];
+                                last10TeamsUnder500Arr[idx] = last10TeamsUnder500Arr[(idx + 1)];
                             }
                         } else {// the last spot in the array, set to most recent game.
                             last10GamesPfArr[idx] = isHomeTeam ? game.getHome_team_score()
@@ -678,11 +690,15 @@ public class TeamUtil {
                                         : game.getVisitor_team_score();
                                 last10Over500PaArr[idx] = isHomeTeam ? game.getVisitor_team_score()
                                         : game.getHome_team_score();
+                                last10TeamsOver500Arr[idx] = isHomeTeam ? game.getVisitor_team().getId()
+                                        : game.getHome_team().getId();
                             } else { // .500 or less
                                 last10Under500PaArr[idx] = isHomeTeam ? game.getVisitor_team_score()
                                         : game.getHome_team_score();
                                 last10Under500PfArr[idx] = isHomeTeam ? game.getHome_team_score()
                                         : game.getVisitor_team_score();
+                                last10TeamsUnder500Arr[idx] = isHomeTeam ? game.getVisitor_team().getId()
+                                        : game.getHome_team().getId();
                             }
                         }
 
@@ -831,6 +847,8 @@ public class TeamUtil {
                 teamStatsJo.put("last10Under500PfArr", last10Under500PfArr);
                 teamStatsJo.put("last10Under500PaArr", last10Under500PaArr);
                 teamStatsJo.put("last10TeamsPlayedArr", last10TeamsPlayedArr);
+                teamStatsJo.put("last10TeamsOver500Arr", last10TeamsOver500Arr);
+                teamStatsJo.put("last10TeamsUnder500Arr", last10TeamsUnder500Arr);
                 teamStatsJo.put("last5AwayTeamsPlayedArr", last5AwayTeamsPlayedArr);
                 teamStatsJo.put("last5HomeTeamsPlayedArr", last5HomeTeamsPlayedArr);
                 teamStatsJo.put("last5HomeGamesPfArr", last5HomeGamesPfArr);

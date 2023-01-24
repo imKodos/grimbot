@@ -28,7 +28,7 @@ public class Prediction {
     private double totalWeight = 0;
     private double totalDivisor = 0;
 
-    private double luciWeight = 16;
+    private double luciWeight = 18;
     private double luciDivisor = 0;
 
     public String getScorePrediction() {
@@ -103,9 +103,7 @@ public class Prediction {
                 // grim prediction = v1 + use O/D ranks
                 // luci prediction = grim + reverse weights + remove playing to defense cap
                 // doom prediction = theory of odds -- if things are going well, they will soon
-                // -- add rng to variance depending on record; will be a diff score every sim
-                // falter. (reverse double variance)
-                //
+                // fail(reverse double variance)
 
                 // get variance; little odds and ends to not rely solely on weighted stats.
                 getVariance(t1, t2);
@@ -181,6 +179,54 @@ public class Prediction {
 
         if (t2WinPercent >= 0.55 && t1WinPercent <= 0.5) {
             t2Variance += 1;
+        }
+
+        if (t2WinPercent > 0.5) {
+            if (t1.getLast5Over500Pf() > t1.getLast5Over500Pa()) {
+                t1Variance += 0.5;
+            } else {
+                t2Variance += 0.5;
+            }
+            if (t1.getLast10Over500Pf() > t1.getLast10Over500Pa()) {
+                t1Variance += 0.5;
+            } else {
+                t2Variance += 0.5;
+            }
+        } else {
+            if (t1.getLast5Under500Pf() > t1.getLast5Under500Pa()) {
+                t1Variance += 0.5;
+            } else {
+                t2Variance += 0.5;
+            }
+            if (t1.getLast10Under500Pf() > t1.getLast10Under500Pa()) {
+                t1Variance += 0.5;
+            } else {
+                t2Variance += 0.5;
+            }
+        }
+
+        if (t1WinPercent > 0.5) {
+            if (t2.getLast5Over500Pf() > t2.getLast5Over500Pa()) {
+                t2Variance += 0.5;
+            } else {
+                t1Variance += 0.5;
+            }
+            if (t2.getLast10Over500Pf() > t2.getLast10Over500Pa()) {
+                t2Variance += 0.5;
+            } else {
+                t1Variance += 0.5;
+            }
+        } else {
+            if (t2.getLast5Under500Pf() > t2.getLast5Under500Pa()) {
+                t2Variance += 0.5;
+            } else {
+                t1Variance += 0.5;
+            }
+            if (t2.getLast10Under500Pf() > t2.getLast10Under500Pa()) {
+                t2Variance += 0.5;
+            } else {
+                t1Variance += 0.5;
+            }
         }
 
         if (t1.getDaysRested() > 0 && t1.getDaysRested() < 3) { // if a team is between 1-2 days rest, add
@@ -457,6 +503,132 @@ public class Prediction {
             t2LuciScorePrediction += luciWeight
                     * grimScoreCalculation(t2.getLast5HomePf(), t1.getLast5AwayPa(), t2.getO10Rank(),
                             t1.getD10Rank());
+        }
+
+        if (t1.getLast10Over500Pf() != -1 && t1.getLast10Over500Pa() != -1 &&
+                t2.getLast10Over500Pf() != -1 && t2.getLast10Over500Pa() != -1 &&
+                t1.getLast10Under500Pf() != -1 && t1.getLast10Under500Pa() != -1 &&
+                t2.getLast10Under500Pf() != -1 && t2.getLast10Under500Pa() != -1) {
+            totalWeight += 1; // keep this a standalone value
+            totalDivisor += totalWeight; // will be the sum of total weights used to divide by later
+            luciWeight -= 1; // keep this a standalone value
+            luciDivisor += luciWeight;
+
+            if (t2.getTotalWins() > t2.getTotalLoss()) { // vs over 500
+                t1ScorePrediction += totalWeight
+                        * scoreCalculation(t1.getLast10Over500Pf(), t1.getLast10Over500Pa());
+                t1GrimScorePrediction += totalWeight
+                        * grimScoreCalculation(t1.getLast10Over500Pf(), t1.getLast10Over500Pa(), t1.getORank(),
+                                t2.getDRank());
+                t1DoomScorePrediction += totalWeight
+                        * doomScoreCalculation(t1.getLast10Over500Pf(), t1.getLast10Over500Pa(), t2.getDRank(),
+                                t1.getORank());
+                t1LuciScorePrediction += luciWeight
+                        * grimScoreCalculation(t1.getLast10Over500Pf(), t1.getLast10Over500Pa(), t1.getO10Rank(),
+                                t2.getD10Rank());
+            } else { // vs 500 or under
+                t1ScorePrediction += totalWeight
+                        * scoreCalculation(t1.getLast10Under500Pf(), t1.getLast10Under500Pa());
+                t1GrimScorePrediction += totalWeight
+                        * grimScoreCalculation(t1.getLast10Under500Pf(), t1.getLast10Under500Pa(), t1.getORank(),
+                                t2.getDRank());
+                t1DoomScorePrediction += totalWeight
+                        * doomScoreCalculation(t1.getLast10Under500Pf(), t1.getLast10Under500Pa(), t2.getDRank(),
+                                t1.getORank());
+                t1LuciScorePrediction += luciWeight
+                        * grimScoreCalculation(t1.getLast10Under500Pf(), t1.getLast10Under500Pa(), t1.getO10Rank(),
+                                t2.getD10Rank());
+            }
+
+            if (t1.getTotalWins() > t1.getTotalLoss()) { // vs over 500
+                t2ScorePrediction += totalWeight
+                        * scoreCalculation(t2.getLast10Over500Pf(), t2.getLast10Over500Pa());
+                t2GrimScorePrediction += totalWeight
+                        * grimScoreCalculation(t2.getLast10Over500Pf(), t2.getLast10Over500Pa(), t2.getORank(),
+                                t1.getDRank());
+                t2DoomScorePrediction += totalWeight
+                        * doomScoreCalculation(t2.getLast10Over500Pf(), t1.getLast10Over500Pa(), t1.getDRank(),
+                                t2.getORank());
+                t2LuciScorePrediction += luciWeight
+                        * grimScoreCalculation(t2.getLast10Over500Pf(), t1.getLast10Over500Pa(), t2.getO10Rank(),
+                                t1.getD10Rank());
+            } else { // vs 500 or under
+                t2ScorePrediction += totalWeight
+                        * scoreCalculation(t2.getLast10Under500Pf(), t2.getLast10Under500Pa());
+                t2GrimScorePrediction += totalWeight
+                        * grimScoreCalculation(t2.getLast10Under500Pf(), t2.getLast10Under500Pa(), t2.getORank(),
+                                t1.getDRank());
+                t2DoomScorePrediction += totalWeight
+                        * doomScoreCalculation(t2.getLast10Under500Pf(), t2.getLast10Under500Pa(), t1.getDRank(),
+                                t2.getORank());
+
+                t2LuciScorePrediction += luciWeight
+                        * grimScoreCalculation(t2.getLast10Under500Pf(), t2.getLast10Under500Pa(), t2.getO10Rank(),
+                                t1.getD10Rank());
+            }
+        }
+
+        if (t1.getLast5Over500Pf() != -1 && t1.getLast5Over500Pa() != -1 &&
+                t2.getLast5Over500Pf() != -1 && t2.getLast5Over500Pa() != -1 &&
+                t1.getLast5Under500Pf() != -1 && t1.getLast5Under500Pa() != -1 &&
+                t2.getLast5Under500Pf() != -1 && t2.getLast5Under500Pa() != -1) {
+            totalWeight += 1; // keep this a standalone value
+            totalDivisor += totalWeight; // will be the sum of total weights used to divide by later
+            luciWeight -= 1; // keep this a standalone value
+            luciDivisor += luciWeight;
+
+            if (t2.getTotalWins() > t2.getTotalLoss()) { // vs over 500
+                t1ScorePrediction += totalWeight
+                        * scoreCalculation(t1.getLast5Over500Pf(), t1.getLast5Over500Pa());
+                t1GrimScorePrediction += totalWeight
+                        * grimScoreCalculation(t1.getLast5Over500Pf(), t1.getLast5Over500Pa(), t1.getORank(),
+                                t2.getDRank());
+                t1DoomScorePrediction += totalWeight
+                        * doomScoreCalculation(t1.getLast5Over500Pf(), t1.getLast5Over500Pa(), t2.getDRank(),
+                                t1.getORank());
+                t1LuciScorePrediction += luciWeight
+                        * grimScoreCalculation(t1.getLast5Over500Pf(), t1.getLast5Over500Pa(), t1.getO10Rank(),
+                                t2.getD10Rank());
+            } else { // vs 500 or under
+                t1ScorePrediction += totalWeight
+                        * scoreCalculation(t1.getLast5Under500Pf(), t1.getLast5Under500Pa());
+                t1GrimScorePrediction += totalWeight
+                        * grimScoreCalculation(t1.getLast5Under500Pf(), t1.getLast5Under500Pa(), t1.getORank(),
+                                t2.getDRank());
+                t1DoomScorePrediction += totalWeight
+                        * doomScoreCalculation(t1.getLast5Under500Pf(), t1.getLast5Under500Pa(), t2.getDRank(),
+                                t1.getORank());
+                t1LuciScorePrediction += luciWeight
+                        * grimScoreCalculation(t1.getLast5Under500Pf(), t1.getLast5Under500Pa(), t1.getO10Rank(),
+                                t2.getD10Rank());
+            }
+
+            if (t1.getTotalWins() > t1.getTotalLoss()) { // vs over 500
+                t2ScorePrediction += totalWeight
+                        * scoreCalculation(t2.getLast5Over500Pf(), t2.getLast5Over500Pa());
+                t2GrimScorePrediction += totalWeight
+                        * grimScoreCalculation(t2.getLast5Over500Pf(), t2.getLast5Over500Pa(), t2.getORank(),
+                                t1.getDRank());
+                t2DoomScorePrediction += totalWeight
+                        * doomScoreCalculation(t2.getLast5Over500Pf(), t1.getLast5Over500Pa(), t1.getDRank(),
+                                t2.getORank());
+                t2LuciScorePrediction += luciWeight
+                        * grimScoreCalculation(t2.getLast5Over500Pf(), t1.getLast5Over500Pa(), t2.getO10Rank(),
+                                t1.getD10Rank());
+            } else { // vs 500 or under
+                t2ScorePrediction += totalWeight
+                        * scoreCalculation(t2.getLast5Under500Pf(), t2.getLast5Under500Pa());
+                t2GrimScorePrediction += totalWeight
+                        * grimScoreCalculation(t2.getLast5Under500Pf(), t2.getLast5Under500Pa(), t2.getORank(),
+                                t1.getDRank());
+                t2DoomScorePrediction += totalWeight
+                        * doomScoreCalculation(t2.getLast5Under500Pf(), t2.getLast5Under500Pa(), t1.getDRank(),
+                                t2.getORank());
+
+                t2LuciScorePrediction += luciWeight
+                        * grimScoreCalculation(t2.getLast5Under500Pf(), t2.getLast5Under500Pa(), t2.getO10Rank(),
+                                t1.getD10Rank());
+            }
         }
 
         // last 5
@@ -839,9 +1011,6 @@ public class Prediction {
             t1DoomScorePrediction = 0;
             t2DoomScorePrediction = 0;
         }
-
-        // t1DoomScorePrediction = t1GrimScorePrediction;
-        // t2DoomScorePrediction = t2GrimScorePrediction;
 
         if (luciDivisor > 0) {
             t1LuciScorePrediction /= luciDivisor;
