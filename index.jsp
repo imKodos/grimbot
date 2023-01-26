@@ -387,17 +387,23 @@ Prediction p = new Prediction(team1, team2);
                 <p><b>Projected Score:</b> <%=p.getScorePrediction()%><br>
                 <b>Projected Total:</b> <%=p.getTotalScorePrediction()%></p>
                 <p></p>
-                <p><b>Grim Score:</b> <%=p.getGrimScorePrediction()%><br>
+                <p>
+                <b><u>Grim Prediction Model</u></b><br>
+                <b>Grim Score:</b> <%=p.getGrimScorePrediction()%><br>
                 <b>Grim Total:</b> <%=p.getGrimTotalScorePrediction()%><br>
                 <b>Grim Pick: TBD</b>
                 </p>
                 <p></p>
-                <p><b>Lucifer Score:</b> <%=p.getLuciScorePrediction()%><br>
+                <p>
+                <b><u>Lucifer Prediction Model</u></b><br>
+                <b>Lucifer Score:</b> <%=p.getLuciScorePrediction()%><br>
                 <b>Lucifer Total:</b> <%=p.getLuciTotalScorePrediction()%><br>
                 <b>Lucifer Pick: TBD</b>
                 </p>
                 <p></p>
-                <p><b>Doom Score:</b> <%=p.getDoomScorePrediction()%><br>
+                <p>
+                <b><u>Doom Prediction Model</u></b><br>
+                <b>Doom Score:</b> <%=p.getDoomScorePrediction()%><br>
                 <b>Doom Total:</b> <%=p.getDoomTotalScorePrediction()%><br>
                 <b>Doom Pick: TBD</b> 
                 </p>
