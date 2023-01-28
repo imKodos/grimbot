@@ -106,10 +106,16 @@ Prediction p = new Prediction(team1, team2);
                 <div class="topView">
                     <div>
                      <p>
-                        <input id="t1" class="teamList" value="<%=team1.getTeamId()%>" />
+                        <input id="t1" class="teamList" value="<%=team1.getTeamId()%>" /><br>
+                        <label for="t1MotivationLoss"> Loss of Motivation</label><input type="checkbox" id="t1MotivationLoss" name="t1MotivationLoss" onchange="teamChange()"><br>
+                        <label for="t1Motivation">Motivation</label><input type="checkbox" id="t1Motivation" name="t1Motivation"  onchange="teamChange()"><br>
+                        <label for="t1ReturningStar"> Returning Star</label><input type="checkbox" id="t1ReturningStar" name="t1ReturningStar" onchange="teamChange()">
                       </p>
                       <p style="padding-top: 20px">
-                        <input id="t2" class="teamList" value="<%=team2.getTeamId()%>" />
+                        <input id="t2" class="teamList" value="<%=team2.getTeamId()%>" /><br>
+                        <label for="t2MotivationLoss"> Loss of Motivation</label><input type="checkbox" id="t2MotivationLoss" name="t2MotivationLoss"  onchange="teamChange()"><br>
+                        <label for="t2Motivation">Motivation</label><input type="checkbox" id="t2Motivation" name="t2Motivation"  onchange="teamChange()"><br>
+                        <label for="t2ReturningStar"> Returning Star</label><input type="checkbox" id="t2ReturningStar" name="t2ReturningStar" onchange="teamChange()">
                       </p>
                     </div>
                     <div style="background: black">
@@ -419,6 +425,26 @@ Prediction p = new Prediction(team1, team2);
 <html>
 
 <script>
+    if(<%=request.getParameter("t1ml")!=null%>){
+       $('#t1MotivationLoss').attr('checked', true); 
+    }
+    if(<%=request.getParameter("t1m")!=null%>){
+       $('#t1Motivation').attr('checked', true); 
+    }
+    if(<%=request.getParameter("t1s")!=null%>){
+       $('#t1ReturningStar').attr('checked', true); 
+    }
+    if(<%=request.getParameter("t2ml")!=null%>){
+       $('#t2MotivationLoss').attr('checked', true); 
+    }
+    if(<%=request.getParameter("t2m")!=null%>){
+       $('#t2Motivation').attr('checked', true); 
+    }
+    if(<%=request.getParameter("t2s")!=null%>){
+       $('#t2ReturningStar').attr('checked', true); 
+    }
+</script>
+<script>
    
 
 
@@ -456,7 +482,18 @@ Prediction p = new Prediction(team1, team2);
     //cons: does a page refresh and looks awful
       var t1Value= $("#t1").val() != "" ? $("#t1").val() : "-1";
       var t2Value= $("#t2").val() != "" ? $("#t2").val() : "-1";
-      document.location.href = '?t1=' + t1Value + '&t2=' +t2Value;
+
+      var t1MotivLoss = $("#t1MotivationLoss").is(':checked') ? "&t1ml" :"";
+      var t1Motiv = $("#t1Motivation").is(':checked') ? "&t1m" :"";
+      var t1Star = $("#t1ReturningStar").is(':checked') ? "&t1s" :"";
+      var t1Attr = t1MotivLoss + t1Motiv + t1Star + "";
+     
+      var t2MotivLoss = $("#t2MotivationLoss").is(':checked') ? "&t2ml" :"";
+      var t2Motiv = $("#t2Motivation").is(':checked') ? "&t2m" :"";
+      var t2Star = $("#t2ReturningStar").is(':checked') ? "&t2s" :"";
+      var t2Attr = t2MotivLoss + t2Motiv + t2Star + "";
+
+     document.location.href = '?t1=' + t1Value + '&t2=' +t2Value + t1Attr + t2Attr;
     // alert(e.sender.element[0].id); // returns id of which ddl was changed
     }
 </script>
