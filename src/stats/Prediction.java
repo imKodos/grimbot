@@ -273,31 +273,25 @@ public class Prediction {
                 } else {
                         if (t1.isAwayHotStreak()) {
                                 t1Variance += 2;
-                                // t2Variance -= 1;
                         }
                         if (t1.isAwayColdStreak()) {
                                 t1Variance -= 2;
-                                // t2Variance += 1;
                         }
                 }
 
                 if (t2.isHomeTeam()) {
                         if (t2.isHomeHotStreak()) {
                                 t2Variance += 2;
-                                // t1Variance -= 1;
                         }
                         if (t2.isHomeColdStreak()) {
                                 t2Variance -= 2;
-                                // t1Variance += 1;
                         }
                 } else {
                         if (t2.isAwayHotStreak()) {
                                 t2Variance += 2;
-                                // t1Variance -= 1;
                         }
                         if (t2.isAwayColdStreak()) {
                                 t2Variance -= 2;
-                                // t1Variance += 1;
                         }
                 }
 
@@ -423,7 +417,7 @@ public class Prediction {
                 }
 
                 // t1 away, t2 home
-                if (!t1.isHomeTeam() && t1.getLast2AwayPf() != -1 && t2.getLast2HomePa() != -1 &&
+                if (t2.isHomeTeam() && t1.getLast2AwayPf() != -1 && t2.getLast2HomePa() != -1 &&
                                 t1.getLast2AwayPa() != -1 && t2.getLast2HomePf() != -1) {
                         totalWeight += 1; // keep this a standalone value
                         totalDivisor += totalWeight; // will be the sum of total weights used to divide by later
@@ -514,7 +508,7 @@ public class Prediction {
                 }
 
                 // t1 away, t2 home
-                if (!t1.isHomeTeam() && t1.getLast5AwayPf() != -1 && t2.getLast5HomePa() != -1 &&
+                if (t2.isHomeTeam() && t1.getLast5AwayPf() != -1 && t2.getLast5HomePa() != -1 &&
                                 t1.getLast5AwayPa() != -1 && t2.getLast5HomePf() != -1) {
                         totalWeight += 1; // keep this a standalone value
                         totalDivisor += totalWeight; // will be the sum of total weights used to divide by later
@@ -606,11 +600,11 @@ public class Prediction {
                                                                 t2.getORank(),
                                                                 t1.getDRank());
                                 t2DoomScorePrediction += totalWeight
-                                                * doomScoreCalculation(t2.getLast10Over500Pf(), t1.getLast10Over500Pa(),
+                                                * doomScoreCalculation(t2.getLast10Over500Pf(), t2.getLast10Over500Pa(),
                                                                 t1.getDRank(),
                                                                 t2.getORank());
                                 t2LuciScorePrediction += luciWeight
-                                                * grimScoreCalculation(t2.getLast10Over500Pf(), t1.getLast10Over500Pa(),
+                                                * grimScoreCalculation(t2.getLast10Over500Pf(), t2.getLast10Over500Pa(),
                                                                 t2.getO10Rank(),
                                                                 t1.getD10Rank());
                         } else { // vs 500 or under
@@ -681,11 +675,11 @@ public class Prediction {
                                                                 t2.getORank(),
                                                                 t1.getDRank());
                                 t2DoomScorePrediction += totalWeight
-                                                * doomScoreCalculation(t2.getLast5Over500Pf(), t1.getLast5Over500Pa(),
+                                                * doomScoreCalculation(t2.getLast5Over500Pf(), t2.getLast5Over500Pa(),
                                                                 t1.getDRank(),
                                                                 t2.getORank());
                                 t2LuciScorePrediction += luciWeight
-                                                * grimScoreCalculation(t2.getLast5Over500Pf(), t1.getLast5Over500Pa(),
+                                                * grimScoreCalculation(t2.getLast5Over500Pf(), t2.getLast5Over500Pa(),
                                                                 t2.getO10Rank(),
                                                                 t1.getD10Rank());
                         } else { // vs 500 or under
@@ -845,7 +839,7 @@ public class Prediction {
                 }
 
                 // t1 away, t2 home
-                if (!t1.isHomeTeam() && t1.getNormalizedLast2AwayPf() != -1 && t2.getNormalizedLast2HomePa() != -1 &&
+                if (t2.isHomeTeam() && t1.getNormalizedLast2AwayPf() != -1 && t2.getNormalizedLast2HomePa() != -1 &&
                                 t1.getNormalizedLast2AwayPa() != -1 && t2.getNormalizedLast2HomePf() != -1) {
                         totalWeight += 1; // keep this a standalone value
                         totalDivisor += totalWeight; // will be the sum of total weights used to divide by later
@@ -952,7 +946,7 @@ public class Prediction {
                 }
 
                 // t1 away, t2 home
-                if (!t1.isHomeTeam() && t1.getNormalizedLast5AwayPf() != -1 && t2.getNormalizedLast5HomePa() != -1 &&
+                if (t2.isHomeTeam() && t1.getNormalizedLast5AwayPf() != -1 && t2.getNormalizedLast5HomePa() != -1 &&
                                 t1.getNormalizedLast5AwayPa() != -1 && t2.getNormalizedLast5HomePf() != -1) {
                         totalWeight += 1; // keep this a standalone value
                         totalDivisor += totalWeight; // will be the sum of total weights used to divide by later
