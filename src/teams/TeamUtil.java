@@ -154,7 +154,7 @@ public class TeamUtil {
                 // build all the games
                 // start with 1 page of games
                 JSONObject gamesJo = FetchStats
-                                .get("https://www.balldontlie.io/api/v1/games?seasons[]=2022&per_page=100");
+                                .get("https://www.balldontlie.io/api/v1/games?seasons[]=2023&per_page=100");
                 JSONArray gamesJoArr = (JSONArray) gamesJo.get("data");
                 JSONObject gamesMetaObj = (JSONObject) gamesJo.get("meta");
                 Long gamesPages = (Long) gamesMetaObj.get("total_pages"); // total number of
@@ -163,7 +163,7 @@ public class TeamUtil {
                 // pages to iterate
                 for (int i = 2; i <= gamesPages.intValue(); i++) {
                         JSONObject curGamesJo = FetchStats
-                                        .get("https://www.balldontlie.io/api/v1/games?seasons[]=2022&per_page=100&page="
+                                        .get("https://www.balldontlie.io/api/v1/games?seasons[]=2023&per_page=100&page="
                                                         + i);
                         JSONArray curGamesArr = (JSONArray) curGamesJo.get("data");
                         gamesJoArr.addAll(curGamesArr);
@@ -390,12 +390,13 @@ public class TeamUtil {
                         int[] last10TeamsPlayedArr = (int[]) totalTeamStatsMap.get(curTeam.getTeamId())
                                         .get("last10TeamsPlayedArr");
                         int validTeamIdx = 0;
-                        for (int i = 0; i < last10TeamsPlayedArr.length; i++) {
-                                Team opponent = teamMap.get(TeamUtil.TeamName.getById(last10TeamsPlayedArr[i]));
-                                double opponentPf = opponent.getSeasonAvgPf();
-                                double opponentPa = opponent.getSeasonAvgPa();
 
-                                if (opponentPf > 0 && opponentPa > 0) {// valid team
+                        for (int i = 0; i < last10TeamsPlayedArr.length; i++) {
+
+                                Team opponent = teamMap.get(TeamUtil.TeamName.getById(last10TeamsPlayedArr[i]));
+                                if (opponent != null && opponent.getTeamId() > -1) {// valid team
+                                        double opponentPf = opponent.getSeasonAvgPf();
+                                        double opponentPa = opponent.getSeasonAvgPa();
                                         validTeamIdx++;
                                         lastTeamOffRank = offensiveRankings.indexOf(opponentPf) + 1;// keep track of
                                                                                                     // last valid as
@@ -417,10 +418,10 @@ public class TeamUtil {
                         int validAwayTeamIdx = 0;
                         for (int i = 0; i < last5AwayTeamsPlayedArr.length; i++) {
                                 Team opponent = teamMap.get(TeamUtil.TeamName.getById(last5AwayTeamsPlayedArr[i]));
-                                double opponentPf = opponent.getSeasonAvgPf();
-                                double opponentPa = opponent.getSeasonAvgPa();
 
-                                if (opponentPf > 0 && opponentPa > 0) {// valid team
+                                if (opponent != null && opponent.getTeamId() > -1) {// valid team
+                                        double opponentPf = opponent.getSeasonAvgPf();
+                                        double opponentPa = opponent.getSeasonAvgPa();
                                         validAwayTeamIdx++;
                                         if (validAwayTeamIdx <= 2) {
                                                 last2AwayOppOffRank += offensiveRankings.indexOf(opponentPf) + 1;
@@ -435,10 +436,9 @@ public class TeamUtil {
                         int validHomeTeamIdx = 0;
                         for (int i = 0; i < last5HomeTeamsPlayedArr.length; i++) {
                                 Team opponent = teamMap.get(TeamUtil.TeamName.getById(last5HomeTeamsPlayedArr[i]));
-                                double opponentPf = opponent.getSeasonAvgPf();
-                                double opponentPa = opponent.getSeasonAvgPa();
-
-                                if (opponentPf > 0 && opponentPa > 0) {// valid team
+                                if (opponent != null && opponent.getTeamId() > -1) {// valid team
+                                        double opponentPf = opponent.getSeasonAvgPf();
+                                        double opponentPa = opponent.getSeasonAvgPa();
                                         validHomeTeamIdx++;
                                         if (validHomeTeamIdx <= 2) {
                                                 last2HomeOppOffRank += offensiveRankings.indexOf(opponentPf) + 1;
@@ -587,10 +587,20 @@ public class TeamUtil {
                 Map<Integer, JSONObject> teamMap = new HashMap<>();
 
                 Vector<Integer> postponedGames = new Vector<>();
-                postponedGames.add(858125); // wizards vs cavaliers 858125
+                // postponedGames.add(858125); // wizards vs cavaliers 858125
+                // postponedGames.add(858385); // wizards vs pistons 858125
                 for (Games game : gamesArray) {
                         int homeTeamId = game.getHome_team().getId();
                         int awayTeamId = game.getVisitor_team().getId();
+                        // if (homeTeamId == 30) {
+                        // System.out.println(game.getVisitor_team().getName() + " " + game.getId() + "
+                        // "
+                        // + game.getPeriod());
+                        // }
+                        // if (awayTeamId == 30) {
+                        // System.out.println(game.getHome_team().getName() + " " + game.getId() + " "
+                        // + game.getPeriod());
+                        // }
                         for (int i = 0; i < 2; i++) { // iterate over the two teams in the game
                                 JSONObject teamStatsJo = new JSONObject();
                                 boolean isHomeTeam = i == 0;

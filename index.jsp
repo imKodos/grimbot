@@ -139,9 +139,17 @@ Prediction p = new Prediction(team1, team2);
                 Let's analyze the matchup between the <%=team1.getFullName() + " (" + team1.getTotalWins()+"-" + team1.getTotalLoss()+")"%>
                 &nbsp;and the <%=team2.getFullName() + " (" + team2.getTotalWins()+"-" +team2.getTotalLoss()+")"%>
                 </p>
-                <h1>
-                Game Line TBD
-                </h1>
+                <h3>
+                <%=team1.getTeamName()%> vs <%=team2.getTeamName()%> Odds
+                </h3>
+                <p>
+                These are the current odds for the <%=team2.getTeamName()%> vs <%=team1.getTeamName()%> game:
+                <ul>
+                    <li><b>Money Line:</b> <%=team1.getTeamName()%>(TBD),  <%=team2.getTeamName()%>(TBD)</li>
+                    <li><b>Spread:</b> <%=team1.getTeamName()%>(TBD),  <%=team2.getTeamName()%>(TBD)</li>
+                    <li><b>Total:</b> O/U (TBD)</li>
+                </ul>
+                </p>
                 <h4>
                 <%=team1.getFullName()%>
                 </h4>
